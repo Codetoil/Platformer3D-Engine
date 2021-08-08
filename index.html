@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Babylon.js sample code</title>
+    <title>3d_game</title>
 
     <!-- Babylon.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
@@ -75,7 +75,7 @@
         );
         player.material = new BABYLON.StandardMaterial("playerMat", scene);
         player.material.diffuseTexture = new BABYLON.Texture(
-          "https://codetoil.github.io/3d_game1/textures/crate.png",
+          "https://codetoil.github.io/3d_game/textures/crate.png",
           scene
         );
         player.material.diffuseTexture.hasAlpha = true;
@@ -200,8 +200,14 @@
         camera.ellipsoid = new BABYLON.Vector3(1, 1, 1);
         //finally, say which mesh will be collisionable
         //box.checkCollisions = true;
+
+        var calcCh = function (x, y) {
+          return Math.sqrt(x ** 2 + y ** 2);
+        };
+
         var moveCh = function (ch, x, y, onGround, onWall, isSprinting) {
-          var r = Math.sqrt(x ** 2 + y ** 2);
+          var r = calcCh(x, y);
+
           if (r > 0.01) {
             r1 = Math.abs(x) + Math.abs(y);
             x *= r / r1;
@@ -221,7 +227,6 @@
               vel.add(dir.scale(onGround ? 1.5 : 0.8))
             );
           }
-          return r;
         };
 
         var jumpCh = function (ch) {
@@ -269,6 +274,7 @@
           var maxHSpeed = 10.0;
           var isSprinting = false;
           var isJumping = false;
+          var moveArray = [];
           if (
             deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)
           ) {
@@ -276,16 +282,19 @@
               BABYLON.DeviceType.Keyboard
             );
             isSprinting =
-              keyboardSource.getInput(16) || keyboardSource.getInput(76);
-            maxHSpeed *= moveCh(
-              player,
+              isSprinting ||
+              keyboardSource.getInput(16) ||
+              keyboardSource.getInput(76);
+            moveArray.push([
               keyboardSource.getInput(87) - keyboardSource.getInput(83),
               keyboardSource.getInput(68) - keyboardSource.getInput(65),
+              player,
               onGround,
               onWall,
-              isSprinting
-            );
+              isSprinting,
+            ]);
             isJumping =
+              isJumping ||
               keyboardSource.getInput(32) == 1 ||
               keyboardSource.getInput(74) == 1;
           }
@@ -294,34 +303,42 @@
               BABYLON.DeviceType.Generic
             );
             isSprinting =
-              gamepadSource.getInput(0) == 1 || gamepadSource.getInput(3) == 1;
-            maxHSpeed *= moveCh(
-              player,
+              isSprinting ||
+              gamepadSource.getInput(0) == 1 ||
+              gamepadSource.getInput(3) == 1;
+            moveArray.push([
               -gamepadSource.getInput(15),
               gamepadSource.getInput(14),
+              player,
               onGround,
               onWall,
-              isSprinting
-            );
+              isSprinting,
+            ]);
             isJumping =
-              gamepadSource.getInput(1) == 1 || gamepadSource.getInput(2) == 1;
+              isJumping ||
+              gamepadSource.getInput(1) == 1 ||
+              gamepadSource.getInput(2) == 1;
           }
           if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Switch)) {
             var gamepadSource = deviceSourceManager.getDeviceSource(
               BABYLON.DeviceType.Switch
             );
             isSprinting =
-              gamepadSource.getInput(3) == 1 || gamepadSource.getInput(2) == 1;
-            maxHSpeed *= moveCh(
-              player,
+              isSprinting ||
+              gamepadSource.getInput(3) == 1 ||
+              gamepadSource.getInput(2) == 1;
+            moveArray.push([
               -gamepadSource.getInput(23),
               gamepadSource.getInput(22),
+              player,
               onGround,
               onWall,
-              isSprinting
-            );
+              isSprinting,
+            ]);
             isJumping =
-              gamepadSource.getInput(0) == 1 || gamepadSource.getInput(1) == 1;
+              isJumping ||
+              gamepadSource.getInput(0) == 1 ||
+              gamepadSource.getInput(1) == 1;
           }
           if (
             deviceSourceManager.getDeviceSource(BABYLON.DeviceType.DualShock)
@@ -330,17 +347,40 @@
               BABYLON.DeviceType.DualShock
             );
             isSprinting =
-              gamepadSource.getInput(3) == 1 || gamepadSource.getInput(2) == 1;
-            maxHSpeed *= moveCh(
-              player,
+              isSprinting ||
+              gamepadSource.getInput(3) == 1 ||
+              gamepadSource.getInput(2) == 1;
+            moveArray.push([
               -gamepadSource.getInput(19),
               gamepadSource.getInput(18),
+              player,
               onGround,
               onWall,
-              isSprinting
-            );
+              isSprinting,
+            ]);
             isJumping =
-              gamepadSource.getInput(0) == 1 || gamepadSource.getInput(1) == 1;
+              isJumping ||
+              gamepadSource.getInput(0) == 1 ||
+              gamepadSource.getInput(1) == 1;
+          }
+          //console.log(moveArray);
+          moveRslt = moveArray.reduce(
+            (p, c, i) => {
+              var r = calcCh(c[0], c[1]);
+              return p[0] < r ? [r, i] : p;
+            },
+            [0, null]
+          );
+          maxHSpeed *= moveRslt[0];
+          if (moveRslt[1] != null) {
+            moveCh(
+              moveArray[moveRslt[1]][2],
+              moveArray[moveRslt[1]][0],
+              moveArray[moveRslt[1]][1],
+              moveArray[moveRslt[1]][3],
+              moveArray[moveRslt[1]][4],
+              moveArray[moveRslt[1]][5]
+            );
           }
           if (!isJumping) {
             hasJumped = false;
