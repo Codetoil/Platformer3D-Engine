@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,18 +8,18 @@
 
         <!-- Babylon.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
-        <script src="https://preview.babylonjs.com/ammo.js"></script>
-        <script src="https://preview.babylonjs.com/cannon.js"></script>
-        <script src="https://preview.babylonjs.com/Oimo.js"></script>
-        <script src="https://preview.babylonjs.com/earcut.min.js"></script>
-        <script src="https://preview.babylonjs.com/babylon.js"></script>
-        <script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
-        <script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
-        <script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
-        <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
-        <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-        <script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
-        <script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+        <script src="https://cdn.babylonjs.com/ammo.js"></script>
+        <script src="https://cdn.babylonjs.com/cannon.js"></script>
+        <script src="https://cdn.babylonjs.com/Oimo.js"></script>
+        <script src="https://cdn.babylonjs.com/earcut.min.js"></script>
+        <script src="https://cdn.babylonjs.com/babylon.js"></script>
+        <script src="https://cdn.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+        <script src="https://cdn.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+        <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+        <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+        <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+        <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+        <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
 
         <style>
             html, body {
@@ -45,8 +46,6 @@
         var scene = null;
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
-        // Please do not modify the code, you'll overwrite my data. Plus licencing? 
-// Please wait for when I release this.
 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
@@ -178,38 +177,20 @@ var createScene = function () {
         var onWall = walls.map((wll) => [wll, (box.intersectsMesh(wll, false) ? box.intersectsMesh(wll, true) : false)]);
         var maxHSpeed = 10.0;
         var isSprinting = false;
+        var isJumping = false;
         if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
             var keyboardSource = deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard);
             isSprinting = keyboardSource.getInput(16) || keyboardSource.getInput(76);
             maxHSpeed *= moveCh(box, keyboardSource.getInput(87) - keyboardSource.getInput(83), keyboardSource.getInput(68) - keyboardSource.getInput(65), onGround, onWall, isSprinting);
-            if (keyboardSource.getInput(32) == 1 || keyboardSource.getInput(74) == 1) { 
-                if (onGround) {
-                    jumpCh(box);
-                }
-                if (canWallJump && !onGround) {
-                    onWall.forEach(e => {
-                        if (e[1])
-                        {
-                            wallJumpCh(box, e[0]);
-                        }
-                    });
-                }
-                if (!onGround) {
-                    box.physicsImpostor.applyForce(new BABYLON.Vector3(0, 0.5, 0), box.getAbsolutePosition());
-                }
-            }
-            else {
-                canWallJump = true;
-            }
-            if (onGround) {
-                lastWall = null;
-            }
+            isJumping = keyboardSource.getInput(32) == 1 || keyboardSource.getInput(74) == 1;
         } 
         if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Generic)) { 
             var gamepadSource = deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Generic); 
             isSprinting = gamepadSource.getInput(0) == 1 || gamepadSource.getInput(3) == 1;
             maxHSpeed *= moveCh(box, -gamepadSource.getInput(15), gamepadSource.getInput(14), onGround, onWall, isSprinting); 
-            if (gamepadSource.getInput(1) == 1 || gamepadSource.getInput(2) == 1) { 
+            isJumping = gamepadSource.getInput(1) == 1 || gamepadSource.getInput(2) == 1;
+        }
+        if (isJumping) { 
                 if (onGround) {
                     jumpCh(box);
                 }
@@ -231,7 +212,6 @@ var createScene = function () {
             if (onGround) {
                 lastWall = null;
             }
-        }
         var vel = box.physicsImpostor.getLinearVelocity();
         var velxz = new BABYLON.Vector3(vel.x, 0, vel.z);
         if (isSprinting && onGround) {
@@ -274,8 +254,8 @@ var createScene = function () {
                         try {
                         return createDefaultEngine();
                         } catch(e) {
-                        console.log("the available createEngine function failed. Creating the default engine instead");
-                        return createDefaultEngine();
+                        console.log("The available createEngine function failed.");
+                        return null;
                         }
                     }
 
