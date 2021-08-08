@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -188,6 +189,18 @@ var createScene = function () {
             isSprinting = gamepadSource.getInput(0) == 1 || gamepadSource.getInput(3) == 1;
             maxHSpeed *= moveCh(box, -gamepadSource.getInput(15), gamepadSource.getInput(14), onGround, onWall, isSprinting); 
             isJumping = gamepadSource.getInput(1) == 1 || gamepadSource.getInput(2) == 1;
+        }
+        if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Switch)) { 
+            var gamepadSource = deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Switch); 
+            isSprinting = gamepadSource.getInput(3) == 1 || gamepadSource.getInput(2) == 1;
+            maxHSpeed *= moveCh(box, -gamepadSource.getInput(23), gamepadSource.getInput(22), onGround, onWall, isSprinting); 
+            isJumping = gamepadSource.getInput(0) == 1 || gamepadSource.getInput(1) == 1;
+        }
+        if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.DualShock)) { 
+            var gamepadSource = deviceSourceManager.getDeviceSource(BABYLON.DeviceType.DualShock); 
+            isSprinting = gamepadSource.getInput(3) == 1 || gamepadSource.getInput(2) == 1;
+            maxHSpeed *= moveCh(box, -gamepadSource.getInput(19), gamepadSource.getInput(18), onGround, onWall, isSprinting); 
+            isJumping = gamepadSource.getInput(0) == 1 || gamepadSource.getInput(1) == 1;
         }
         if (isJumping) { 
                 if (onGround) {
