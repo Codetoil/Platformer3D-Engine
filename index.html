@@ -397,7 +397,7 @@
                 }
               });
             }
-            if (!onGround) {
+            if (!onGround && !onWall.reduce((p, c) => p || c[1], false)) {
               var vel = player.physicsImpostor.getLinearVelocity();
               player.physicsImpostor.setLinearVelocity(
                 vel.add(new BABYLON.Vector3(0, 0.5, 0))
