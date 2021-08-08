@@ -45,6 +45,8 @@
         var scene = null;
         var sceneToRender = null;
         var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true,  disableWebGL2Support: false}); };
+        // Please do not modify the code, you'll overwrite my data. Plus licencing? 
+// Please wait for when I release this.
 
 var createScene = function () {
     var scene = new BABYLON.Scene(engine);
@@ -57,7 +59,7 @@ var createScene = function () {
     box.material = new BABYLON.StandardMaterial("boxMat", scene);
     box.material.diffuseTexture = new BABYLON.Texture("https://codetoil.github.io/3d_game1/textures/crate.png", scene);
     box.material.diffuseTexture.hasAlpha = true;
-    box.position = new BABYLON.Vector3(5, -8, -10);
+    box.position = new BABYLON.Vector3(5, -5, -10);
     box.physicsImpostor = new BABYLON.PhysicsImpostor( box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1 }, scene);
 
     var camera = new BABYLON.ArcFollowCamera("camera", Math.PI / 2, 0.5, 10, box, scene);
