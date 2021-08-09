@@ -390,7 +390,7 @@
               jumpCh(player);
               hasJumped = true;
             }
-            if (canWallJump && !onGround) {
+            if (canWallJump && !onGround && maxHSpeed > 0.1) {
               onWall.forEach((e) => {
                 if (e[1]) {
                   wallJumpCh(player, e[0]);
