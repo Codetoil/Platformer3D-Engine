@@ -293,6 +293,14 @@
               onWall,
               isSprinting,
             ]);
+            moveArray.push([
+              keyboardSource.getInput(38) - keyboardSource.getInput(40),
+              keyboardSource.getInput(39) - keyboardSource.getInput(37),
+              player,
+              onGround,
+              onWall,
+              isSprinting,
+            ]);
             isJumping =
               isJumping ||
               keyboardSource.getInput(32) == 1 ||
