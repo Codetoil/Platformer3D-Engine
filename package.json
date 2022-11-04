@@ -1,0 +1,11 @@
+{
+  "name": "3d-game",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "index.html",
+  "dependencies": {
+    "@babylonjs/core": "4.2.0",
+    "ammo.js": "0.0.10"
+  }
+}
