@@ -13,6 +13,26 @@
       "name": "build",
       "command": "yarn build",
       "runAtStart": true
+    },
+    "server": {
+      "name": "server",
+      "command": "server"
+    },
+    "upgrade": {
+      "name": "upgrade",
+      "command": "upgrade"
+    },
+    "yarn server": {
+      "name": "yarn server",
+      "command": "yarn server"
+    },
+    "yarn upgrade": {
+      "name": "yarn upgrade",
+      "command": "yarn upgrade"
+    },
+    "yarn install": {
+      "name": "yarn install",
+      "command": "yarn install"
     }
   }
 }

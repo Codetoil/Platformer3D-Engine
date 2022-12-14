@@ -1,19 +1,29 @@
 {
   "name": "3d-game",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "3D level-based platformer for the web.",
   "keywords": [],
-  "browser": "src/index.html",
+  "browser": "index.html",
   "dependencies": {
-    "@babylonjs/core": "^4.2.0",
-    "typescript": "^4.8.0"
+    "@babylonjs/core": "4.2.2",
+    "typescript": "4.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.19.0",
-    "@babel/core": "^7.20.0",
-    "@babel/preset-typescript": "^7.18.0"
+    "@open-wc/building-rollup": "2.2.1",
+    "deepmerge": "4.2.2",
+    "http-server": "14.1.1",
+    "rimraf": "3.0.2",
+    "rollup": "3.7.4",
+    "rollup-plugin-typescript2": "0.34.1",
+    "@rollup/plugin-node-resolve": "15.0.1"
   },
   "scripts": {
-    "build": "yarn run babel ts --out-dir js --extensions \".ts\""
-  }
+    "build": "rimraf dist && rollup -c rollup.config.js",
+    "server": "yarn run http-server"
+  },
+  "repository": "https://github.com/Codetoil/3d_game.git",
+  "author": "Anthony Michalek (Codetoil) <ianthisawesomee@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module"
 }

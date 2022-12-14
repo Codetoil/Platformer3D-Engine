@@ -1,13 +1,22 @@
-import * as BABYLON from "@babylonjs/core";
+/**
+ * ALL RIGHTS RESERVED Codetoil (c) 2022
+ */
 
-console.clear();
+import * as BABYLON from "@babylonjs/core";
+import NewConsole from "./custom_logger";
+console = new NewConsole(console);
 
 class BabylonState {
+  public running: boolean = true;
   public engine: BABYLON.Engine;
   public canvas: HTMLCanvasElement;
   public scene: BABYLON.Scene;
 
-  constructor(engine: BABYLON.Engine, canvas: HTMLCanvasElement, scene: BABYLON.Scene) {
+  constructor(
+    engine: BABYLON.Engine,
+    canvas: HTMLCanvasElement,
+    scene: BABYLON.Scene
+  ) {
     this.engine = engine;
     this.canvas = canvas;
     this.scene = scene;
@@ -15,17 +24,25 @@ class BabylonState {
 }
 
 class EventHandler {
-  public static onResize (babylonState: BabylonState) {
+  public static onResize(babylonState: BabylonState) {
     babylonState.engine.resize();
-  };
+  }
 }
 
 class Main {
-  private static calcCh (x: number, y: number): number {
+  private static calcCh(x: number, y: number): number {
     return Math.sqrt(x ** 2 + y ** 2);
-  };
+  }
 
-  private static moveCh (ch: BABYLON.Mesh, cameraAlpha: number , x: number, y: number, onGround: boolean, onWall: (boolean | BABYLON.Mesh)[][], isSprinting: boolean) {
+  private static moveCh(
+    ch: BABYLON.Mesh,
+    cameraAlpha: number,
+    x: number,
+    y: number,
+    onGround: boolean,
+    onWall: (boolean | BABYLON.Mesh)[][],
+    isSprinting: boolean
+  ) {
     var r = Main.calcCh(x, y);
 
     if (r > 0.01) {
@@ -42,17 +59,17 @@ class Main {
         ch.setDirection(dir);
       }
 
-      var vel = ch.physicsImpostor.getLinearVelocity();
+      /*var vel = ch.physicsImpostor.getLinearVelocity();
       ch.physicsImpostor.setLinearVelocity(
         vel.add(dir.scale(onGround ? 1.5 : 0.8))
-      );
+      );*/
     }
-  };
+  }
 
-  private static jumpCh (ch: BABYLON.Mesh) {
-    var vel = ch.physicsImpostor.getLinearVelocity();
-    ch.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(vel.x, 28, vel.z));
-  };
+  private static jumpCh(ch: BABYLON.Mesh) {
+    /*var vel = ch.physicsImpostor.getLinearVelocity();
+    ch.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(vel.x, 28, vel.z));*/
+  }
 
   public static CreateEngine(canvas: HTMLCanvasElement): BABYLON.Engine {
     return new BABYLON.Engine(canvas, true, {
@@ -60,22 +77,32 @@ class Main {
       stencil: true,
       disableWebGL2Support: false,
     });
-  };
+  }
 
-  public static CreateScene(engine: BABYLON.Engine, canvas: HTMLCanvasElement): BABYLON.Scene {
+  public static CreateScene(
+    engine: BABYLON.Engine,
+    canvas: HTMLCanvasElement
+  ): BABYLON.Scene {
     var scene: BABYLON.Scene = new BABYLON.Scene(engine);
     var gravity: BABYLON.Vector3 = new BABYLON.Vector3(0, -100, 0);
-    var deviceSourceManager: BABYLON.DeviceSourceManager = new BABYLON.DeviceSourceManager(scene.getEngine());
+    var deviceSourceManager: BABYLON.DeviceSourceManager =
+      new BABYLON.DeviceSourceManager(scene.getEngine());
     // Lights
     var _lightHemi: BABYLON.Light = new BABYLON.HemisphericLight(
       "hemi",
       new BABYLON.Vector3(0, 1, 0),
       scene
     );
-    //Simple crate
+    // Create the player entity
     var player: BABYLON.Mesh = BABYLON.MeshBuilder.CreateCapsule(
       "player",
-      { radius: 0.75, height: 3, subdivisions: null, tessellation: null, capSubdivisions: null },
+      {
+        radius: 0.75,
+        height: 3,
+        subdivisions: 10,
+        tessellation: 10,
+        capSubdivisions: 10,
+      },
       scene
     );
     player.material = new BABYLON.StandardMaterial("playerMat", scene);
@@ -85,14 +112,14 @@ class Main {
     );
     player.material.diffuseTexture.hasAlpha = true;*/
     player.position = new BABYLON.Vector3(5, -5, -10);
-    player.physicsImpostor = new BABYLON.PhysicsImpostor(
+    /*player.physicsImpostor = new BABYLON.PhysicsImpostor(
       player,
       BABYLON.PhysicsImpostor.CapsuleImpostor,
       { mass: 1 },
       scene
-    );
+    );*/
     var onGround = true;
-  
+
     var camera: BABYLON.ArcFollowCamera = new BABYLON.ArcFollowCamera(
       "camera",
       Math.PI / 2,
@@ -112,12 +139,12 @@ class Main {
     } else {
       camera.beta = 0.25;
     }
-  
+
     var grounds: BABYLON.Mesh[] = [];
     var walls: BABYLON.Mesh[] = [];
     /*var ceilings = [];*/
     //Ground
-    var ground: BABYLON.Mesh  = BABYLON.MeshBuilder.CreateBox(
+    var ground: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
       "ground",
       { width: 20.0, depth: 20.0, height: 0.5 },
       scene
@@ -127,14 +154,14 @@ class Main {
     ground.material.backFaceCulling = false;
     ground.position = new BABYLON.Vector3(5, -10, -15);
     ground.rotation = new BABYLON.Vector3(0, 0, 0);
-    ground.physicsImpostor = new BABYLON.PhysicsImpostor(
+    /*ground.physicsImpostor = new BABYLON.PhysicsImpostor(
       ground,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0, friction: 1 },
       scene
-    );
+    );*/
     grounds.push(ground);
-  
+
     var wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
       "wall",
       { width: 15, height: 15, depth: 0.75 },
@@ -145,15 +172,15 @@ class Main {
     wall.material.backFaceCulling = false;
     wall.position = new BABYLON.Vector3(3.2, -2.5, -15);
     wall.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-    wall.physicsImpostor = new BABYLON.PhysicsImpostor(
+    /*wall.physicsImpostor = new BABYLON.PhysicsImpostor(
       wall,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0, friction: 10 },
       scene
-    );
+    );*/
     //wall.setEnabled(false);
     walls.push(wall);
-  
+
     var wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
       "wall2",
       { width: 15, height: 15, depth: 0.75 },
@@ -162,15 +189,15 @@ class Main {
     wall2.material = wall.material;
     wall2.position = new BABYLON.Vector3(6.8, -2.5, -15);
     wall2.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-    wall2.physicsImpostor = new BABYLON.PhysicsImpostor(
+    /*wall2.physicsImpostor = new BABYLON.PhysicsImpostor(
       wall2,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0, friction: 10 },
       scene
-    );
+    );*/
     //wall2.setEnabled(false);
     walls.push(wall2);
-  
+
     var platform = BABYLON.MeshBuilder.CreateBox(
       "platform1",
       { width: 5.0, depth: 5.0, height: 0.5 },
@@ -178,14 +205,14 @@ class Main {
     );
     platform.material = wall.material;
     platform.position = new BABYLON.Vector3(17, -10, -10);
-    platform.physicsImpostor = new BABYLON.PhysicsImpostor(
+    /*platform.physicsImpostor = new BABYLON.PhysicsImpostor(
       platform,
       BABYLON.PhysicsImpostor.BoxImpostor,
       { mass: 0 },
       scene
-    );
+    );*/
     grounds.push(platform);
-  
+
     var dbox = BABYLON.MeshBuilder.CreateBox(
       "dbox",
       { width: 1, height: 2, depth: 1 },
@@ -196,7 +223,7 @@ class Main {
     //dbox.material.diffuseColor = new BABYLON.Color3(0, 1, 1);
     dbox.material.backFaceCulling = false;
     dbox.setEnabled(false);
-  
+
     // Enable Collisions
     scene.collisionsEnabled = true;
     //Then apply collisions and gravity to the active camera
@@ -210,24 +237,24 @@ class Main {
     var lastWall = null;
     var wallJumpCh = function (ch: BABYLON.Mesh, wall) {
       if (lastWall !== wall) {
-        ch.physicsImpostor.setLinearVelocity(
+        /*ch.physicsImpostor.setLinearVelocity(
           ch.getDirection(new BABYLON.Vector3(0, 30, -60))
-        );
+        );*/
         ch.setDirection(ch.getDirection(new BABYLON.Vector3(0, 0, -60)));
         canWallJump = false;
         lastWall = wall;
       }
     };
-  
+
     var hasJumped = false;
-  
+
     scene.onBeforeRenderObservable.add(function (evt) {
       if (camera.mode === BABYLON.Camera.ORTHOGRAPHIC_CAMERA) {
         camera.beta = 0;
       } else {
         camera.beta = 0.25;
       }
-  
+
       var onGround: boolean = grounds
         .map((gnd) =>
           player.intersectsMesh(gnd, false)
@@ -248,7 +275,7 @@ class Main {
       if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
         let keyboardSource = deviceSourceManager.getDeviceSource(
           BABYLON.DeviceType.Keyboard
-        );
+        ) as BABYLON.DeviceSource<BABYLON.DeviceType.Keyboard>;
         isSprinting =
           isSprinting ||
           keyboardSource.getInput(16) === 0 ||
@@ -277,7 +304,7 @@ class Main {
       if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Generic)) {
         let gamepadSource = deviceSourceManager.getDeviceSource(
           BABYLON.DeviceType.Generic
-        );
+        ) as BABYLON.DeviceSource<BABYLON.DeviceType.Generic>;
         isSprinting =
           isSprinting ||
           gamepadSource.getInput(0) === 1 ||
@@ -298,7 +325,7 @@ class Main {
       if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Switch)) {
         let gamepadSource = deviceSourceManager.getDeviceSource(
           BABYLON.DeviceType.Switch
-        );
+        ) as BABYLON.DeviceSource<BABYLON.DeviceType.Switch>;
         isSprinting =
           isSprinting ||
           gamepadSource.getInput(3) === 1 ||
@@ -319,7 +346,7 @@ class Main {
       if (deviceSourceManager.getDeviceSource(BABYLON.DeviceType.DualShock)) {
         let gamepadSource = deviceSourceManager.getDeviceSource(
           BABYLON.DeviceType.DualShock
-        );
+        ) as BABYLON.DeviceSource<BABYLON.DeviceType.DualShock>;
         isSprinting =
           isSprinting ||
           gamepadSource.getInput(3) === 1 ||
@@ -373,10 +400,10 @@ class Main {
           });
         }
         if (!onGround && !onWall.reduce((p, c) => p || c[1], false)) {
-          var vel = player.physicsImpostor.getLinearVelocity();
+          /*var vel = player.physicsImpostor.getLinearVelocity();
           player.physicsImpostor.setLinearVelocity(
             vel.add(new BABYLON.Vector3(0, 0.5, 0))
-          );
+          );*/
         }
       } else {
         canWallJump = true;
@@ -384,7 +411,8 @@ class Main {
       if (onGround) {
         lastWall = null;
       }
-      vel = player.physicsImpostor.getLinearVelocity();
+      //vel = player.physicsImpostor.getLinearVelocity();
+      let vel = new BABYLON.Vector3(0, 0, 0);
       var velxz = new BABYLON.Vector3(vel.x, 0, vel.z);
       if (isSprinting && onGround) {
         maxHSpeed *= 1.3;
@@ -398,15 +426,15 @@ class Main {
       if (Math.abs(vely) > 50) {
         vely = 50 * (vely === 0 ? 0 : vely > 0 ? 1 : -1);
       }
-      player.physicsImpostor.setLinearVelocity(
+      /*player.physicsImpostor.setLinearVelocity(
         new BABYLON.Vector3(velxz.x, vely, velxz.z)
       );
-      player.physicsImpostor.setAngularVelocity(BABYLON.Vector3.Zero());
+      player.physicsImpostor.setAngularVelocity(BABYLON.Vector3.Zero());*/
       var dir = new BABYLON.Vector3(0, 0, 1);
-      dir.rotateByQuaternionToRef(player.rotationQuaternion, dir);
+      //dir.rotateByQuaternionToRef(player.rotationQuaternion, dir);
       dir.y = 0;
       player.setDirection(dir);
-      player.physicsImpostor.setDeltaRotation(player.rotationQuaternion);
+      //player.physicsImpostor.setDeltaRotation(player.rotationQuaternion);
     });
     var meshesColliderList = [];
     for (var i = 1; i < scene.meshes.length; i++) {
@@ -414,23 +442,25 @@ class Main {
         scene.meshes[i].checkCollisions &&
         scene.meshes[i].isVisible === false
       ) {
-        scene.meshes[i].physicsImpostor = new BABYLON.PhysicsImpostor(
+        /*scene.meshes[i].physicsImpostor = new BABYLON.PhysicsImpostor(
           scene.meshes[i],
           BABYLON.PhysicsImpostor.BoxImpostor,
           { mass: 0, friction: 0.5, restitution: 0.7 },
           scene
-        );
+        );*/
         meshesColliderList.push(scene.meshes[i]);
       }
     }
-  
+
     //new BABYLON.AsciiArtPostProcess("pp", camera, "ariel").activate(camera);
     return scene;
   }
 }
 
 var initFunction = async function (): Promise<BabylonState> {
-  let canvas: HTMLCanvasElement = document.getElementById("renderCanvas") as HTMLCanvasElement;
+  let canvas: HTMLCanvasElement = document.getElementById(
+    "renderCanvas"
+  ) as HTMLCanvasElement;
   var asyncEngineCreation = async function () {
     try {
       return Main.CreateEngine(canvas);
@@ -446,11 +476,27 @@ var initFunction = async function (): Promise<BabylonState> {
   return new BabylonState(engine, canvas, Main.CreateScene(engine, canvas));
 };
 initFunction().then((babylonState) => {
-  window.addEventListener("resize", EventHandler.onResize.bind(null, babylonState));
+  window.addEventListener(
+    "resize",
+    EventHandler.onResize.bind(null, babylonState)
+  );
 
   babylonState.engine.runRenderLoop(function () {
-    if (babylonState.scene && babylonState.scene.activeCamera) {
-      babylonState.scene.render();
+    if (
+      babylonState.running &&
+      babylonState.scene &&
+      babylonState.scene.activeCamera
+    ) {
+      console.debug("In Render Loop");
+      try {
+        babylonState.scene.render();
+      } catch (e: any) {
+        console.error(e);
+        babylonState.running = false;
+      }
+    } else if (!babylonState.running) {
+      babylonState.engine.stopRenderLoop();
+      alert("Stopping rendering");
     }
   });
 });

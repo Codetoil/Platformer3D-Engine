@@ -4,7 +4,7 @@
   "compilerOptions": {
     // Tells TypeScript to read JS files, as
     // normally they are ignored as source files
-    "allowJs": false,
+    "allowJs": true,
     // Generate d.ts files
     "declaration": true,
     // This compiler run should
@@ -13,10 +13,14 @@
     // Types should go into this directory.
     // Removing this would place the .d.ts files
     // next to the .js files
-    "outDir": "js",
+    "outDir": "tmp",
+    "moduleResolution": "node",
     // go to js file when using IDE functions like
     // "Go to Definition" in VSCode
     "declarationMap": true,
-    "lib": [ "es2015", "DOM" ]
+    "target": "es2015",
+    "module": "ES2015",
+    "strict": false,
+    "lib": ["es2015", "DOM"]
   }
 }
