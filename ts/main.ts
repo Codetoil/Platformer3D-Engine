@@ -487,7 +487,6 @@ initFunction().then((babylonState) => {
       babylonState.scene &&
       babylonState.scene.activeCamera
     ) {
-      console.debug("In Render Loop");
       try {
         babylonState.scene.render();
       } catch (e: any) {
