@@ -7,6 +7,7 @@ export default {
   output: {
     file: "dist/index.js",
     format: "iife",
+    name: "Game3D",
   },
 
   plugins: [
