@@ -4,6 +4,7 @@
   "description": "3D level-based platformer for the web.",
   "keywords": [],
   "browser": "index.html",
+  "types": "dist/main.d.ts",
   "dependencies": {
     "@babylonjs/core": "4.2.2",
     "jquery": "^3.6.2",

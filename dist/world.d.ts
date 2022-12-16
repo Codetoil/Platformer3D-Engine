@@ -6,5 +6,8 @@ export declare class World {
     gravity: BABYLON.Vector3;
     grounds: BABYLON.Mesh[];
     walls: BABYLON.Mesh[];
+    engine: BABYLON.Engine;
+    scene: BABYLON.Scene;
+    tick(): void;
 }
 //# sourceMappingURL=world.d.ts.map

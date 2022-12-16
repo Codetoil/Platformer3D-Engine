@@ -6,11 +6,11 @@ import { Player } from "./characterController";
 import { World } from "./world";
 export declare class Game3D {
     ready: Promise<Game3D>;
-    running: boolean;
+    started: boolean;
+    stopped: boolean;
     engine: BABYLON.Engine;
     canvas: HTMLCanvasElement;
     scene: BABYLON.Scene;
-    private deviceSourceManager;
     player: Player;
     camera: BABYLON.ArcFollowCamera;
     world: World;

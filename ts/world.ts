@@ -8,4 +8,8 @@ export class World {
   public gravity: BABYLON.Vector3;
   public grounds: BABYLON.Mesh[];
   public walls: BABYLON.Mesh[];
+  public engine: BABYLON.Engine;
+  public scene: BABYLON.Scene;
+
+  public tick() {}
 }
