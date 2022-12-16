@@ -65,14 +65,14 @@ export class Player extends Entity {
       x *= r / r1;
       z *= r / r1;
 
-      let dir = new BABYLON.Vector3(-x, z, 0).toQuaternion();
+      let dir = new BABYLON.Vector3(0.0, Math.atan2(z, x), 0).toQuaternion();
 
       //if (this.onGround) {
       this.mesh.rotationQuaternion = dir;
       //}
-      dir = dir.scale(this.onGround ? 1.5 : 0.8);
+      let s = this.onGround ? 1.5 : 0.8;
 
-      this.vel = this.vel.add(new BABYLON.Vector3(dir.x, 0, dir.z));
+      this.vel = this.vel.add(new BABYLON.Vector3(s * x, 0.0, s * z));
     }
   }
 

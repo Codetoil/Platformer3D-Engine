@@ -97,7 +97,10 @@ export class Game3D {
       "playerMat",
       this.scene
     );
-    this.player.texture = new BABYLON.Texture("textures/crate.png", this.scene);
+    this.player.texture = new BABYLON.Texture(
+      "textures/temp_player.png",
+      this.scene
+    );
     (this.player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
       this.player.texture;
     this.player.texture.hasAlpha = true;
