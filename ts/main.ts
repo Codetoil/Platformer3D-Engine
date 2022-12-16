@@ -8,7 +8,7 @@ import { Player } from "./characterController";
 import { World } from "./world";
 console = new NewConsole(console);
 
-class Game3D {
+export class Game3D {
   public ready: Promise<Game3D>;
   public running: boolean = true;
 
@@ -413,7 +413,7 @@ class Game3D {
   }
 }
 
-class EventHandler {
+export class EventHandler {
   public static onResize(game3D: Game3D) {
     game3D.engine.resize();
   }
@@ -434,7 +434,7 @@ game3D.ready.then((value) => {
       }
     } else if (!value.running) {
       value.engine.stopRenderLoop();
-      alert("Stopping rendering");
+      console.error("Stopping game...");
     }
   });
 });
