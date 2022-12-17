@@ -11,7 +11,6 @@ export declare class Entity {
     pos: BABYLON.Vector3;
     vel: BABYLON.Vector3;
     rot: BABYLON.Quaternion;
-    angVel: BABYLON.Quaternion;
     onGround: boolean;
     constructor(world: World);
     setMesh(mesh: BABYLON.Mesh): Entity;

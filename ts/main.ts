@@ -73,7 +73,7 @@ export class Game3D {
     this.world = new World();
     this.world.engine = this.engine;
     this.world.scene = this.scene;
-    this.world.gravity = new BABYLON.Vector3(0, -100, 0);
+    this.world.gravity = -100.0;
     // Create the player entity
     this.player = new Player(this.world)
       .setMesh(

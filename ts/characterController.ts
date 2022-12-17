@@ -15,14 +15,12 @@ export class Entity {
   public pos: BABYLON.Vector3;
   public vel: BABYLON.Vector3;
   public rot: BABYLON.Quaternion;
-  public angVel: BABYLON.Quaternion;
 
   public onGround: boolean;
 
   public constructor(world: World) {
     this.world = world;
     this.vel = new BABYLON.Vector3(0.0, 0.0, 0.0);
-    this.angVel = new BABYLON.Quaternion(0.0, 0.0, 0.0, 0.0);
   }
 
   public setMesh(mesh: BABYLON.Mesh): Entity {
@@ -67,12 +65,12 @@ export class Player extends Entity {
 
       let dir = new BABYLON.Vector3(0.0, Math.atan2(z, x), 0).toQuaternion();
 
-      //if (this.onGround) {
-      this.mesh.rotationQuaternion = dir;
-      //}
+      if (this.onGround) {
+        this.mesh.rotationQuaternion = dir;
+      }
       let s = this.onGround ? 1.5 : 0.8;
 
-      this.vel = this.vel.add(new BABYLON.Vector3(s * x, 0.0, s * z));
+      this.vel = this.vel.add(new BABYLON.Vector3(s * z, 0.0, s * x));
     }
   }
 
@@ -167,12 +165,22 @@ export class Player extends Entity {
       velH = velH.normalize().scale(this.maxHSpeed);
     }
     var vely = this.vel.y;
+    if (!this.onGround) {
+      vely += this.world.gravity / 60.0;
+    } else if (this.onGround && vely < 0.0) {
+      vely = 0.0;
+    }
     if (Math.abs(vely) > 50) {
       vely = 50 * (vely === 0 ? 0 : vely > 0 ? 1 : -1);
     }
     this.vel = new BABYLON.Vector3(velH.x, vely, velH.z);
-    this.angVel = BABYLON.Quaternion.Zero();
-
+    vely = vely + (!this.onGround ? this.world.gravity / 2 : 0.0);
+    if (Math.abs(vely) > 50) {
+      vely = 50 * (vely === 0 ? 0 : vely > 0 ? 1 : -1);
+    }
+    let vel1 = new BABYLON.Vector3(velH.x, vely, velH.z);
+    this.mesh.position = this.mesh.position.add(vel1.scale(1.0 / 60.0));
+    this.pos = this.mesh.position;
     this.rot = this.mesh.rotationQuaternion;
   }
 }

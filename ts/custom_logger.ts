@@ -265,12 +265,4 @@ export default class NewConsole implements Console {
   profileEnd(label: string = "default"): void {
     this.oldConsole.profileEnd(label);
   }
-
-  exception(message?: string, ...optionalParams: any[]): void {
-    this.oldConsole.exception(message, optionalParams);
-  }
-
-  get memory(): any {
-    return this.oldConsole.memory;
-  }
 }

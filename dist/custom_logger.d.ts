@@ -33,7 +33,5 @@ export default class NewConsole implements Console {
     timeEnd(label?: string): void;
     profile(label?: string): void;
     profileEnd(label?: string): void;
-    exception(message?: string, ...optionalParams: any[]): void;
-    get memory(): any;
 }
 //# sourceMappingURL=custom_logger.d.ts.map
