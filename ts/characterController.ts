@@ -68,9 +68,17 @@ export class Player extends Entity {
       if (this.onGround) {
         this.mesh.rotationQuaternion = dir;
       }
-      let s = this.onGround ? 1.5 : 0.8;
+      let s = this.onGround ? 5.0 : 1.0;
 
       this.vel = this.vel.add(new BABYLON.Vector3(s * z, 0.0, s * x));
+    }
+
+    if (this.onGround) {
+      this.vel = new BABYLON.Vector3(
+        0.7 * this.vel.x,
+        this.vel.y,
+        0.7 * this.vel.z
+      );
     }
   }
 
@@ -80,15 +88,10 @@ export class Player extends Entity {
 
   public wallJump(wall: BABYLON.Mesh) {
     if (this.lastWall !== wall) {
-      let velQ: BABYLON.Quaternion = new BABYLON.Quaternion(
-        this.vel.x,
-        this.vel.y,
-        this.vel.z,
-        0.0
-      );
-      this.mesh.rotationQuaternion = velQ.multiply(
-        this.mesh.rotationQuaternion.multiply(velQ)
-      );
+      let normal: BABYLON.Quaternion = wall.rotation.toQuaternion();
+      this.mesh.rotationQuaternion = normal
+        .multiply(this.mesh.rotationQuaternion.multiply(normal))
+        .normalize();
       this.canWallJump = false;
       this.lastWall = wall;
     }
@@ -103,17 +106,16 @@ export class Player extends Entity {
           : false
       )
       .reduce((p, c) => p || c, false);
-    this.onWall.forEach(
-      (_v: boolean, wll: BABYLON.Mesh, map: Map<BABYLON.Mesh, boolean>) => {
-        let v = this.mesh.intersectsMesh(wll, false)
-          ? this.mesh.intersectsMesh(wll, true)
-          : false;
-        map.set(wll, v);
-      }
-    );
+    for (const wall of this.world.walls) {
+      let v = this.mesh.intersectsMesh(wall, false)
+        ? this.mesh.intersectsMesh(wall, true)
+        : false;
+      this.onWall.set(wall, v);
+    }
+
     this.inputController.tick(cameraAngle);
 
-    this.maxHSpeed = 10.0 * this.inputController.joystick.length();
+    this.maxHSpeed = 3.0 + 10.0 * this.inputController.joystick.length();
     this.isJumping = this.inputController.jumpPressed;
     this.isSprinting = this.inputController.sprintHeld;
 
@@ -133,9 +135,9 @@ export class Player extends Entity {
         this.hasJumped = true;
       }
       if (this.canWallJump && !this.onGround && this.maxHSpeed > 0.1) {
-        this.onWall.forEach((e) => {
-          if (e[1]) {
-            this.wallJump(e[0]);
+        this.onWall.forEach((wallCanBeJumped, wall) => {
+          if (wallCanBeJumped) {
+            this.wallJump(wall);
           }
         });
       }
@@ -174,7 +176,7 @@ export class Player extends Entity {
       vely = 50 * (vely === 0 ? 0 : vely > 0 ? 1 : -1);
     }
     this.vel = new BABYLON.Vector3(velH.x, vely, velH.z);
-    vely = vely + (!this.onGround ? this.world.gravity / 2 : 0.0);
+    vely = vely + (!this.onGround ? this.world.gravity / 2 : 0.0) / 60.0;
     if (Math.abs(vely) > 50) {
       vely = 50 * (vely === 0 ? 0 : vely > 0 ? 1 : -1);
     }
