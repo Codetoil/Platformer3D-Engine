@@ -6,7 +6,7 @@ import * as BABYLON from "@babylonjs/core";
 import NewConsole from "./custom_logger";
 import { Player } from "./characterController";
 import { World } from "./world";
-import { Quaternion } from "@babylonjs/core";
+import { Quaternion, WebGPUEngine } from "@babylonjs/core";
 console = new NewConsole(console);
 
 export class Game3D {
@@ -54,11 +54,20 @@ export class Game3D {
   }
 
   public async createEngine(): Promise<BABYLON.Engine> {
-    this.engine = new BABYLON.Engine(this.canvas, true, {
-      preserveDrawingBuffer: true,
-      stencil: true,
-      disableWebGL2Support: false,
-    });
+    const webGPUSupported = await BABYLON.WebGPUEngine.IsSupportedAsync;
+    if (webGPUSupported) {
+      this.engine = new BABYLON.WebGPUEngine(this.canvas, {
+        antialiasing: true,
+        stencil: true,
+      });
+      await (this.engine as BABYLON.WebGPUEngine).initAsync();
+    } else {
+      this.engine = new BABYLON.Engine(this.canvas, true, {
+        preserveDrawingBuffer: true,
+        stencil: true,
+        disableWebGL2Support: false,
+      });
+    }
     return this.engine;
   }
 
