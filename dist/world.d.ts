@@ -3,7 +3,6 @@
  */
 import * as BABYLON from "@babylonjs/core";
 export declare class World {
-    gravity: number;
     grounds: BABYLON.Mesh[];
     walls: BABYLON.Mesh[];
     engine: BABYLON.Engine;

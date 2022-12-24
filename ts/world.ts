@@ -5,7 +5,6 @@
 import * as BABYLON from "@babylonjs/core";
 
 export class World {
-  public gravity: number;
   public grounds: BABYLON.Mesh[];
   public walls: BABYLON.Mesh[];
   public engine: BABYLON.Engine;

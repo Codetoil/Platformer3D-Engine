@@ -4,31 +4,42 @@
 import * as BABYLON from "@babylonjs/core";
 import { World } from "./world";
 import { PlayerInputController } from "./playerInputController";
-export declare class Entity {
+export declare abstract class Entity {
     mesh: BABYLON.Mesh;
     texture: BABYLON.Texture;
     world: World;
     pos: BABYLON.Vector3;
-    vel: BABYLON.Vector3;
+    velH: BABYLON.Vector3;
+    vely: number;
     rot: BABYLON.Quaternion;
     onGround: boolean;
-    constructor(world: World);
+    onWall: boolean;
+    abstract gravity: number;
+    protected constructor(world: World);
     setMesh(mesh: BABYLON.Mesh): Entity;
     setPositionAndRotation(pos: BABYLON.Vector3, rot: BABYLON.Quaternion): Entity;
+    protected checkCollisions(): void;
 }
 export declare class Player extends Entity {
     maxHSpeed: number;
     isSprinting: boolean;
-    isJumping: boolean;
+    isJumpButtonPressed: boolean;
     canWallJump: boolean;
-    lastWall: any;
-    hasJumped: boolean;
+    lastWallWallJumpedFrom: any;
+    jumpState2: boolean;
     inputController: PlayerInputController;
-    onWall: Map<BABYLON.Mesh, boolean>;
+    facingDirection: BABYLON.Vector3;
+    get gravity(): number;
     constructor(world: World);
-    moveH(x: number, z: number): void;
+    protected get hMovementScaleFactor(): 5 | 1;
+    accelerateAndRotateH(x: number, z: number): void;
     jump(): void;
-    wallJump(wall: BABYLON.Mesh): void;
+    wallJump(): void;
+    private applyGravityReduction;
+    private executeJumpRoutine;
+    private applyHMovementInfluences;
+    private applyGravity;
+    private moveMesh;
     tick(cameraAngle: BABYLON.Quaternion): void;
 }
 //# sourceMappingURL=characterController.d.ts.map

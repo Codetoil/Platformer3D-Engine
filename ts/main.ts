@@ -6,7 +6,6 @@ import * as BABYLON from "@babylonjs/core";
 import NewConsole from "./custom_logger";
 import { Player } from "./characterController";
 import { World } from "./world";
-import { Quaternion, WebGPUEngine } from "@babylonjs/core";
 console = new NewConsole(console);
 
 export class Game3D {
@@ -82,7 +81,6 @@ export class Game3D {
     this.world = new World();
     this.world.engine = this.engine;
     this.world.scene = this.scene;
-    this.world.gravity = -100.0;
     // Create the player entity
     this.player = new Player(this.world)
       .setMesh(
@@ -100,7 +98,7 @@ export class Game3D {
       )
       .setPositionAndRotation(
         new BABYLON.Vector3(5, -5, -10),
-        Quaternion.Identity()
+        BABYLON.Quaternion.Identity()
       ) as Player;
     this.player.mesh.material = new BABYLON.StandardMaterial(
       "playerMat",
