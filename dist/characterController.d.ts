@@ -35,7 +35,6 @@ export declare class Player extends Entity {
     accelerateAndRotateH(x: number, z: number): void;
     jump(): void;
     wallJump(): void;
-    private applyGravityReduction;
     private executeJumpRoutine;
     private applyHMovementInfluences;
     private applyGravity;

@@ -167,10 +167,6 @@ export class Player extends Entity {
       ) {
         this.wallJump();
       }
-
-      if (!this.onGround && !this.onWall) {
-        this.applyGravityReduction();
-      }
     } else {
       this.canWallJump = true;
     }
