@@ -150,10 +150,6 @@ export class Player extends Entity {
     }
   }
 
-  private applyGravityReduction() {
-    this.vely = this.vely + 0.5;
-  }
-
   private executeJumpRoutine() {
     if (!this.isJumpButtonPressed) {
       this.jumpState2 = false;
