@@ -24,7 +24,7 @@ export declare class Player extends Entity {
     maxHSpeed: number;
     canWallJump: boolean;
     lastWallWallJumpedFrom: BABYLON.Mesh;
-    jumpState2: boolean;
+    jumpState: boolean;
     inputController: PlayerInputController;
     facingDirection: BABYLON.Vector3;
     get gravity(): number;
