@@ -28,4 +28,4 @@ jobs:
         cache: 'yarn'
     - run: yarn install --immutable
     - run: yarn run build
-    - run: yarn run test
+    
