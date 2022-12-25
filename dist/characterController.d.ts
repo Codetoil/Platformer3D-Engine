@@ -22,10 +22,8 @@ export declare abstract class Entity {
 }
 export declare class Player extends Entity {
     maxHSpeed: number;
-    isSprinting: boolean;
-    isJumpButtonPressed: boolean;
     canWallJump: boolean;
-    lastWallWallJumpedFrom: any;
+    lastWallWallJumpedFrom: BABYLON.Mesh;
     jumpState2: boolean;
     inputController: PlayerInputController;
     facingDirection: BABYLON.Vector3;

@@ -5,6 +5,7 @@
 import * as BABYLON from "@babylonjs/core";
 import { World } from "./world";
 import { PlayerInputController } from "./playerInputController";
+import { Mesh } from "@babylonjs/core";
 
 export abstract class Entity {
   public mesh: BABYLON.Mesh;
@@ -62,16 +63,16 @@ export abstract class Entity {
 
 export class Player extends Entity {
   public maxHSpeed: number;
-  public isSprinting: boolean;
-  public isJumpButtonPressed: boolean;
   public canWallJump = true;
-  public lastWallWallJumpedFrom = null;
-  public jumpState2 = false;
+  public lastWallWallJumpedFrom: BABYLON.Mesh = null;
+  public jumpState = false;
   public inputController: PlayerInputController;
   public facingDirection: BABYLON.Vector3;
 
   public get gravity(): number {
-    return this.isJumpButtonPressed ? -1.8 : -2.0;
+    if (this.onWall) return -1.667;
+    if (this.inputController.jumpPressed) return -1.8;
+    return -2.0;
   }
 
   public constructor(world: World) {
@@ -93,11 +94,9 @@ export class Player extends Entity {
       z *= r / r1;
 
       if (this.onGround) {
-        this.mesh.rotationQuaternion = new BABYLON.Vector3(
-          0.0,
-          Math.atan2(z, x),
-          0
-        ).toQuaternion();
+        this.mesh.rotationQuaternion = BABYLON.Vector3.Up()
+          .scale(Math.atan2(z, x))
+          .toQuaternion();
 
         this.facingDirection = new BABYLON.Vector3(z, 0.0, x).normalize();
       }
@@ -122,7 +121,7 @@ export class Player extends Entity {
 
   public wallJump() {
     if (!this.facingDirection) return;
-    let ray = new BABYLON.Ray(this.pos, this.facingDirection, 100);
+    let ray = new BABYLON.Ray(this.pos, this.facingDirection, 1);
     let rayHelper = new BABYLON.RayHelper(ray);
     rayHelper.show(this.world.scene, BABYLON.Color3.Red());
     let hit = this.world.scene.pickWithRay(ray, (mesh: BABYLON.Mesh) => {
@@ -131,8 +130,13 @@ export class Player extends Entity {
     let wall = hit.pickedMesh;
     if (!wall) return;
     if (this.lastWallWallJumpedFrom !== wall) {
-      let normalV: BABYLON.Vector3 = hit.getNormal();
-      console.debug(normalV);
+      let normalV: BABYLON.Vector3 = hit.getNormal(true);
+      console.debug([wall, normalV]);
+      let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalV, 1);
+      new BABYLON.RayHelper(rayNormal).show(
+        this.world.scene,
+        BABYLON.Color3.Blue()
+      );
       let normal: BABYLON.Quaternion = new BABYLON.Quaternion(
         normalV.x,
         normalV.y,
@@ -145,30 +149,29 @@ export class Player extends Entity {
       this.velH = this.velH.subtract(
         normalV.scale(2 * BABYLON.Vector3.Dot(this.velH, normalV))
       );
+      this.vely = 28.0;
       this.canWallJump = false;
-      this.lastWallWallJumpedFrom = wall;
+      this.lastWallWallJumpedFrom = wall as Mesh;
     }
   }
 
   private executeJumpRoutine() {
-    if (!this.isJumpButtonPressed) {
-      this.jumpState2 = false;
-    }
-    if (this.isJumpButtonPressed) {
-      if (this.onGround && !this.jumpState2) {
+    if (!this.inputController.jumpPressed) {
+      this.jumpState = false;
+      this.canWallJump = true;
+    } else {
+      if (this.onGround && !this.jumpState) {
         this.jump();
-        this.jumpState2 = true;
+        this.jumpState = true;
       }
       if (
         this.canWallJump &&
         this.onWall &&
         !this.onGround &&
-        this.maxHSpeed > 0.1
+        this.inputController.joystick.length() > 0.1
       ) {
         this.wallJump();
       }
-    } else {
-      this.canWallJump = true;
     }
     if (this.onGround) {
       this.lastWallWallJumpedFrom = null;
@@ -176,9 +179,9 @@ export class Player extends Entity {
   }
 
   private applyHMovementInfluences() {
-    if (this.isSprinting && this.onGround) {
+    if (this.inputController.sprintHeld && this.onGround) {
       this.maxHSpeed *= 1.3;
-    } else if (this.isSprinting && !this.onGround) {
+    } else if (this.inputController.sprintHeld && !this.onGround) {
       this.maxHSpeed *= 1.2;
     }
     if (this.velH.length() > this.maxHSpeed) {
@@ -197,8 +200,6 @@ export class Player extends Entity {
 
   private moveMesh() {
     this.maxHSpeed = 2.5 + 10.0 * this.inputController.joystick.length();
-    this.isJumpButtonPressed = this.inputController.jumpPressed;
-    this.isSprinting = this.inputController.sprintHeld;
 
     if (this.inputController.joystick != null) {
       this.accelerateAndRotateH(
