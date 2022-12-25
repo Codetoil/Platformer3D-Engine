@@ -3,6 +3,8 @@
     "node/no-missing-import": [
       "error",
       {
+        "allowModules": [],
+        "resolvePaths": ["/ts"],
         "tryExtensions": [".js", ".ts", ".json", ".node"]
       }
     ]
