@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "node/no-missing-import": [
+      "error",
+      {
+        "allowModules": [],
+        "resolvePaths": ["."],
+        "tryExtensions": [".js", ".ts", ".json", ".node"]
+      }
+    ]
+  }
+}
