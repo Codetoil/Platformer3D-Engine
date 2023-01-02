@@ -33,6 +33,10 @@
     "yarn install": {
       "name": "yarn install",
       "command": "yarn install"
+    },
+    "yarn dev": {
+      "name": "yarn dev",
+      "command": "yarn dev"
     }
   }
 }
