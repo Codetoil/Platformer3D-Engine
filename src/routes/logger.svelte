@@ -16,7 +16,10 @@ interface FormatSpecifierSearcher {
 export class NewConsole implements Console {
   private oldConsole: Console;
   private countMap: Map<string, number>;
-  public Console: console.ConsoleConstructor; // Do not use, use `new NewConsole()`
+  
+  public get Console(): console.ConsoleConstructor {
+    throw new Error("Do not use, use `new NewConsole()`, instead");
+  }
 
   constructor(oldConsole: Console) {
     this.oldConsole = oldConsole;
@@ -152,20 +155,20 @@ export class NewConsole implements Console {
     return this.formatter(result);
   }
 
-  private logger(logLevel: string, formatString: string, rest?: any[]): void {
+  private logger(logLevel: string, formatString?: string, rest?: any[]): void {
     /*
     this.printer("logger", ["formatString:", formatString]);
     this.printer("logger", ["rest:" , rest]);
     this.printer("logger", ["rest.length:" , rest.length]);
     this.printer("logger", []);
     */
-    if (rest.length === 0) {
+    if (!!rest) {
       this.printer(logLevel, [formatString]);
     } else {
-      if (!this.hasFormatSpecifiers(formatString)) {
-        this.printer(logLevel, [formatString, ...rest]);
+      if (!!formatString && !this.hasFormatSpecifiers(formatString)) {
+        this.printer(logLevel, [formatString, ...(rest as unknown as any[])]);
       } else {
-        this.printer(logLevel, this.formatter([formatString, ...rest]));
+        this.printer(logLevel, this.formatter([formatString, ...(rest as unknown as any[])]));
       }
     }
   }
@@ -191,83 +194,83 @@ export class NewConsole implements Console {
     this.logger("error", message, optionalParams);
     this.oldConsole.error(message, optionalParams);
   }
-  info(message?: string, ...optionalParams: any[]): void {
+  public info(message?: string, ...optionalParams: any[]): void {
     this.logger("info", message, optionalParams);
     this.oldConsole.info(message, optionalParams);
   }
-  log(message?: string, ...optionalParams: any[]): void {
+  public log(message?: string, ...optionalParams: any[]): void {
     this.logger("log", message, optionalParams);
     this.oldConsole.log(message, optionalParams);
   }
-  table(tabularData: any, properties: readonly string[]): void {
+  public table(tabularData: any, properties?: readonly string[]): void {
     this.oldConsole.table(tabularData, properties);
   }
-  trace(message?: string, ...optionalParams: any[]): void {
+  public trace(message?: string, ...optionalParams: any[]): void {
     this.oldConsole.trace(message, optionalParams);
   }
-  warn(message?: string, ...optionalParams: any[]): void {
+  public warn(message?: string, ...optionalParams: any[]): void {
     this.logger("warn", message, optionalParams);
     this.oldConsole.warn(message, optionalParams);
   }
-  dir(item?: any, options: any = {}): void {
+  public dir(item?: any, options: any = {}): void {
     this.oldConsole.dir(item, options);
   }
-  dirxml(...data: any[]): void {
+  public dirxml(...data: any[]): void {
     this.oldConsole.dirxml(data);
   }
 
-  count(label: string = "default"): void {
-    if (this.countMap[label] !== undefined) {
+  public count(label: string = "default"): void {
+    /*if (this.countMap[label] !== undefined) {
       this.countMap[label]++;
     } else {
       this.countMap[label] = 1;
     }
-    this.logger("count", label + ": " + this.countMap[label]);
+    this.logger("count", label + ": " + this.countMap[label]);*/
     this.oldConsole.count(label);
   }
-  countReset(label: string = "default"): void {
-    if (this.countMap[label] !== undefined) {
+  public countReset(label: string = "default"): void {
+    /*if (this.countMap[label] !== undefined) {
       this.countMap[label] = 0;
     } else {
       this.logger(
         "countReset",
         "Label `" + label + "` does not have an associated count"
       );
-    }
+    }*/
     this.oldConsole.countReset(label);
   }
 
-  group(...label: any[]): void {
+  public group(...label: any[]): void {
     this.oldConsole.group(label);
   }
-  groupCollapsed(...label: any[]): void {
+  public groupCollapsed(...label: any[]): void {
     this.oldConsole.groupCollapsed(label);
   }
-  groupEnd(): void {
+  public groupEnd(): void {
     this.oldConsole.groupEnd();
   }
 
-  time(label: string = "default"): void {
+  public time(label: string = "default"): void {
     this.oldConsole.time(label);
   }
-  timeLog(label: string = "default", ...data: any[]): void {
+  public timeLog(label: string = "default", ...data: any[]): void {
     this.oldConsole.timeLog(label, data);
   }
-  timeStamp(label: string = "default"): void {
+  public timeStamp(label: string = "default"): void {
     this.oldConsole.timeStamp(label);
   }
-  timeEnd(label: string = "default"): void {
+  public timeEnd(label: string = "default"): void {
     this.oldConsole.timeEnd(label);
   }
 
-  profile(label: string = "default"): void {
+  public profile(label: string = "default"): void {
     this.oldConsole.profile(label);
   }
-  profileEnd(label: string = "default"): void {
+  public profileEnd(label: string = "default"): void {
     this.oldConsole.profileEnd(label);
   }
 }
-console = new NewConsole(console);
+console = new NewConsole(console) as Console;
 </script>
 
 <p id="log">{@html logText}</p>

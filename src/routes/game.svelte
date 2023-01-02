@@ -5,21 +5,21 @@
 
 import * as BABYLON from "@babylonjs/core";
 import { onMount } from "svelte"
-import { Player } from "./characterController.ts";
-import { World } from "./world.ts";
+import { Player } from "./characterController";
+import { World } from "./world";
 
 export class Game3D {
   public ready: Promise<Game3D>;
   public started: boolean;
   public stopped: boolean;
 
-  public engine: BABYLON.Engine;
-  public canvas: HTMLCanvasElement;
-  public scene: BABYLON.Scene;
+  public engine!: BABYLON.Engine;
+  public canvas!: HTMLCanvasElement;
+  public scene!: BABYLON.Scene;
 
-  public player: Player;
-  public camera: BABYLON.ArcFollowCamera;
-  public world: World;
+  public player!: Player;
+  public camera!: BABYLON.ArcFollowCamera;
+  public world!: World;
 
   constructor() {
     this.started = false;
