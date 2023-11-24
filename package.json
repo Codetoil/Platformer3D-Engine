@@ -1,6 +1,7 @@
 {
   "name": "game3d",
   "version": "0.1.1",
+  "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build --config vite.config.client.js",
