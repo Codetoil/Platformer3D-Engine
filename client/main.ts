@@ -25,13 +25,13 @@ export class Game3D {
   public started: boolean;
   public stopped: boolean;
 
-  public engine: BABYLON.Engine;
+  public engine!: BABYLON.Engine;
   public canvas: HTMLCanvasElement;
-  public scene: BABYLON.Scene;
+  public scene!: BABYLON.Scene;
 
-  public player: Player;
-  public camera: BABYLON.ArcFollowCamera;
-  public world: World;
+  public player!: Player;
+  public camera!: BABYLON.ArcFollowCamera;
+  public world!: World;
 
   constructor() {
     this.started = false;
@@ -68,7 +68,7 @@ export class Game3D {
     const webGPUSupported = await BABYLON.WebGPUEngine.IsSupportedAsync;
     if (webGPUSupported) {
       this.engine = new BABYLON.WebGPUEngine(this.canvas, {
-        antialiasing: true,
+        antialias: true,
         stencil: true,
       });
       await (this.engine as BABYLON.WebGPUEngine).initAsync();
@@ -85,7 +85,7 @@ export class Game3D {
   public async createScene(): Promise<BABYLON.Scene> {
     this.scene = new BABYLON.Scene(this.engine);
     // Lights
-    var _lightHemi: BABYLON.Light = new BABYLON.HemisphericLight(
+    new BABYLON.HemisphericLight(
       "hemi",
       new BABYLON.Vector3(0, 1, 0),
       this.scene

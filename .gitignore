@@ -4,3 +4,5 @@ ngrok.exe
 launch-ngrok.bat
 dist/**
 package-lock.json
+.idea/**
+venv/**

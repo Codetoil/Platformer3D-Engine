@@ -22,18 +22,18 @@ import { PlayerInputController } from "./playerInputController";
 import { Mesh } from "@babylonjs/core";
 
 export abstract class Entity {
-  public mesh: BABYLON.Mesh;
-  public texture: BABYLON.Texture;
+  public mesh!: BABYLON.Mesh;
+  public texture!: BABYLON.Texture;
 
   public world: World;
 
-  public pos: BABYLON.Vector3;
+  public pos!: BABYLON.Vector3;
   public velH: BABYLON.Vector3;
   public vely: number;
-  public rot: BABYLON.Quaternion;
+  public rot!: BABYLON.Quaternion;
 
-  public onGround: boolean;
-  public onWall: boolean;
+  public onGround!: boolean;
+  public onWall!: boolean;
 
   public abstract gravity: number;
 
@@ -76,12 +76,12 @@ export abstract class Entity {
 }
 
 export class Player extends Entity {
-  public maxHSpeed: number;
+  public maxHSpeed!: number;
   public canWallJump = true;
-  public lastWallWallJumpedFrom: BABYLON.Mesh = null;
+  public lastWallWallJumpedFrom: BABYLON.Mesh | null = null;
   public jumpState = false;
   public inputController: PlayerInputController;
-  public facingDirection: BABYLON.Vector3;
+  public facingDirection!: BABYLON.Vector3;
 
   public get gravity(): number {
     if (this.onWall) return -1.667;
@@ -138,15 +138,15 @@ export class Player extends Entity {
     let ray = new BABYLON.Ray(this.pos, this.facingDirection, 1);
     let rayHelper = new BABYLON.RayHelper(ray);
     rayHelper.show(this.world.scene, BABYLON.Color3.Red());
-    let hit = this.world.scene.pickWithRay(ray, (mesh: BABYLON.Mesh) => {
-      return this.world.walls.includes(mesh);
+    let hit = this.world.scene.pickWithRay(ray, (mesh: BABYLON.AbstractMesh) => {
+      return this.world.walls.includes(mesh as BABYLON.Mesh);
     });
-    let wall = hit.pickedMesh;
+    let wall = hit!.pickedMesh;
     if (!wall) return;
     if (this.lastWallWallJumpedFrom !== wall) {
-      let normalV: BABYLON.Vector3 = hit.getNormal(true);
+      let normalV: BABYLON.Vector3 = hit!.getNormal(true) as BABYLON.Vector3;
       console.debug([wall, normalV]);
-      let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalV, 1);
+      let rayNormal = new BABYLON.Ray(hit!.pickedPoint as BABYLON.Vector3, normalV, 1);
       new BABYLON.RayHelper(rayNormal).show(
         this.world.scene,
         BABYLON.Color3.Blue()
@@ -158,7 +158,7 @@ export class Player extends Entity {
         0.0
       );
       this.mesh.rotationQuaternion = normal
-        .multiply(this.mesh.rotationQuaternion.multiply(normal))
+        .multiply(this.mesh.rotationQuaternion!.multiply(normal))
         .normalize();
       this.velH = this.velH.subtract(
         normalV.scale(2 * BABYLON.Vector3.Dot(this.velH, normalV))
@@ -236,7 +236,7 @@ export class Player extends Entity {
 
     this.mesh.position = this.mesh.position.add(deltaPos);
     this.pos = this.mesh.position;
-    this.rot = this.mesh.rotationQuaternion;
+    this.rot = this.mesh.rotationQuaternion as BABYLON.Quaternion;
   }
 
   public tick(cameraAngle: BABYLON.Quaternion) {
