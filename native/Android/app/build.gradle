@@ -1,0 +1,153 @@
+apply plugin: 'com.android.application'
+
+def jsEngine = "V8"
+if (project.hasProperty("jsEngine")) {
+    jsEngine = project.property("jsEngine")
+}
+
+def graphics_api = "OpenGL"
+def platformVersion = 21
+if (project.hasProperty("GRAPHICS_API")) {
+    graphics_api = project.property("GRAPHICS_API")
+    if ("${graphics_api}" == "Vulkan" ) {
+        platformVersion = 24 // minimal version to get Vulkan
+    }
+}
+
+def unity_build = "false"
+if (project.hasProperty("UNITY_BUILD")) {
+    unity_build = project.property("UNITY_BUILD")
+}
+def arcore_libpath = "${buildDir}/arcore-native"
+
+configurations { natives }
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId "com.android.babylonnative.playground"
+        minSdkVersion "${platformVersion}"
+        targetSdkVersion 29
+        ndkVersion "23.1.7779620"
+        if (project.hasProperty("NDK_VERSION")) {
+            def NDKVersion = project.property("NDK_VERSION")
+            ndkVersion  "${NDK_VERSION}"
+        }
+        externalNativeBuild {
+            cmake {
+                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+                arguments "-DANDROID_STL=c++_shared",
+                    "-DENABLE_PCH=OFF",
+                    "-DGRAPHICS_API=${graphics_api}",
+                    "-DARCORE_LIBPATH=${arcore_libpath}/jni",
+                    "-DNAPI_JAVASCRIPT_ENGINE=${jsEngine}",
+                    "-DJSRUNTIMEHOST_CORE_APPRUNTIME_V8_INSPECTOR=ON",
+                    "-DBABYLON_NATIVE_BUILD_APPS=ON",
+                    "-DCMAKE_UNITY_BUILD=${unity_build}"
+            }
+        }
+        ndk {
+            if (project.hasProperty("ARM64Only")) {
+                abiFilters "arm64-v8a"
+            } else {
+                abiFilters "arm64-v8a", "armeabi-v7a", "x86"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            signingConfig signingConfigs.debug
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            version '3.19.6+'
+            path 'CMakeLists.txt'
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'lib/*/libv8android.so'
+        pickFirst 'lib/*/libjsc.so'
+    }
+}
+
+dependencies {
+    // ARCore library
+    implementation 'com.google.ar:core:1.14.0'
+    natives 'com.google.ar:core:1.14.0'
+
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+}
+
+// Extracts the shared libraries from aars in the natives configuration.
+// This is done so that NDK builds can access these libraries.
+task extractNativeLibraries() {
+    // Always extract, this insures the native libs are updated if the version changes.
+    outputs.upToDateWhen { false }
+    doFirst {
+        configurations.natives.files.each { f ->
+            copy {
+                from zipTree(f)
+                into arcore_libpath
+                include "jni/**/*"
+            }
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name.contains("external") && !task.name.contains("Clean")) {
+        task.dependsOn(extractNativeLibraries)
+    }
+}
+
+task copyFiles {
+    copy
+    {
+        from '../../../node_modules/babylonjs'
+        include "babylon.max.js"
+        into 'src/main/assets/Scripts'
+    }
+    copy
+    {
+        from '../../../node_modules/babylonjs-loaders'
+        include "babylonjs.loaders.js"
+        into 'src/main/assets/Scripts'
+    }
+    copy
+    {
+        from '../../../node_modules/babylonjs-materials'
+        include "babylonjs.materials.js"
+        into 'src/main/assets/Scripts'
+    }
+    copy
+    {
+        from '../../../node_modules/babylonjs-gui'
+        include "babylon.gui.js"
+        into 'src/main/assets/Scripts'
+    }
+    copy
+    {
+        from '../../../Dependencies'
+        include "*.js"
+        into 'src/main/assets/Scripts'
+    }
+    copy
+    {
+        from '../../Scripts'
+        include "*.js"
+        into 'src/main/assets/Scripts'
+    }
+}
+
+preBuild.dependsOn(copyFiles)
+

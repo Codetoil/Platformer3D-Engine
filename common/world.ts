@@ -16,13 +16,36 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as BABYLON from "@babylonjs/core";
+import type * as BABYLON from "@babylonjs/core";
+import type { Game } from "./game";
 
-export class World {
-  public grounds!: BABYLON.Mesh[];
-  public walls!: BABYLON.Mesh[];
-  public engine!: BABYLON.Engine;
-  public scene!: BABYLON.Scene;
+export class Ground {
+    public mesh!: BABYLON.AbstractMesh;
 
-  public tick() {}
+    public setMesh(mesh: BABYLON.AbstractMesh): Ground {
+        this.mesh = mesh;
+        return this;
+    }
+}
+
+export class Wall {
+    public mesh!: BABYLON.AbstractMesh;
+
+    public setMesh(mesh: BABYLON.AbstractMesh): Wall {
+        this.mesh = mesh;
+        return this;
+    }
+}
+
+export abstract class World {
+    public game: Game;
+    public grounds!: Ground[];
+    public walls!: Wall[];
+
+    constructor(game: Game) {
+        this.game = game;
+    }
+
+    public abstract load(): void;
+    public abstract tick(): void;
 }

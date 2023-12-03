@@ -3,6 +3,9 @@ tmp/**
 ngrok.exe
 launch-ngrok.bat
 dist/**
+dist-tsc/**
+dist-es5/**
+native/cmake-build-debug
 package-lock.json
 .idea/**
 venv/**
