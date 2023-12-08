@@ -1,1 +1,16 @@
 Script
+.idea
+/Win32/**
+!/Win32/App.cpp
+!/Win32/App.h
+!/Win32/App.ico
+!/Win32/App.rc
+!/Win32/Resource.h
+!/Win32/small.ico
+!/Win32/targetver.h
+/build/**
+cmake-build-debug-visual-studio
+cmake-build-default-visual-studio
+cmake-build-minsizerel-visual-studio
+cmake-build-release-visual-studio
+cmake-build-relwithdebinfo-visual-studio

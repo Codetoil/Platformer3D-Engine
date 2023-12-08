@@ -63,7 +63,8 @@ extern "C"
     }
 
     JNIEXPORT void JNICALL
-    Java_BabylonNative_Wrapper_surfaceCreated(JNIEnv* env, jclass clazz, jobject surface, jobject context)
+    Java_BabylonNative_Wrapper_surfaceCreated(JNIEnv* env, jclass clazz, jobject surface,
+                                              jobject context)
     {
         if (!runtime)
         {
@@ -126,22 +127,18 @@ extern "C"
             });
 
             scriptLoader.emplace(*runtime);
-            scriptLoader->LoadScript("app:///Scripts/ammo.js");
-            scriptLoader->LoadScript("app:///Scripts/recast.js");
-            scriptLoader->LoadScript("app:///Scripts/babylon.max.js");
-            scriptLoader->LoadScript("app:///Scripts/babylonjs.loaders.js");
-            scriptLoader->LoadScript("app:///Scripts/babylonjs.materials.js");
-            scriptLoader->LoadScript("app:///Scripts/babylon.gui.js");
         }
     }
 
     JNIEXPORT void JNICALL
-    Java_BabylonNative_Wrapper_surfaceChanged(JNIEnv* env, jclass clazz, jint width, jint height, jobject surface)
+    Java_BabylonNative_Wrapper_surfaceChanged(JNIEnv* env, jclass clazz, jint width,
+                                              jint height, jobject surface)
     {
         if (runtime)
         {
             ANativeWindow* window = ANativeWindow_fromSurface(env, surface);
-            runtime->Dispatch([window, width = static_cast<size_t>(width), height = static_cast<size_t>(height)](auto) {
+            runtime->Dispatch([window, width = static_cast<size_t>(width), height =
+            static_cast<size_t>(height)](auto) {
                 device->UpdateWindow(window);
                 device->UpdateSize(width, height);
             });
@@ -149,7 +146,8 @@ extern "C"
     }
 
     JNIEXPORT void JNICALL
-    Java_BabylonNative_Wrapper_setCurrentActivity(JNIEnv* env, jclass clazz, jobject currentActivity)
+    Java_BabylonNative_Wrapper_setCurrentActivity(JNIEnv* env, jclass clazz,
+                                                  jobject currentActivity)
     {
         android::global::SetCurrentActivity(currentActivity);
     }
@@ -175,7 +173,10 @@ extern "C"
     }
 
     JNIEXPORT void JNICALL
-    Java_BabylonNative_Wrapper_activityOnRequestPermissionsResult(JNIEnv* env, jclass clazz, jint requestCode, jobjectArray permissions, jintArray grantResults)
+    Java_BabylonNative_Wrapper_activityOnRequestPermissionsResult(JNIEnv* env, jclass clazz,
+                                                                  jint requestCode,
+                                                                  jobjectArray permissions,
+                                                                  jintArray grantResults)
     {
         std::vector<std::string> nativePermissions{};
         for (int i = 0; i < env->GetArrayLength(permissions); i++)
@@ -188,10 +189,12 @@ extern "C"
 
         auto grantResultElements{env->GetIntArrayElements(grantResults, nullptr)};
         auto grantResultElementCount = env->GetArrayLength(grantResults);
-        std::vector<int32_t> nativeGrantResults{grantResultElements, grantResultElements + grantResultElementCount};
+        std::vector<int32_t> nativeGrantResults{grantResultElements, grantResultElements +
+            grantResultElementCount};
         env->ReleaseIntArrayElements(grantResults, grantResultElements, 0);
 
-        android::global::RequestPermissionsResult(requestCode, nativePermissions, nativeGrantResults);
+        android::global::RequestPermissionsResult(requestCode, nativePermissions,
+                                                  nativeGrantResults);
     }
 
     JNIEXPORT void JNICALL
@@ -215,7 +218,8 @@ extern "C"
     }
 
     JNIEXPORT void JNICALL
-    Java_BabylonNative_Wrapper_setTouchInfo(JNIEnv* env, jclass clazz, jint pointerId, jfloat x, jfloat y, jboolean buttonAction, jint buttonValue)
+    Java_BabylonNative_Wrapper_setTouchInfo(JNIEnv* env, jclass clazz, jint pointerId, jfloat x,
+                                            jfloat y, jboolean buttonAction, jint buttonValue)
     {
         if (nativeInput != nullptr)
         {

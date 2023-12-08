@@ -10,20 +10,19 @@
 #include <stdio.h>
 #include <optional>
 
-#include <Babylon/AppRuntime.h>
-#include <Babylon/Graphics/Device.h>
-#include <Babylon/ScriptLoader.h>
-#include <Babylon/Plugins/NativeCapture.h>
-#include <Babylon/Plugins/NativeEngine.h>
-#include <Babylon/Plugins/NativeOptimizations.h>
-#include <Babylon/Plugins/NativeXr.h>
-#include <Babylon/Plugins/NativeCamera.h>
-#include <Babylon/Plugins/NativeInput.h>
-#include <Babylon/Plugins/TestUtils.h>
-#include <Babylon/Polyfills/Console.h>
-#include <Babylon/Polyfills/Window.h>
-#include <Babylon/Polyfills/XMLHttpRequest.h>
-#include <Babylon/Polyfills/Canvas.h>
+#include "Babylon/AppRuntime.h"
+#include "Babylon/Graphics/Device.h"
+#include "Babylon/ScriptLoader.h"
+#include "Babylon/Plugins/NativeCapture.h"
+#include "Babylon/Plugins/NativeEngine.h"
+#include "Babylon/Plugins/NativeOptimizations.h"
+#include "Babylon/Plugins/NativeXr.h"
+#include "Babylon/Plugins/NativeCamera.h"
+#include "Babylon/Plugins/NativeInput.h"
+#include "Babylon/Polyfills/Console.h"
+#include "Babylon/Polyfills/Window.h"
+#include "Babylon/Polyfills/XMLHttpRequest.h"
+#include "Babylon/Polyfills/Canvas.h"
 
 #define MAX_LOADSTRING 100
 
@@ -38,6 +37,10 @@ Babylon::Plugins::NativeInput* nativeInput{};
 std::optional<Babylon::Polyfills::Canvas> nativeCanvas{};
 bool minimized{false};
 int buttonRefCount{0};
+
+class path;
+
+class path;
 
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -151,7 +154,7 @@ namespace
 
             nativeInput = &Babylon::Plugins::NativeInput::CreateForJavaScript(env);
 
-            Babylon::Plugins::TestUtils::Initialize(env, hWnd);
+            //Babylon::Plugins::TestUtils::Initialize(env, hWnd);
         });
 
         Babylon::ScriptLoader loader{*runtime};
@@ -402,7 +405,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {
             Uninitialize();
-            PostQuitMessage(Babylon::Plugins::TestUtils::errorCode);
+            //PostQuitMessage(Babylon::Plugins::TestUtils::errorCode);
             break;
         }
         case WM_KEYDOWN:

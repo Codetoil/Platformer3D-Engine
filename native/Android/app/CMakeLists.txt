@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.13.2)
 #                    with the right header and lib files. No need to use ES3 dynamic
 #                    detection.
 #   [24, infinite)   ES2 & ES3 & Vulkan
-project(BabylonNative)
+project(Game3D)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(BABYLON_NATIVE_PLATFORM "Android")
 set(CMAKE_CXX_STANDARD 17)
@@ -29,14 +29,14 @@ target_include_directories(javascript_engine INTERFACE "${ANDROID_JSENGINE_INCPA
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/src/")
 
-set(BABYLON_NATIVE_PLAYGROUND_DIR "${CMAKE_CURRENT_LIST_DIR}/../..")
-add_subdirectory(${BABYLON_NATIVE_PLAYGROUND_DIR}/../../ ${BABYLON_NATIVE_PLAYGROUND_DIR}/../../build/Android_${CMAKE_ANDROID_ARCH_ABI}/)
+set(GAME3D_NATIVE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+add_subdirectory(${GAME3D_NATIVE_DIR}/../../ ${GAME3D_NATIVE_DIR}/../../build/Android_${CMAKE_ANDROID_ARCH_ABI}/)
 
 add_library(BabylonNativeJNI SHARED
     src/main/cpp/BabylonNativeJNI.cpp)
 
 target_include_directories(BabylonNativeJNI
-    PRIVATE ${BABYLON_NATIVE_PLAYGROUND_DIR}/Shared)
+    PRIVATE ${GAME3D_NATIVE_DIR}/Shared)
 
 target_link_libraries(BabylonNativeJNI
     GLESv3

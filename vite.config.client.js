@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import resolve from '@rollup/plugin-node-resolve'
 
 export default defineConfig({
 	build: {
@@ -9,14 +10,18 @@ export default defineConfig({
 			output: {
 				format: 'es',
 				dir: 'dist/client'
-			}
+			},
 		},
 	},
 	server: {
 		// vite server configs, for details see [vite doc](https://vitejs.dev/config/#server-host)
 		port: 3000
 	},
-	plugins: [],
+	plugins: [
+		resolve({
+			extensions: ['.js', '.ts']
+		})
+	],
 	optimizeDeps: {
 		
 	},

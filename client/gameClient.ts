@@ -61,7 +61,7 @@ export class GameClient extends Game {
   }
 
   public async createEngine(): Promise<BABYLON.Engine> {
-    const webGPUSupported = false//await BABYLON.WebGPUEngine.IsSupportedAsync;
+    const webGPUSupported = await BABYLON.WebGPUEngine.IsSupportedAsync;
     console.info("Using WebGPU: " + webGPUSupported);
     if (webGPUSupported) {
       await this.createWebGPUEngine();
