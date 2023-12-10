@@ -14,26 +14,26 @@
     "@rollup/plugin-node-resolve": "15.2.3",
     "@types/uuid": "9.0.7",
     "@types/ws": "8.5.10",
-    "@typescript-eslint/eslint-plugin": "6.13.1",
+    "@typescript-eslint/eslint-plugin": "6.13.2",
     "@typescript-eslint/parser": "6.13.2",
     "eslint": "8.55.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-security": "1.7.1",
     "tslib": "2.6.2",
     "typescript": "5.3.3",
-    "vite": "5.0.6",
-    "vitest": "1.0.2"
+    "vite": "5.0.7",
+    "vitest": "1.0.4"
   },
   "type": "module",
   "dependencies": {
-    "@babylonjs/core": "6.33.0",
-    "@babylonjs/loaders": "6.33.0",
+    "@babylonjs/core": "6.33.1",
+    "@babylonjs/loaders": "6.33.1",
     "@webgpu/glslang": "0.0.15",
     "modern-isomorphic-ws": "1.0.5",
     "ts-mixer": "6.0.3",
     "twgl.js": "5.5.3",
     "uuid": "9.0.1",
-    "ws": "8.14.2",
+    "ws": "8.15.0",
     "xss": "1.0.14"
   },
   "optionalDependencies": {
