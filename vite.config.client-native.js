@@ -8,7 +8,7 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
-				dir: 'native/Script'
+				dir: 'dist-native'
 			}
 		},
 	},

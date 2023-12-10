@@ -19,6 +19,7 @@
 #include "Babylon/Plugins/NativeXr.h"
 #include "Babylon/Plugins/NativeCamera.h"
 #include "Babylon/Plugins/NativeInput.h"
+#include <Babylon/Plugins/TestUtils.h>
 #include "Babylon/Polyfills/Console.h"
 #include "Babylon/Polyfills/Window.h"
 #include "Babylon/Polyfills/XMLHttpRequest.h"
@@ -154,33 +155,11 @@ namespace
 
             nativeInput = &Babylon::Plugins::NativeInput::CreateForJavaScript(env);
 
-            //Babylon::Plugins::TestUtils::Initialize(env, hWnd);
+            Babylon::Plugins::TestUtils::Initialize(env, hWnd);
         });
 
         Babylon::ScriptLoader loader{*runtime};
-        loader.LoadScript("app:///Scripts/ammo.js");
-        // Commenting out recast.js for now because v8jsi is incompatible with asm.js.
-        // loader.LoadScript("app:///Scripts/recast.js");
-        loader.LoadScript("app:///Scripts/babylon.max.js");
-        loader.LoadScript("app:///Scripts/babylonjs.loaders.js");
-        loader.LoadScript("app:///Scripts/babylonjs.materials.js");
-        loader.LoadScript("app:///Scripts/babylon.gui.js");
-        loader.LoadScript("app:///Scripts/meshwriter.min.js");
-
-        std::vector<std::string> scripts = GetCommandLineArguments();
-        if (scripts.empty())
-        {
-            loader.LoadScript("app:///Scripts/experience.js");
-        }
-        else
-        {
-            for (const auto& script : scripts)
-            {
-                loader.LoadScript(GetUrlFromPath(script));
-            }
-
-            loader.LoadScript("app:///Scripts/playground_runner.js");
-        }
+            loader.LoadScript("app:///Scripts/assets/client-C5D_gxjW.js");
     }
 
     void UpdateWindowSize(size_t width, size_t height)
@@ -405,7 +384,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
         {
             Uninitialize();
-            //PostQuitMessage(Babylon::Plugins::TestUtils::errorCode);
+            PostQuitMessage(Babylon::Plugins::TestUtils::errorCode);
             break;
         }
         case WM_KEYDOWN:
