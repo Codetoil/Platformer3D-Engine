@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build --config vite.config.client.js",
+    "build-gh-pages": "vite build --config vite.config.client-gh-pages.js",
     "build-native": "vite build --config vite.config.client-native.js",
     "preview": "vite preview",
     "test": "vitest"
