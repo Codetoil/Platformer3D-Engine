@@ -1,10 +1,17 @@
 cmake_minimum_required(VERSION 3.21)
 project(Game3D)
 
+if (WIN32)
+    set(NAPI_JAVASCRIPT_ENGINE V8)
+endif ()
+
+set(EXTENSIONS_DIRS
+        "../Extensions/ChromeDevTools")
+
 add_subdirectory(native/BabylonNative)
 
 set(SCRIPTS
-        "dist-native/assets/client-C5D_gxjW.js")
+        "dist-native/assets/client-esYu3IGp.js")
 
 if (UNIX)
     set(SOURCES
@@ -75,6 +82,7 @@ target_link_libraries(Game3D
         PRIVATE Window
         PRIVATE XMLHttpRequest
         PRIVATE TestUtils
+        PRIVATE ChromeDevTools
         ${ADDITIONAL_LIBRARIES})
 
 # See https://gitlab.kitware.com/cmake/cmake/-/issues/23543

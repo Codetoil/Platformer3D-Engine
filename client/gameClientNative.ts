@@ -16,11 +16,32 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, it, expect } from "vitest";
 
-it('should work', (ctx) => {
-    // prints name of the test
-    console.log(ctx.task.name)
-})
+import * as BABYLON from "@babylonjs/core";
+import { Game } from "../common/game";
+import {GameClient, initRenderLoop} from "./gameClient";
 
-export { };
+export class GameClientNative extends GameClient {
+  public ready: Promise<Game> = new Promise((resolve, reject) => {
+    this.init(resolve, reject);
+  });
+  public init(
+      resolve: (value: Game | PromiseLike<Game>) => void,
+      reject: (reason?: any) => void
+  ) {
+    super.init(resolve, reject);
+  }
+
+  public async createEngine(): Promise<BABYLON.Engine> {
+    this.engine = new BABYLON.NativeEngine({
+    });
+    console.log("Engine initialized...")
+    return this.engine;
+  }
+}
+
+const gameClient: GameClientNative = new GameClientNative();
+
+gameClient.ready.then((value) => {
+  initRenderLoop(value);
+});

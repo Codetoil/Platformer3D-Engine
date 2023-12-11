@@ -16,4 +16,4 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export let CLIENT_VERSION = "0.1.3"
+export const CLIENT_VERSION = "0.1.3"

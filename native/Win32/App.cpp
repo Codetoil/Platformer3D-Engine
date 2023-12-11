@@ -1,5 +1,20 @@
-// App.cpp : Defines the entry point for the application.
-//
+/**
+ *  Game3D, a 3D Platformer built for the web.
+ *  Copyright (C) 2021-2023  Codetoil
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #include "App.h"
 
@@ -7,8 +22,9 @@
 #include <Windowsx.h>
 #include <Shlwapi.h>
 #include <filesystem>
-#include <stdio.h>
+#include <cstdio>
 #include <optional>
+#include <cassert>
 
 #include "Babylon/AppRuntime.h"
 #include "Babylon/Graphics/Device.h"
@@ -25,6 +41,8 @@
 #include "Babylon/Polyfills/XMLHttpRequest.h"
 #include "Babylon/Polyfills/Canvas.h"
 
+#include "Extensions/ChromeDevTools.h"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -35,6 +53,7 @@ std::optional<Babylon::AppRuntime> runtime{};
 std::optional<Babylon::Graphics::Device> device{};
 std::optional<Babylon::Graphics::DeviceUpdate> update{};
 Babylon::Plugins::NativeInput* nativeInput{};
+std::optional<ChromeDevTools> chromeDevTools{};
 std::optional<Babylon::Polyfills::Canvas> nativeCanvas{};
 bool minimized{false};
 int buttonRefCount{0};
@@ -51,40 +70,6 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 namespace
 {
-    std::string GetUrlFromPath(const std::filesystem::path& path)
-    {
-        char url[1024];
-        DWORD length = ARRAYSIZE(url);
-        HRESULT hr = UrlCreateFromPathA(path.u8string().data(), url, &length, 0);
-        if (FAILED(hr))
-        {
-            throw std::exception("Failed to create url from path", hr);
-        }
-
-        return {url};
-    }
-
-    std::vector<std::string> GetCommandLineArguments()
-    {
-        int argc;
-        auto argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-
-        std::vector<std::string> arguments{};
-        arguments.reserve(argc);
-
-        for (int idx = 1; idx < argc; idx++)
-        {
-            std::wstring hstr{argv[idx]};
-            int bytesRequired = ::WideCharToMultiByte(CP_UTF8, 0, &hstr[0], static_cast<int>(hstr.size()), nullptr, 0, nullptr, nullptr);
-            arguments.push_back(std::string(bytesRequired, 0));
-            ::WideCharToMultiByte(CP_UTF8, 0, hstr.data(), static_cast<int>(hstr.size()), arguments.back().data(), bytesRequired, nullptr, nullptr);
-        }
-
-        LocalFree(argv);
-
-        return arguments;
-    }
-
     void Uninitialize()
     {
         if (device)
@@ -94,6 +79,7 @@ namespace
         }
 
         nativeCanvas.reset();
+        chromeDevTools.reset();
         nativeInput = {};
         runtime.reset();
         update.reset();
@@ -110,8 +96,8 @@ namespace
             return;
         }
 
-        auto width = static_cast<size_t>(rect.right - rect.left);
-        auto height = static_cast<size_t>(rect.bottom - rect.top);
+        const auto width = static_cast<size_t>(rect.right - rect.left);
+        const auto height = static_cast<size_t>(rect.bottom - rect.top);
 
         Babylon::Graphics::Configuration graphicsConfig{};
         graphicsConfig.Window = hWnd;
@@ -155,14 +141,20 @@ namespace
 
             nativeInput = &Babylon::Plugins::NativeInput::CreateForJavaScript(env);
 
+            chromeDevTools.emplace(ChromeDevTools::Initialize(env));
+            if (chromeDevTools->SupportsInspector())
+            {
+                chromeDevTools->StartInspector(5643, "Game3D Native");
+            }
             Babylon::Plugins::TestUtils::Initialize(env, hWnd);
         });
 
         Babylon::ScriptLoader loader{*runtime};
-            loader.LoadScript("app:///Scripts/assets/client-C5D_gxjW.js");
+
+        loader.LoadScript("app:///Scripts/client-esYu3IGp.js");
     }
 
-    void UpdateWindowSize(size_t width, size_t height)
+    void UpdateWindowSize(const size_t width, const size_t height)
     {
         device->UpdateSize(width, height);
     }
@@ -178,7 +170,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_PLAYGROUNDWIN32, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_GAME3DWIN32, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
@@ -187,7 +179,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PLAYGROUNDWIN32));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAME3DWIN32));
 
     MSG msg{};
 
@@ -223,7 +215,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    return (int)msg.wParam;
+    return static_cast<int>(msg.wParam);
 }
 
 //
@@ -242,10 +234,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PLAYGROUNDWIN32));
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_GAME3DWIN32));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_PLAYGROUNDWIN32);
+    wcex.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_GAME3DWIN32);
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -305,6 +297,8 @@ void ProcessMouseButtons(tagPOINTER_BUTTON_CHANGE_TYPE changeType, int x, int y)
         case POINTER_CHANGE_THIRDBUTTON_UP:
             nativeInput->MouseUp(Babylon::Plugins::NativeInput::MIDDLE_MOUSE_BUTTON_ID, x, y);
             break;
+        default:
+            break;
     }
 }
 
@@ -356,9 +350,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         case WM_COMMAND:
         {
-            int wmId = LOWORD(wParam);
             // Parse the menu selections:
-            switch (wmId)
+            switch (int wmId = LOWORD(wParam); wmId)
             {
                 case IDM_ABOUT:
                     DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -389,10 +382,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         case WM_KEYDOWN:
         {
-            if (wParam == 'R')
-            {
-                RefreshBabylon(hWnd);
-            }
             break;
         }
         case WM_POINTERWHEEL:
@@ -494,15 +483,22 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
         case WM_INITDIALOG:
-            return (INT_PTR)TRUE;
+            return TRUE;
 
         case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+            if (LOWORD(wParam) == IDOK)
             {
                 EndDialog(hDlg, LOWORD(wParam));
-                return (INT_PTR)TRUE;
+                return TRUE;
+            }
+            else if (LOWORD(wParam) == IDLICENSE)
+            {
+                ShellExecute(0, 0, L"https://www.gnu.org/licenses/agpl-3.0.en.html", 0, 0, SW_SHOW);
+                return TRUE;
             }
             break;
+        default:
+            break;
     }
-    return (INT_PTR)FALSE;
+    return FALSE;
 }

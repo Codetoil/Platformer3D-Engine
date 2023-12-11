@@ -4,10 +4,10 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			input: {
-				client: '/index.html'
+				client: '/client/gameClientNative.ts'
 			},
 			output: {
-				format: 'es',
+				format: 'iife',
 				dir: 'dist-native'
 			}
 		},

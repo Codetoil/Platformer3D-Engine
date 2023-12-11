@@ -10,3 +10,10 @@ package-lock.json
 .idea/**
 venv/**
 /cmake-build-debug-visual-studio/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+out/**
+.vs/**
+x64/**
