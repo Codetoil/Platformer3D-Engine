@@ -41,8 +41,6 @@
 #include "Babylon/Polyfills/XMLHttpRequest.h"
 #include "Babylon/Polyfills/Canvas.h"
 
-#include "Extensions/ChromeDevTools.h"
-
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -53,7 +51,6 @@ std::optional<Babylon::AppRuntime> runtime{};
 std::optional<Babylon::Graphics::Device> device{};
 std::optional<Babylon::Graphics::DeviceUpdate> update{};
 Babylon::Plugins::NativeInput* nativeInput{};
-std::optional<ChromeDevTools> chromeDevTools{};
 std::optional<Babylon::Polyfills::Canvas> nativeCanvas{};
 bool minimized{false};
 int buttonRefCount{0};
@@ -79,7 +76,6 @@ namespace
         }
 
         nativeCanvas.reset();
-        chromeDevTools.reset();
         nativeInput = {};
         runtime.reset();
         update.reset();
@@ -141,17 +137,12 @@ namespace
 
             nativeInput = &Babylon::Plugins::NativeInput::CreateForJavaScript(env);
 
-            chromeDevTools.emplace(ChromeDevTools::Initialize(env));
-            if (chromeDevTools->SupportsInspector())
-            {
-                chromeDevTools->StartInspector(5643, "Game3D Native");
-            }
             Babylon::Plugins::TestUtils::Initialize(env, hWnd);
         });
 
         Babylon::ScriptLoader loader{*runtime};
 
-        loader.LoadScript("app:///Scripts/client-esYu3IGp.js");
+        loader.LoadScript("app:///Scripts/client-OaYSeiNw.js");
     }
 
     void UpdateWindowSize(const size_t width, const size_t height)

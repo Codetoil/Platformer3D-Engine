@@ -47,6 +47,10 @@ export class GameClientWeb extends GameClient {
     await (this.engine as BABYLON.WebGPUEngine).initAsync();
   }
 
+  public assetsDir(): string {
+    return "./assets/";
+  }
+
   public createWebGLEngine(): void {
     this.engine = new BABYLON.Engine(this.canvas, true, {
       stencil: true,

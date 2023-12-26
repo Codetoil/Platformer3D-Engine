@@ -23,6 +23,8 @@ import {WorldClient} from "./worldClient";
 
 export abstract class GameClient extends Game {
   public name: string = "Game";
+  
+  public abstract assetsDir(): string;
 
   public abstract createEngine(): Promise<BABYLON.Engine>;
 

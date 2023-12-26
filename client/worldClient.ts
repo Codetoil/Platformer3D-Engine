@@ -19,15 +19,19 @@
 import * as BABYLON from "@babylonjs/core";
 import { PlayerClient } from "./entityClient";
 import {Ground, Wall, World} from "../common/world";
+import {GameClient} from "./gameClient";
 
 export class WorldClient extends World {
     public player!: PlayerClient;
 
     public read() {
+        console.debug("Reading world...");
+        console.debug("(TEMP: HARDCODED)");
         this.grounds = [];
         this.walls = [];
 
         //Ground
+        console.debug("(TEMP: Ground)");
         const ground: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane(
             "ground",
             {width: 20.0, height: 20.0},
@@ -41,6 +45,7 @@ export class WorldClient extends World {
         ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
         this.grounds.push(new Ground().setMesh(ground));
 
+        console.debug("(TEMP: Wall)");
         var wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall",
             { width: 15, height: 15, depth: 0.75 },
@@ -54,6 +59,7 @@ export class WorldClient extends World {
         wall.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
         this.walls.push(new Wall().setMesh(wall));
 
+        console.debug("(TEMP: Wall2)")
         var wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall2",
             { width: 15, height: 15, depth: 0.75 },
@@ -64,6 +70,7 @@ export class WorldClient extends World {
         wall2.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
         this.walls.push(new Wall().setMesh(wall2));
 
+        console.debug("(TEMP: Platform)");
         var platform = BABYLON.MeshBuilder.CreateBox(
             "platform1",
             { width: 5.0, depth: 5.0, height: 0.5 },
@@ -73,6 +80,7 @@ export class WorldClient extends World {
         platform.position = new BABYLON.Vector3(17, -10, -10);
         this.grounds.push(new Ground().setMesh(platform));
 
+        console.debug("(TEMP: DBox)");
         const dbox = BABYLON.MeshBuilder.CreateBox(
             "dbox",
             {width: 1, height: 2, depth: 1},
@@ -87,13 +95,16 @@ export class WorldClient extends World {
     }
 
     public load(): void {
+        console.info("Loading World...");
         this.read();
         // Lights
+        console.debug("Initializing Lights...");
         new BABYLON.HemisphericLight(
             "hemi",
             new BABYLON.Vector3(0, 1, 0),
             this.game.scene
         );
+        console.debug("Initializing Player...");
         // Create the player entity
         this.player = new PlayerClient()
             .setWorld(this)
@@ -121,7 +132,7 @@ export class WorldClient extends World {
         );
 
         this.player.texture = new BABYLON.Texture(
-            "temp_player.png",
+            (this.game as GameClient).assetsDir() + "temp_player.png",
             this.game.scene
         );
         (this.player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
@@ -129,6 +140,7 @@ export class WorldClient extends World {
         this.player.texture.hasAlpha = true;
         this.player.onGround = true;
 
+        console.debug("Initializing Camera...");
         this.game.camera = new BABYLON.ArcFollowCamera(
             "camera",
             Math.PI / 2,
