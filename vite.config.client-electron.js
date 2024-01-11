@@ -6,8 +6,7 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			input: {
-				client: '/index.html',
-				main: 'electron-main/electronInit.ts'
+				client: '/index.html'
 			},
 			output: {
 				format: 'es',
@@ -22,11 +21,6 @@ export default defineConfig({
 	plugins: [
 		resolve({
 			extensions: ['.js', '.ts']
-		}),
-		createExternal({
-			externals: {
-				'electron/main': "electronMain"
-			}
 		})
 	],
 });

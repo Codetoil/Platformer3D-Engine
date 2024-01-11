@@ -12,7 +12,7 @@ export default defineConfig({
 				assetFileNames: 'assets/[name][extname]',
 				chunkFileNames: '[name].js',
 				entryFileNames: '[name].js',
-				dir: 'dist-native-apple'
+				dir: 'dist-native-apple/client'
 			}
 		},
 		minify: true

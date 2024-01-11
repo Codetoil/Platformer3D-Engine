@@ -9,7 +9,7 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
-				dir: 'dist/client'
+				dir: 'dist-browser/client'
 			},
 		},
 		minify: true

@@ -2,11 +2,11 @@
   "name": "game3d",
   "version": "0.1.3",
   "license": "GPL-3.0-or-later",
-  "main": "dist-electron/client/main.js",
+  "main": "dist-electron/main/main.cjs",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build --config vite.config.client.js",
-    "build-electron-js": "vite build --config vite.config.client-electron.js",
+    "build-electron-js": "vite build --config vite.config.client-electron.js && vite build --config vite.config.electron-main.js && vite build --config vite.config.electron-preload.js",
     "build-gh-pages": "vite build --config vite.config.client-gh-pages.js",
     "build-native-apple": "vite build --config vite.config.client-native-apple.js",
     "preview": "vite preview",

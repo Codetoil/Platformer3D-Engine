@@ -3,9 +3,11 @@ tmp/**
 ngrok.exe
 launch-ngrok.bat
 dist/**
-dist-tsc/**
+dist-browser/**
 dist-electron/**
+dist-gh-pages/**
 dist-native-apple/**
+dist-tsc/**
 native/cmake-build-debug
 package-lock.json
 .idea/**
