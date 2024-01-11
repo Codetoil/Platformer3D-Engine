@@ -4,6 +4,7 @@ ngrok.exe
 launch-ngrok.bat
 dist/**
 dist-tsc/**
+dist-electron/**
 dist-native-apple/**
 native/cmake-build-debug
 package-lock.json

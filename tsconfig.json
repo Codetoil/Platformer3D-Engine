@@ -5,22 +5,29 @@
     "module": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "baseUrl": ".",
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
 
     /* Linting */
     "strict": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "dist-tsc/client"
+    "outDir": "dist-tsc"
   },
   "include": [
     "client",
     "common",
-    "lib"
+    "lib",
+    "electron-main",
+    "electron-preload"
   ],
 }

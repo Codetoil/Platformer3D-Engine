@@ -1,6 +1,6 @@
 <!-- 
     Game3D, a 3D Platformer built for the web.
-    Copyright (C) 2021-2023  Codetoil
+    Copyright (C) 2021-2024 Codetoil
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -21,23 +21,18 @@
 
     <head>
         <meta charset="utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
+        <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"/>
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
         <link rel="manifest" href="./assets/site.webmanifest">
+        <link rel="stylesheet" href="./style.css">
         <meta name="viewport" content="width=device-width" />
-        <style>
-            #renderCanvas {
-                width: 100%;
-                height: 100%;
-                display: block;
-                font-size: 0;
-            }
-        </style>
     </head>
     
     <body>
-        <div style="display: contents">
+        <div id="renderDiv">
             <canvas id="renderCanvas"></canvas>
         </div>
         <script type="module" src="client/gameClientWeb.ts"></script>

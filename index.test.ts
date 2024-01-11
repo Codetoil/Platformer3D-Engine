@@ -1,6 +1,6 @@
 /**
  *  Game3D, a 3D Platformer built for the web.
- *  Copyright (C) 2021-2023  Codetoil
+ *  Copyright (C) 2021-2024 Codetoil
  *  
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { describe, it, expect } from "vitest";
+import { it } from "vitest";
 
 it('should work', (ctx) => {
     // prints name of the test
-    console.log(ctx.task.name)
+    console.log(ctx.task.name);
 })
 
 export { };

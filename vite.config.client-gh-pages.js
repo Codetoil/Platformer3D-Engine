@@ -12,13 +12,5 @@ export default defineConfig({
 			}
 		},
 	},
-	base: "https://codetoil.github.io/Game3D/",
-	server: {
-		// vite server configs, for details see [vite doc](https://vitejs.dev/config/#server-host)
-		port: 3000
-	},
-	plugins: [],
-	optimizeDeps: {
-		
-	},
+	base: "https://codetoil.github.io/Game3D/"
 });

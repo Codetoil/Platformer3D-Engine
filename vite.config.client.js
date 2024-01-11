@@ -12,6 +12,7 @@ export default defineConfig({
 				dir: 'dist/client'
 			},
 		},
+		minify: true
 	},
 	server: {
 		// vite server configs, for details see [vite doc](https://vitejs.dev/config/#server-host)
@@ -22,7 +23,4 @@ export default defineConfig({
 			extensions: ['.js', '.ts']
 		})
 	],
-	optimizeDeps: {
-		
-	},
 });
