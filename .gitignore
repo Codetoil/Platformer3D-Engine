@@ -8,7 +8,6 @@ dist-native/**
 dist-gh-pages/**
 dist-tsc/**
 native/cmake-build-debug
-package-lock.json
 .idea/**
 venv/**
 /cmake-build-debug-visual-studio/
