@@ -71,7 +71,6 @@ class UIBabylonGestureRecognizer: UIGestureRecognizer {
 class ViewController: UIViewController, MTKViewDelegate {
 
     var mtkView: MTKView!
-    var xrView: MTKView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,15 +101,8 @@ class ViewController: UIViewController, MTKViewDelegate {
             let width = view.bounds.size.width
             let height = view.bounds.size.height
 
-            xrView = MTKView()
-            xrView.translatesAutoresizingMaskIntoConstraints = false
-            xrView.isUserInteractionEnabled = false
-            xrView.isHidden = true
-            view.addSubview(xrView)
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[xrView]|", options: [], metrics: nil, views: ["xrView" : xrView]))
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[xrView]|", options: [], metrics: nil, views: ["xrView" : xrView]))
-
-            appDelegate!._bridge!.init(mtkView, screenScale:Float(UIScreen.main.scale), width:Int32(width * scale), height:Int32(height * scale), xrView:Unmanaged.passUnretained(xrView).toOpaque())
+            
+            appDelegate!._bridge!.init(mtkView, screenScale:Float(UIScreen.main.scale), width:Int32(width * scale), height:Int32(height * scale))
         }
     }
 

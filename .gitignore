@@ -4,15 +4,15 @@ ngrok.exe
 launch-ngrok.bat
 dist/**
 dist-browser/**
-dist-electron/**
+dist-native/**
 dist-gh-pages/**
-dist-native-apple/**
 dist-tsc/**
 native/cmake-build-debug
 package-lock.json
 .idea/**
 venv/**
 /cmake-build-debug-visual-studio/
+/cmake-build-debug/
 **.sln
 **.vcxproj
 **.vcxproj.filters

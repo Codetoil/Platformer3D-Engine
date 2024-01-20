@@ -26,7 +26,7 @@
   "include": [
     "client",
     "common",
-    "lib",
+    "public/lib",
     "electron-main",
     "electron-preload"
   ],

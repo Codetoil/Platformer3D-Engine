@@ -30,7 +30,7 @@ set(RESOURCES
 if(APPLE)
     set(SCRIPTS
             ${SCRIPTS}
-            "dist-native-apple/client.js")
+            "dist-native/apple/client/client.js")
     find_library(JAVASCRIPTCORE_LIBRARY JavaScriptCore)
     if(IOS)
         set(PLIST_FILE	
@@ -39,7 +39,6 @@ if(APPLE)
             "${CMAKE_CURRENT_LIST_DIR}/native/iOS/Base.lproj/Main.storyboard"
             "${CMAKE_CURRENT_LIST_DIR}/native/iOS/Base.lproj/LaunchScreen.storyboard")
         set(RESOURCE_FILES ${STORYBOARD} ${SCRIPTS} ${RESOURCES})
-        set(ADDITIONAL_LIBRARIES PRIVATE z NativeXr)
         set(SOURCES
             ${SOURCES}
             "native/iOS/AppDelegate.swift"
@@ -157,10 +156,10 @@ if(APPLE)
             RESOURCE "${RESOURCE_FILES}"
 
             XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET ${DEPLOYMENT_TARGET}
-            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "io.github.codetoil.Game3D.iOS"
+            XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "io.github.codetoil.game3D.iOS"
 
-            XCODE_ATTRIBUTE_SWIFT_VERSION "4.0"
-            XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "${CMAKE_CURRENT_LIST_DIR}/iOS/LibNativeBridge.h"
+            XCODE_ATTRIBUTE_SWIFT_VERSION "5.0"
+            XCODE_ATTRIBUTE_SWIFT_OBJC_BRIDGING_HEADER "${CMAKE_CURRENT_LIST_DIR}/native/iOS/LibNativeBridge.h"
             XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@executable_path/Frameworks"
             XCODE_ATTRIBUTE_ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES YES
 
@@ -170,7 +169,7 @@ if(APPLE)
 
             # Swift support
             set(CMAKE_Swift_COMPILER_FORCED TRUE)
-            set(CMAKE_Swift_LANGUAGE_VERSION 4.0)
+            set(CMAKE_Swift_LANGUAGE_VERSION 5.0)
             enable_language(Swift)
     else()
         target_link_libraries(Game3D PUBLIC "-framework MetalKit")

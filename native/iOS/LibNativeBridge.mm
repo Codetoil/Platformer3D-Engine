@@ -7,7 +7,6 @@
 #import <Babylon/Plugins/NativeEngine.h>
 #import <Babylon/Plugins/NativeInput.h>
 #import <Babylon/Plugins/NativeOptimizations.h>
-#import <Babylon/Plugins/NativeXr.h>
 #import <Babylon/Polyfills/Canvas.h>
 #import <Babylon/Polyfills/Console.h>
 #import <Babylon/Polyfills/Window.h>
@@ -19,9 +18,7 @@ std::optional<Babylon::Graphics::Device> device{};
 std::optional<Babylon::Graphics::DeviceUpdate> update{};
 std::optional<Babylon::AppRuntime> runtime{};
 std::optional<Babylon::Polyfills::Canvas> nativeCanvas{};
-std::optional<Babylon::Plugins::NativeXr> nativeXr{};
 Babylon::Plugins::NativeInput* nativeInput{};
-bool isXrActive{};
 float screenScale{1.0f};
 
 @implementation LibNativeBridge
@@ -41,14 +38,13 @@ float screenScale{1.0f};
     }
     
     nativeInput = {};
-    nativeXr.reset();
     nativeCanvas.reset();
     runtime.reset();
     update.reset();
     device.reset();
 }
 
-- (void)init:(MTKView*)view screenScale:(float)inScreenScale width:(int)inWidth height:(int)inHeight xrView:(void*)xrView
+- (void)init:(MTKView*)view screenScale:(float)inScreenScale width:(int)inWidth height:(int)inHeight
 {
     screenScale = inScreenScale;
     float width = inWidth;
@@ -87,21 +83,15 @@ float screenScale{1.0f};
 
         Babylon::Plugins::NativeOptimizations::Initialize(env);
 
-        nativeXr.emplace(Babylon::Plugins::NativeXr::Initialize(env));
-        nativeXr->UpdateWindow(xrView);
-        nativeXr->SetSessionStateChangedCallback([](bool isXrActive){ ::isXrActive = isXrActive; });
-
         nativeInput = &Babylon::Plugins::NativeInput::CreateForJavaScript(env);
     });
 
     Babylon::ScriptLoader loader{ *runtime };
-    loader.LoadScript("app:///Scripts/ammo.js");
-    loader.LoadScript("app:///Scripts/recast.js");
     loader.LoadScript("app:///Scripts/babylon.max.js");
     loader.LoadScript("app:///Scripts/babylonjs.loaders.js");
     loader.LoadScript("app:///Scripts/babylonjs.materials.js");
     loader.LoadScript("app:///Scripts/babylon.gui.js");
-    loader.LoadScript("app:///Scripts/experience.js");
+    loader.LoadScript("app:///Scripts/client.js");
 }
 
 - (void)resize:(int)inWidth height:(int)inHeight
@@ -148,11 +138,6 @@ float screenScale{1.0f};
     if (nativeInput != nullptr) {
         nativeInput->TouchUp(pointerId, inX * screenScale, inY * screenScale);
     }
-}
-
-- (bool)isXRActive
-{
-    return ::isXrActive;
 }
 
 @end

@@ -47,7 +47,7 @@ module.exports = {
         renderer: [
           {
             name: 'main_window',
-            config: 'vite.config.client-electron.js',
+            config: 'vite.config.client-native-web.js',
           },
         ],
       }

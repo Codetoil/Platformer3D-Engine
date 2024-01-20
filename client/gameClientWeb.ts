@@ -47,6 +47,14 @@ export class GameClientWeb extends GameClient {
     this.engine = new BABYLON.WebGPUEngine(this.canvas, {
       antialias: true,
       stencil: true,
+      glslangOptions: {
+        jsPath: "../lib/glslang.js",
+        wasmPath: "../lib/glslang.wasm"
+      },
+      twgslOptions: {
+        jsPath: "../lib/twgsl.js",
+        wasmPath: "../lib/twgsl.wasm"
+      }
     });
     await (this.engine as BABYLON.WebGPUEngine).initAsync();
   }

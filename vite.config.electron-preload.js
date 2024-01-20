@@ -13,7 +13,7 @@ export default defineConfig({
                 assetFileNames: 'assets/[name][extname]',
                 chunkFileNames: '[name].js',
                 entryFileNames: '[name].js',
-                dir: 'dist-electron/preload'
+                dir: 'dist-native/electron-preload'
             },
         },
         minify: false

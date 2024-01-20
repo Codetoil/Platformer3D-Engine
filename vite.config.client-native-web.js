@@ -13,7 +13,7 @@ export default defineConfig({
 				assetFileNames: 'assets/[name][extname]',
 				chunkFileNames: '[name].js',
 				entryFileNames: '[name].js',
-				dir: 'dist-electron/client'
+				dir: 'dist-native/web/client'
 			},
 		},
 		minify: false
