@@ -1,27 +1,27 @@
 /**
  *  Game3D, a 3D Platformer built for the web.
  *  Copyright (C) 2021-2024 Codetoil
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Affero General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 
 import * as BABYLON from "@babylonjs/core";
-import { Mixin } from "ts-mixer";
-import { PlayerInputController } from "./clientInputController";
-import { Entity, Player } from "../common/entity";
-import type { World } from "../common/world";
+import {Mixin} from "ts-mixer";
+import {PlayerInputController} from "./clientInputController";
+import {Entity, Player} from "../common/entity";
+import type {World} from "../common/world";
 import {Wall} from "../common/world";
 
 export abstract class EntityClient extends Entity {
@@ -99,8 +99,8 @@ export class PlayerClient extends Mixin(EntityClient, Player) {
         rayHelper.show(this.world.game.scene, BABYLON.Color3.Red());
         let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this.world.game.scene.pickWithRay(ray,
             (mesh: BABYLON.AbstractMesh) => {
-            return this.world.walls.map((wall) => wall.mesh).includes(mesh);
-        });
+                return this.world.walls.map((wall) => wall.mesh).includes(mesh);
+            });
         if (!hit) return;
         if (!hit.pickedMesh) return;
         let wall: BABYLON.AbstractMesh = hit.pickedMesh;
@@ -201,19 +201,15 @@ export class PlayerClient extends Mixin(EntityClient, Player) {
         let deltaPos = new BABYLON.Vector3(this.velH.x, this.vely, this.velH.z)
             .scale(getDeltaTime() / 1000.0);
 
-        if (deltaPos.length() > 0)
-        {
+        if (deltaPos.length() > 0) {
             let ray: BABYLON.Ray = new BABYLON.Ray(this.pos, deltaPos, deltaPos.length());
             let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this.world.game.scene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
-                return this.world.grounds.map((ground) => ground.mesh).includes(mesh);
-            });
-            if (hit && hit.pickedPoint)
-            {
+                    return this.world.grounds.map((ground) => ground.mesh).includes(mesh);
+                });
+            if (hit && hit.pickedPoint) {
                 this.mesh.position = this.pos = hit.pickedPoint as BABYLON.Vector3;
-            }
-            else
-            {
+            } else {
                 this.mesh.position = this.pos = this.pos.add(deltaPos);
             }
         }

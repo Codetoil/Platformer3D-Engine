@@ -4,7 +4,7 @@
   "license": "GPL-3.0-or-later",
   "main": "dist-native/electron-main/main.cjs",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --host",
     "build": "vite build --config vite.config.client.js && vite build --config vite.config.client-native-web.js",
     "build-electron-js": "vite build --config vite.config.electron-main.js && vite build --config vite.config.electron-preload.js",
     "build-gh-pages": "vite build --config vite.config.client-gh-pages.js",

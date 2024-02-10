@@ -1,4 +1,0 @@
-[submodule "native/BabylonNative"]
-	path = native/BabylonNative
-	url = https://github.com/Codetoil/BabylonNative.git
-	branch = b38925e3995d4d57fe392a1046d84de732aa74ca

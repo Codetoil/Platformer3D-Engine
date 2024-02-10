@@ -1,23 +1,23 @@
 /**
  *  Game3D, a 3D Platformer built for the web.
  *  Copyright (C) 2021-2024 Codetoil
- *  
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *  
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 import * as BABYLON from "@babylonjs/core";
-import { PlayerClient } from "./entityClient";
+import {PlayerClient} from "./entityClient";
 import {Ground, Wall, World} from "../common/world";
 import {GameClient} from "./gameClient";
 
@@ -48,7 +48,7 @@ export class WorldClient extends World {
         console.debug("(TEMP: Wall)");
         var wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall",
-            { width: 15, height: 15, depth: 0.75 },
+            {width: 15, height: 15, depth: 0.75},
             this.game.scene
         );
         wall.material = new BABYLON.StandardMaterial("wallMat", this.game.scene);
@@ -62,7 +62,7 @@ export class WorldClient extends World {
         console.debug("(TEMP: Wall2)")
         var wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall2",
-            { width: 15, height: 15, depth: 0.75 },
+            {width: 15, height: 15, depth: 0.75},
             this.game.scene
         );
         wall2.material = wall.material;
@@ -73,7 +73,7 @@ export class WorldClient extends World {
         console.debug("(TEMP: Platform)");
         var platform = BABYLON.MeshBuilder.CreateBox(
             "platform1",
-            { width: 5.0, depth: 5.0, height: 0.5 },
+            {width: 5.0, depth: 5.0, height: 0.5},
             this.game.scene
         );
         platform.material = wall.material;
