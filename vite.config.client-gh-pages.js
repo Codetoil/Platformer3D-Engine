@@ -8,7 +8,7 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
-				dir: 'dist-gh-pages/client'
+				dir: 'dist/gh-pages/client'
 			}
 		},
 	},

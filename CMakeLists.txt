@@ -5,7 +5,7 @@ if (WIN32)
     set(NAPI_JAVASCRIPT_ENGINE V8)
 endif ()
 
-add_subdirectory(native/BabylonNative)
+add_subdirectory(../BabylonNative babylon-build)
 
 set(BABYLON_SCRIPTS
     "node_modules/babylonjs-loaders/babylonjs.loaders.js"

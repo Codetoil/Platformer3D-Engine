@@ -1,7 +1,0 @@
-/build/**
-cmake-build-debug
-cmake-build-debug-visual-studio
-cmake-build-default-visual-studio
-cmake-build-minsizerel-visual-studio
-cmake-build-release-visual-studio
-cmake-build-relwithdebinfo-visual-studio

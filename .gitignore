@@ -3,10 +3,6 @@ tmp/**
 ngrok.exe
 launch-ngrok.bat
 dist/**
-dist-browser/**
-dist-native/**
-dist-gh-pages/**
-dist-tsc/**
 native/cmake-build-debug
 .idea/**
 venv/**

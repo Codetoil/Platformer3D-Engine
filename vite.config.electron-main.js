@@ -12,7 +12,7 @@ export default defineConfig({
               assetFileNames: 'assets/[name][extname]',
               chunkFileNames: '[name].cjs',
               entryFileNames: '[name].cjs',
-              dir: 'dist-native/electron-main'
+              dir: 'dist/electron/main'
           },
       },
       minify: false
