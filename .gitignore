@@ -3,16 +3,8 @@ tmp/**
 ngrok.exe
 launch-ngrok.bat
 dist/**
-native/cmake-build-debug
 .idea/**
 venv/**
-/cmake-build-debug-visual-studio/
-/cmake-build-debug/
-**.sln
-**.vcxproj
-**.vcxproj.filters
-**.vcxproj.user
 out/**
-.vs/**
-x64/**
 build/**
+target/
