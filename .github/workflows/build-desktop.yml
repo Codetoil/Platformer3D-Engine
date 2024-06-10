@@ -58,8 +58,8 @@ jobs:
         with:
           name: game3d
           path: |
-            src-tauri/target/release/bundle/macos/game3d.app/**
-            src-tauri/target/release/bundle/dmg/*.dmg
+            src-tauri/target/aarch64-apple-darwin/release/bundle/macos/game3d.app/**
+            src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
   build-windows:
     runs-on: windows-2022
 
