@@ -30,11 +30,8 @@ jobs:
           libayatana-appindicator3-dev
           librsvg2-dev
           gcc-aarch64-linux-gnu
-      - run: rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
-      - run: export PKG_CONFIG_LIBDIR_aarch64_unknown_linux_gnu=/usr/lib/aarch64-linux-gnu/pkgconfig
-      - run: export PKG_CONFIG_SYSROOT_DIR_aarch64_unknown_linux_gnu=/usr/bin/
+      - run: rustup target add x86_64-unknown-linux-gnu
       - run: npm install
-      - run: npm run build-tauri-arm64-linux
       - run: npm run build-tauri-x64-linux
       - name: Upload Output
         uses: actions/upload-artifact@v3
@@ -72,9 +69,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - run: rustup target add x86_64-pc-windows-msvc aarch64-pc-windows-msvc
+      - run: rustup target add x86_64-pc-windows-msvc
       - run: npm install
-      - run: npm run build-tauri-arm64-windows
       - run: npm run build-tauri-x64-windows
       - name: Upload Output
         uses: actions/upload-artifact@v3
