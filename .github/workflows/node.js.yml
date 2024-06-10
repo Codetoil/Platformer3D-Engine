@@ -26,6 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run build
+      - run: npm run build-tauri
       - name: Upload Output
         uses: actions/upload-artifact@v3
         with:
