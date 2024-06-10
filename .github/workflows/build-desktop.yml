@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 20.x
+      - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
@@ -29,6 +29,7 @@ jobs:
           libssl-dev
           libayatana-appindicator3-dev
           librsvg2-dev
+      - run: rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
       - run: npm install
       - run: npm run build-tauri-arm64-linux
       - run: npm run build-tauri-x64-linux
@@ -45,21 +46,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 20.x
+      - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+      - run: rustup target add aarch64-apple-darwin
       - run: npm install
       - run: npm run build-tauri-arm64-macos
+      - name: Upload Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: game3d
+          path: |
+            src-tauri/target/release/bundle/macos/game3d.app/**
+            src-tauri/target/release/bundle/dmg/*.dmg
   build-windows:
     runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js 20.x
+      - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+      - run: rustup target add x86_64-pc-windows-msvc aarch64-pc-windows-msvc
       - run: npm install
       - run: npm run build-tauri-arm64-windows
       - run: npm run build-tauri-x64-windows
