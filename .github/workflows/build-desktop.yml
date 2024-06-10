@@ -31,7 +31,7 @@ jobs:
           librsvg2-dev
           gcc-aarch64-linux-gnu
       - run: rustup target add x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu
-      - run: export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=/usr/bin/aarch64-linux-gnu-gcc
+      - run: export CARGO_TARGET_AARCH64_LINUX_GNU_LINKER=/usr/bin/aarch64-linux-gnu-gcc
       - run: npm install
       - run: npm run build-tauri-arm64-linux
       - run: npm run build-tauri-x64-linux
