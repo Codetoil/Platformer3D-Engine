@@ -24,6 +24,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Update apt repositories
+        run: sudo apt update
+      - name: Download prerequisite apt packages
+        run: sudo apt install |
+          libwebkit2gtk-4.1-dev |
+          build-essential |
+          curl |
+          wget |
+          file |
+          libxdo-dev |
+          libssl-dev |
+          libayatana-appindicator3-dev |
+          librsvg2-dev
       - run: npm install
       - run: npm run build
       - run: npm run build-tauri
