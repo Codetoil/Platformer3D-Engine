@@ -29,7 +29,7 @@
     "modern-isomorphic-ws": "1.0.5",
     "ts-mixer": "6.0.3",
     "uuid": "9.0.1",
-    "ws": "8.14.2",
+    "ws": "8.17.1",
     "xss": "1.0.14"
   },
   "optionalDependencies": {
