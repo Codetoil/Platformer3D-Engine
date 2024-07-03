@@ -18,25 +18,29 @@
 
 
 import * as BABYLON from "@babylonjs/core";
-import {Mixin} from "ts-mixer";
-import {PlayerInputController} from "./clientInputController";
-import {Entity, Player} from "../common/entity";
-import type {World} from "../common/world";
+import { Game } from "../../common/game";
+import {GameDedicatedServer} from "./gameDedicatedServer";
 
-export abstract class EntityClient extends Entity {
-    public texture?: BABYLON.Texture;
-}
-
-export class PlayerClient extends Mixin(EntityClient, Player) {
-
-    public constructor() {
-        super();
-        this.inputController = new PlayerInputController();
+export class GameDedicatedServerNode extends GameDedicatedServer {
+    public ready: Promise<Game> = new Promise((resolve, reject) => {
+        this.init(resolve, reject);
+    });
+    public init(
+        resolve: (value: Game | PromiseLike<Game>) => void,
+        reject: (reason?: any) => void
+    ) {
+        super.init(resolve, reject);
     }
 
-    public setWorld(world: World): Player {
-        super.setWorld(world);
-        (this.inputController as PlayerInputController).setEngine(this.world.game.engine);
-        return this;
+    public async createEngine(): Promise<BABYLON.NullEngine> {
+        this.engine = new BABYLON.NullEngine();
+        console.log("Engine initialized...")
+        return this.engine;
     }
 }
+
+const gameClient: GameDedicatedServerNode = new GameDedicatedServerNode();
+
+gameClient.ready.then((value) => {
+    value.initLoop();
+});

@@ -19,7 +19,7 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {Game} from "../common/game";
-import {GameClient, initRenderLoop} from "./gameClient";
+import {GameClient} from "./gameClient";
 
 export class GameClientWeb extends GameClient {
     public ready: Promise<Game> = new Promise((resolve, reject) => {
@@ -89,5 +89,5 @@ const gameClient: GameClientWeb = new GameClientWeb();
 
 gameClient.ready.then((value) => {
     window.addEventListener("resize", EventHandler.onResize.bind(null, value as GameClientWeb));
-    initRenderLoop(value);
+    value.initLoop();
 });

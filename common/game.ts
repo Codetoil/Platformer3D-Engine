@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type * as BABYLON from "@babylonjs/core";
+import * as BABYLON from "@babylonjs/core";
 import type {World} from "./world";
 
 export abstract class Game {
@@ -28,11 +28,18 @@ export abstract class Game {
     public started: boolean = false;
     public stopped: boolean = false;
 
-    public abstract createEngine(): Promise<BABYLON.Engine>;
+    public abstract createEngine(): PromiseLike<BABYLON.Engine>;
 
-    public abstract createScene(): Promise<BABYLON.Scene>;
+    public async createScene(): Promise<BABYLON.Scene> {
+        this.scene = new BABYLON.Scene(this.engine);
+        this.world = await this.createWorld();
+        this.world.load();
+        this.scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
 
-    public abstract setMenuCamera(): void;
+        return this.scene;
+    }
+
+    public abstract createWorld(): PromiseLike<World>;
 
     public init(resolve: (value: Game | PromiseLike<Game>) => void, reject: (reason?: any) => void) {
         this.createEngine()
@@ -45,13 +52,13 @@ export abstract class Game {
                         this.scene = scene;
                         resolve(this);
                     })
-                    .catch(function (e) {
+                    .catch(function (e: any) {
                         console.error("The available createScene function failed.");
                         console.error(e);
                         reject(e);
                     });
             })
-            .catch((e) => {
+            .catch((e: any) => {
                 console.error("The available createEngine function failed.");
                 console.error(e);
                 reject(e);
@@ -67,4 +74,32 @@ export abstract class Game {
         if (!this.started || this.stopped || !(this.world !== undefined)) return;
         this.world.tick();
     }
+
+    protected beforeRender(): void {
+        if (!this.started || this.stopped || !this.world || this.additionalStoppingConditions()) return;
+        this.tick();
+    }
+
+    public initLoop() {
+        this.engine.runRenderLoop(() => {
+            if (
+                this.started &&
+                !this.stopped &&
+                this.scene &&
+                this.additionalStoppingConditions()
+            ) {
+                try {
+                    this.scene.render();
+                } catch (e: any) {
+                    console.error(e);
+                    this.stopped = true;
+                }
+            } else if (this.stopped && this.engine) {
+                this.engine.stopRenderLoop();
+                console.error("Stopped game.");
+            }
+        });
+    }
+
+    public abstract additionalStoppingConditions(): boolean;
 }

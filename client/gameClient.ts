@@ -20,24 +20,21 @@
 import * as BABYLON from "@babylonjs/core";
 import {Game} from "../common/game";
 import {WorldClient} from "./worldClient";
+import {World} from "../common/world";
 
 export abstract class GameClient extends Game {
-    public name: string = "Game";
+    public name: string = "Game Client";
   
-  public abstract assetsDir(): string;
+    public abstract assetsDir(): string;
 
-    public abstract createEngine(): Promise<BABYLON.Engine>;
+    public abstract createEngine(): PromiseLike<BABYLON.Engine>;
 
-    public async createScene(): Promise<BABYLON.Scene> {
-        this.scene = new BABYLON.Scene(this.engine);
-        this.world = new WorldClient(this);
-        this.world.load();
-        this.scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
-
-        return this.scene;
+    public async createWorld(): Promise<World>
+    {
+        return new WorldClient(this);
     }
 
-    public async setMenuCamera(): Promise<void> {
+    public setMenuCamera(): void {
         this.camera = new BABYLON.UniversalCamera(
             "default",
             new BABYLON.Vector3(0, 0, 0),
@@ -45,29 +42,8 @@ export abstract class GameClient extends Game {
         );
     }
 
-    private beforeRender(): void {
-        if (!this.started || this.stopped || !this.world) return;
-        this.tick();
+    public additionalStoppingConditions(): boolean {
+        return !this.scene.activeCamera;
     }
 }
 
-export function initRenderLoop(value: Game) {
-    value.engine.runRenderLoop(() => {
-        if (
-            value.started &&
-            !value.stopped &&
-            value.scene &&
-            value.scene.activeCamera
-        ) {
-            try {
-                value.scene.render();
-            } catch (e: any) {
-                console.error(e);
-                value.stopped = true;
-            }
-        } else if (value.stopped && value.engine) {
-            value.engine.stopRenderLoop();
-            console.error("Stopped game.");
-        }
-    });
-}

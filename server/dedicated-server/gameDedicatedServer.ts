@@ -16,27 +16,31 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 import * as BABYLON from "@babylonjs/core";
-import {Mixin} from "ts-mixer";
-import {PlayerInputController} from "./clientInputController";
-import {Entity, Player} from "../common/entity";
-import type {World} from "../common/world";
+import {Game} from "../../common/game";
+import {WorldServer} from "../worldServer";
+import {World} from "../../common/world";
 
-export abstract class EntityClient extends Entity {
-    public texture?: BABYLON.Texture;
-}
+export abstract class GameDedicatedServer extends Game {
+    public name: string = "Game Dedicated Server";
 
-export class PlayerClient extends Mixin(EntityClient, Player) {
+    public abstract createEngine(): Promise<BABYLON.NullEngine>;
 
-    public constructor() {
-        super();
-        this.inputController = new PlayerInputController();
+    public async createScene(): Promise<BABYLON.Scene> {
+        this.scene = new BABYLON.Scene(this.engine);
+        this.world = new WorldServer(this);
+        this.world!.load();
+        this.scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
+
+        return this.scene;
     }
 
-    public setWorld(world: World): Player {
-        super.setWorld(world);
-        (this.inputController as PlayerInputController).setEngine(this.world.game.engine);
-        return this;
+    public async createWorld(): Promise<World>
+    {
+        return new WorldServer(this);
+    }
+
+    public additionalStoppingConditions(): boolean {
+        return false;
     }
 }
