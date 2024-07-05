@@ -39,6 +39,7 @@ export class Wall {
 
 export abstract class World {
     public game: Game;
+    protected _loaded!: boolean;
     public grounds!: Ground[];
     public walls!: Wall[];
 
@@ -46,7 +47,12 @@ export abstract class World {
         this.game = game;
     }
 
-    public abstract load(): void;
+    public get loaded(): boolean
+    {
+        return this._loaded;
+    }
+
+    public abstract load(): Promise<void>;
 
     public abstract tick(): void;
 }

@@ -18,30 +18,31 @@
 
 import * as BABYLON from "@babylonjs/core";
 import type {World} from "./world";
+import {VERSION} from "./version";
 
 export abstract class Game {
     public abstract name: string;
-    public world!: World | undefined;
+    public world: World | undefined;
     public engine!: BABYLON.Engine;
     public scene!: BABYLON.Scene;
     public camera!: BABYLON.Camera;
     public started: boolean = false;
     public stopped: boolean = false;
 
-    public abstract createEngine(): PromiseLike<BABYLON.Engine>;
+    public abstract createEngine(): Promise<BABYLON.Engine>;
 
     public async createScene(): Promise<BABYLON.Scene> {
         this.scene = new BABYLON.Scene(this.engine);
-        this.world = await this.createWorld();
-        this.world.load();
+        this.world = this.createWorld();
         this.scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
 
         return this.scene;
     }
 
-    public abstract createWorld(): PromiseLike<World>;
+    public abstract createWorld(): World;
 
-    public init(resolve: (value: Game | PromiseLike<Game>) => void, reject: (reason?: any) => void) {
+    public init(resolve: (value: Game | Promise<Game>) => void, reject: (reason?: any) => void) {
+        console.info(`Starting ${this.name} Version ${VERSION}`)
         this.createEngine()
             .then((engine) => {
                 if (!engine) reject(new Error("engine should not be null."));
@@ -70,35 +71,33 @@ export abstract class Game {
         );
     }
 
-    public tick(): void {
-        if (!this.started || this.stopped || !(this.world !== undefined)) return;
-        this.world.tick();
+    protected beforeRender(): void {
+        this.tick();
     }
 
-    protected beforeRender(): void {
-        if (!this.started || this.stopped || !this.world || this.additionalStoppingConditions()) return;
-        this.tick();
+    public tick(): void {
+        if (this.shouldStop()) return;
+        this.world?.tick();
     }
 
     public initLoop() {
         this.engine.runRenderLoop(() => {
-            if (
-                this.started &&
-                !this.stopped &&
-                this.scene &&
-                this.additionalStoppingConditions()
-            ) {
+            if (!this.shouldStop()) {
                 try {
                     this.scene.render();
                 } catch (e: any) {
                     console.error(e);
                     this.stopped = true;
                 }
-            } else if (this.stopped && this.engine) {
+            } else if (this.engine) {
                 this.engine.stopRenderLoop();
                 console.error("Stopped game.");
             }
         });
+    }
+
+    public shouldStop(): boolean {
+        return !this.started || this.stopped || this.additionalStoppingConditions();
     }
 
     public abstract additionalStoppingConditions(): boolean;

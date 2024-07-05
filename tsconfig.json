@@ -3,7 +3,11 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "module": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "es2022",
+      "dom",
+      "dom.iterable"
+    ],
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
@@ -24,8 +28,12 @@
     "outDir": "dist-tsc"
   },
   "include": [
-    "client",
-    "common",
+    "web/client",
+    "web/server",
+    "common/common",
+    "common/client",
+    "common/server",
+    "node/server",
     "public/lib"
   ],
 }

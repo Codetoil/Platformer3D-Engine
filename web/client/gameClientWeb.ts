@@ -16,12 +16,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 import * as BABYLON from "@babylonjs/core";
-import {Game} from "../common/game";
-import {GameClient} from "./gameClient";
+import {Game} from "../../common/common/game";
+import {GameClient} from "../../common/client/gameClient";
 
 export class GameClientWeb extends GameClient {
+    public name: string = "Game3D Web Client";
     public ready: Promise<Game> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
             this.init(resolve, reject);
@@ -30,7 +30,7 @@ export class GameClientWeb extends GameClient {
     public canvas!: HTMLCanvasElement;
 
     public init(
-        resolve: (value: Game | PromiseLike<Game>) => void,
+        resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
     ) {
         this.canvas = document.getElementById(
@@ -88,6 +88,11 @@ export class EventHandler {
 const gameClient: GameClientWeb = new GameClientWeb();
 
 gameClient.ready.then((value) => {
+    value.world!.load().catch((reason: any) => {
+        console.error("FAILED TO LOAD WORLD: ");
+        console.error(reason);
+    });
+    // ^temporary, will add menu later.
     window.addEventListener("resize", EventHandler.onResize.bind(null, value as GameClientWeb));
     value.initLoop();
 });

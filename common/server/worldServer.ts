@@ -18,10 +18,12 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {Ground, Wall, World} from "../common/world";
+import {Player} from "../common/entity";
 
 export class WorldServer extends World {
+    public players!: Player[];
 
-    public read() {
+    public async read(): Promise<void> {
         console.debug("Reading world...");
         console.debug("(TEMP: HARDCODED)");
         this.grounds = [];
@@ -89,11 +91,40 @@ export class WorldServer extends World {
             new BABYLON.Color3(0, 1, 1);
         dbox.material.backFaceCulling = false;
         dbox.setEnabled(false);
+
+        // Lights
+        console.debug("Initializing Lights...");
+        new BABYLON.HemisphericLight(
+            "hemi",
+            new BABYLON.Vector3(0, 1, 0),
+            this.game.scene
+        );
+
+        console.debug("Initializing Camera...");
+        this.game.camera = new BABYLON.ArcRotateCamera(
+            "fake_camera",
+            Math.PI / 2,
+            0.5,
+            10,
+            new BABYLON.Vector3(0, 0, 0),
+            this.game.scene
+        );
+        (this.game.camera as BABYLON.ArcFollowCamera).orthoBottom = -10;
+        (this.game.camera as BABYLON.ArcFollowCamera).orthoLeft = -10;
+        (this.game.camera as BABYLON.ArcFollowCamera).orthoRight = 10;
+        (this.game.camera as BABYLON.ArcFollowCamera).orthoTop = 10;
+        this.game.camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+            Math.PI / 2,
+            0.0,
+            0.0
+        ).toQuaternion();
     }
 
-    public load(): void {
+    public async load(): Promise<void> {
         console.info("Loading World...");
-        this.read();
+        await this.read();
+        this._loaded = true;
     }
 
     public tick() {

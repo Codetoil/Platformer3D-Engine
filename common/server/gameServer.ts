@@ -16,34 +16,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 import * as BABYLON from "@babylonjs/core";
 import {Game} from "../common/game";
-import {WorldClient} from "./worldClient";
+import {WorldServer} from "./worldServer";
 import {World} from "../common/world";
 
-export abstract class GameClient extends Game {
-    public name: string = "Game Client";
-  
-    public abstract assetsDir(): string;
+export abstract class GameServer extends Game {
+    public abstract createEngine(): Promise<BABYLON.NullEngine>;
 
-    public abstract createEngine(): PromiseLike<BABYLON.Engine>;
-
-    public async createWorld(): Promise<World>
+    public createWorld(): World
     {
-        return new WorldClient(this);
-    }
-
-    public setMenuCamera(): void {
-        this.camera = new BABYLON.UniversalCamera(
-            "default",
-            new BABYLON.Vector3(0, 0, 0),
-            this.scene
-        );
+        return new WorldServer(this);
     }
 
     public additionalStoppingConditions(): boolean {
-        return !this.scene.activeCamera;
+        return !this.world || !this.world.loaded;
     }
 }
-

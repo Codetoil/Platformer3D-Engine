@@ -18,26 +18,34 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {PlayerClient} from "./entityClient";
-import {Ground, Wall, World} from "../common/world";
+import {World} from "../common/world";
 import {GameClient} from "./gameClient";
 
 export class WorldClient extends World {
     public player!: PlayerClient;
+    public worker!: Worker;
 
-    public read() {
-        console.debug("Reading world...");
+    public async read(): Promise<void> {
+        console.debug("Loading world from network...");
+        this.worker = new Worker(new URL("../../web/server/integratedServerWorker.ts", import.meta.url));
+        this.worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
+            if (typeof(event.data) === "string") {
+                console.info("Received: " + (event.data as string))
+            } else
+            {
+                console.info("Received: " + (event.data as Uint8Array).toString())
+            }
+        }
+        this.worker.postMessage(Uint8Array.of());
+
+        // TEMP
+        this.grounds = [];
+        this.walls = [];
     }
 
-    public load(): void {
+    public async load(): Promise<void> {
         console.info("Loading World...");
-        this.read();
-        // Lights
-        console.debug("Initializing Lights...");
-        new BABYLON.HemisphericLight(
-            "hemi",
-            new BABYLON.Vector3(0, 1, 0),
-            this.game.scene
-        );
+        await this.read();
         console.debug("Initializing Player...");
         // Create the player entity
         this.player = new PlayerClient()
@@ -83,25 +91,12 @@ export class WorldClient extends World {
             this.player.mesh,
             this.game.scene
         );
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoBottom = -10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoLeft = -10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoRight = 10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoTop = 10;
-        // this.game.camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        if (this.game.camera.mode === BABYLON.Camera.ORTHOGRAPHIC_CAMERA) {
-            (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
-                Math.PI / 2,
-                0.0,
-                0.0
-            ).toQuaternion();
-        } else {
-            (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
-                Math.PI / 2,
-                0,
-                0.25
-            ).toQuaternion();
-        }
-
+        (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+            Math.PI / 2,
+            0,
+            0.25
+        ).toQuaternion();
+        this._loaded = true;
     }
 
     public tick() {

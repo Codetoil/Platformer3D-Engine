@@ -18,15 +18,16 @@
 
 
 import * as BABYLON from "@babylonjs/core";
-import { Game } from "../../common/game";
-import {GameDedicatedServer} from "./gameDedicatedServer";
+import { Game } from "../common/game";
+import {GameServer} from "./gameServer";
 
-export class GameDedicatedServerNode extends GameDedicatedServer {
+export class GameServerIntegrated extends GameServer {
+    public name: string = "Game3D Integrated Server";
     public ready: Promise<Game> = new Promise((resolve, reject) => {
         this.init(resolve, reject);
     });
     public init(
-        resolve: (value: Game | PromiseLike<Game>) => void,
+        resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
     ) {
         super.init(resolve, reject);
@@ -39,8 +40,12 @@ export class GameDedicatedServerNode extends GameDedicatedServer {
     }
 }
 
-const gameClient: GameDedicatedServerNode = new GameDedicatedServerNode();
+const gameServerIntegrated: GameServerIntegrated = new GameServerIntegrated();
 
-gameClient.ready.then((value) => {
+gameServerIntegrated.ready.then((value) => {
+    value.world!.load().catch((reason: any) => {
+        console.error("FAILED TO LOAD WORLD: ");
+        console.error(reason);
+    });
     value.initLoop();
 });
