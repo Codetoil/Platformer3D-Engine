@@ -659,9 +659,7 @@ school, if any, to sign a "copyright disclaimer" for the program, if
 necessary. For more information on this, and how to apply and follow
 the GNU AGPL, see <https://www.gnu.org/licenses/>.
 
-## Exceptions
-
-### Launcher Interface Exception
+## Launcher Interface Exception
 
 Linking Game3D statically or dynamically with other modules is making a combined work based on Game3D. Thus, the terms
 and conditions of the GNU Affero General Public License cover the whole combination.
@@ -677,27 +675,6 @@ Note that people who make modified versions of Game3D are not obligated to grant
 modified versions; it is their choice whether to do so. The GNU Affero General Public License gives permission to
 release a modified version without this exception; this exception also makes it possible to release a modified version
 which carries forward this exception. If you modify the Launcher interface, this exception does not apply to your
-modified version of Game3D, and you must remove this exception when you distribute your modified version.
-
-This exception is an additional permission under section 7 of the GNU Affero General Public License, version 3
-(“AGPLv3”)
-
-### Levelpack Interface Exception
-
-Linking Game3D statically or dynamically with other modules is making a combined work based on Game3D. Thus, the terms
-and conditions of the GNU Affero General Public License cover the whole combination.
-
-As a special exception, the copyright holders of Game3D give you permission to combine Game3D program with free
-software programs or libraries that are released under the GNU LGPL and with independent modules that communicate with
-Game3D solely through the Levelpack interface. You may copy and distribute such a system following the terms of the GNU
-AGPL for Game3D and the licenses of the other code concerned, provided that you include the source code of that other
-code when and as the GNU AGPL requires distribution of source code and provided that you do not modify the Levelpack
-interface.
-
-Note that people who make modified versions of Game3D are not obligated to grant this special exception for their
-modified versions; it is their choice whether to do so. The GNU Affero General Public License gives permission to
-release a modified version without this exception; this exception also makes it possible to release a modified version
-which carries forward this exception. If you modify the Levelpack interface, this exception does not apply to your
 modified version of Game3D, and you must remove this exception when you distribute your modified version.
 
 This exception is an additional permission under section 7 of the GNU Affero General Public License, version 3
