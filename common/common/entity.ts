@@ -19,6 +19,8 @@
 import * as BABYLON from "@babylonjs/core";
 import type {InputController} from "./inputController";
 import type {Wall, World} from "./world";
+import {Component, ComponentIdentifier, ComponentType} from "./component";
+import {parse, stringify, v7, validate} from 'uuid';
 
 export abstract class Entity {
     public mesh!: BABYLON.Mesh;
@@ -263,5 +265,28 @@ export class Player extends Entity {
 
     protected get hMovementScaleFactor() {
         return this.onGround ? 5.0 : 1.0;
+    }
+}
+
+export class EntityComponent extends Component<EntityComponent> {
+    public static readonly EntityComponentType = class extends ComponentType<EntityComponent> {
+        public static readonly componentIdentifier: ComponentIdentifier =
+            new ComponentIdentifier("game3d", "entity");
+
+        public serialize(component: EntityComponent): Uint8Array | undefined
+        {
+            let buffer: Uint8Array | undefined = super.serialize(component);
+            if (!buffer) return undefined;
+            return buffer;
+        }
+
+        public deserialize(buffer: Uint8Array): EntityComponent | undefined
+        {
+            return new EntityComponent(this.getUUID(buffer));
+        }
+    };
+
+    private constructor(uuid: string = v7()) {
+        super(EntityComponent.EntityComponentType.componentIdentifier, uuid);
     }
 }
