@@ -1,0 +1,36 @@
+{
+  "name": "game3d-common",
+  "version": "0.2.0",
+  "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@types/node": "22.5.0",
+    "@types/uuid": "10.0.0",
+    "@types/ws": "8.5.12",
+    "tslib": "2.7.0",
+    "typescript": "5.5.4",
+    "vite": "5.4.2",
+    "vitest": "2.0.5"
+  },
+  "type": "module",
+  "dependencies": {
+    "@babylonjs/core": "7.22.3",
+    "@babylonjs/gui": "7.22.3",
+    "@babylonjs/loaders": "7.22.3",
+    "@babylonjs/materials": "7.22.3",
+    "modern-isomorphic-ws": "1.0.5",
+    "ts-mixer": "6.0.4",
+    "ts-runtime": "0.3.0",
+    "uuid": "10.0.0",
+    "ws": "8.18.0",
+    "xss": "1.0.15"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Codetoil/Game3D.git"
+  }
+}
