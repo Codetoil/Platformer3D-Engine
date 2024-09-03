@@ -9,10 +9,10 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
-				dir: 'dist/gh-pages/client'
+				dir: 'dist/gh-pages'
 			}
 		},
 	},
 	plugins: [],
-	base: "https://codetoil.github.io/Game3D/"
+	base: "https://game3d.codetoil.io"
 });

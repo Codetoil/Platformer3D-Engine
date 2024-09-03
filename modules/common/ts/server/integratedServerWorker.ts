@@ -19,7 +19,34 @@
 /// <reference lib="es2022" />
 /// <reference lib="webworker" />
 
-self.onmessage = (event: MessageEvent<Uint8Array>) =>
-{
-    self.postMessage("Recieved Data: " + event.data.toString());
+import type { GameServerIntegrated } from "./gameServerIntegrated";
+
+function startServer(gameServerIntegratedType: { GameServerIntegrated: GameServerIntegrated }): void {
+    const gameServerIntegrated: GameServerIntegrated = new gameServerIntegratedType.GameServerIntegrated();
+
+    gameServerIntegrated.ready.then((value) => {
+        value.world!.load().catch((reason: any) => {
+            console.error("FAILED TO LOAD WORLD: ");
+            console.error(reason);
+        });
+        value.initLoop();
+    });
 }
+
+self.onmessage = (event: MessageEvent<string | Uint8Array>) => {
+    console.debug("Recieved Data: " + event.data.toString());
+    if (typeof (event.data) == "string") {
+        const url_base = event.data;
+        const url1: string = new URL("../gameServerIntegrated.js", url_base).toString();
+        import(url1).then(startServer)
+            .catch((reason: any) => {
+                console.info("Failed to load production integrated game server, assuming development environment...");
+                console.info(reason);
+                const url2: string = new URL("../server/gameServerIntegrated.ts", url_base).toString();
+                import(url2).then(startServer);
+            });
+    }
+}
+
+
+

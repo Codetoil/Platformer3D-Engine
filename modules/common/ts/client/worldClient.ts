@@ -36,6 +36,7 @@ export class WorldClient extends World {
                 console.info("Received: " + (event.data as Uint8Array).toString())
             }
         }
+        this.worker.postMessage(import.meta.url);
         this.worker.postMessage(Uint8Array.of());
 
         // TEMP

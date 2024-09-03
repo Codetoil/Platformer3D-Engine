@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "15.2.3",
-    "@types/node": "22.5.0",
+    "@types/node": "22.5.2",
     "@types/uuid": "10.0.0",
     "@types/ws": "8.5.12",
     "tslib": "2.7.0",
@@ -18,10 +18,10 @@
   },
   "type": "module",
   "dependencies": {
-    "@babylonjs/core": "7.22.3",
-    "@babylonjs/gui": "7.22.3",
-    "@babylonjs/loaders": "7.22.3",
-    "@babylonjs/materials": "7.22.3",
+    "@babylonjs/core": "7.23.0",
+    "@babylonjs/gui": "7.23.0",
+    "@babylonjs/loaders": "7.23.0",
+    "@babylonjs/materials": "7.23.0",
     "modern-isomorphic-ws": "1.0.5",
     "ts-mixer": "6.0.4",
     "ts-runtime": "0.3.0",

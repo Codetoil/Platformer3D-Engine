@@ -13,8 +13,7 @@ export default defineConfig({
 				chunkFileNames: '[name].js',
 				entryFileNames: '[name].js'
 			},
-		},
-		minify: true
+		}
 	},
 	server: {
 		// vite server configs, for details see [vite doc](https://vitejs.dev/config/#server-host)
