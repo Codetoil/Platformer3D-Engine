@@ -23,8 +23,8 @@ import { Game } from "game3d-common/ts/common/game";
 import { GameServer } from "game3d-common/ts/server/gameServer";
 
 export class GameDedicatedServer extends GameServer {
-    public name: string = "Game3D Dedicated Server";
-    public ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly name: string = "Game3D Dedicated Server";
+    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
         this.init(resolve, reject);
     });
     public init(
@@ -35,9 +35,9 @@ export class GameDedicatedServer extends GameServer {
     }
 
     public async createEngine(): Promise<BABYLON.NullEngine> {
-        this.engine = new BABYLON.NullEngine();
+        this._engine = new BABYLON.NullEngine();
         console.log("Engine initialized...")
-        return this.engine;
+        return this._engine as unknown as BABYLON.NullEngine;
     }
 }
 

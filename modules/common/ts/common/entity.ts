@@ -188,14 +188,14 @@ export class Player extends Entity {
             }
 
             this._vel.set(
-                this._vel.x - this.hMovementScaleFactor * z,
+                this._vel.x + this.hMovementScaleFactor * z,
                 this._vel.y,
                 this._vel.z + this.hMovementScaleFactor * x
             )
         }
 
         if (this.on.get("ground")) {
-            this.vel.set(this.friction * this._vel.x, this._vel.y, this.friction * this._vel.z);
+            this._vel.set(this.friction * this._vel.x, this._vel.y, this.friction * this._vel.z);
         }
     }
 
