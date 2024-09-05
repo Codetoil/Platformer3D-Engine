@@ -30,6 +30,6 @@ export abstract class GameServer extends Game {
     }
 
     public additionalStoppingConditions(): boolean {
-        return !this.world || !this.world.loaded;
+        return !this._world || !this._world.loaded;
     }
 }

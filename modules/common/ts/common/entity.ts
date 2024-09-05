@@ -18,129 +18,206 @@
 
 import * as BABYLON from "@babylonjs/core";
 import type {InputController} from "./inputController";
-import type {Wall, World} from "./world";
+import type {World} from "./world";
 import {Move} from "./move";
-import {Badge} from "./badge";
+import {Skills} from "./skills";
+import {AbstractMesh} from "@babylonjs/core";
 
 export abstract class Entity {
-    public mesh!: BABYLON.Mesh;
-    public inputController!: InputController;
-    public height!: number;
-    public maxHP!: number;
-    public maxMP!: number;
-    public maxBP!: number;
+    protected _mesh!: BABYLON.Mesh;
+    protected _inputController!: InputController;
+    protected _height!: number;
+    protected _maxHP!: number;
+    protected _maxMP!: number;
+    protected _maxSP!: number;
 
-    public world!: World;
-    public pos!: BABYLON.Vector3;
-    public velH: BABYLON.Vector3 = new BABYLON.Vector3(0.0, 0.0, 0.0);
-    public vely: number = 0.0;
-    public rot!: BABYLON.Quaternion;
-    public facingDirection: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1).normalize();
-    public hp!: number;
-    public mp!: number;
-    public badges!: Badge[];
-    public moves!: Move[];
+    protected _world!: World;
+    protected _pos!: BABYLON.Vector3;
+    protected _vel: BABYLON.Vector3 = new BABYLON.Vector3(0.0, 0.0, 0.0);
+    protected _rot!: BABYLON.Quaternion;
+    protected _facingDirection: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1).normalize();
+    protected _hp!: number;
+    protected _mp!: number;
+    protected _skills!: Skills[];
+    protected _moves!: Move[];
 
-    public onGround: boolean = false;
-    public onWall: boolean = false;
+    public readonly on: Map<string, boolean> = new Map([["ground",  false], ["wall", false]]);
 
-    public abstract gravity: number;
+    protected abstract _gravity: number;
 
-    public setHeight(height: number): Entity {
-        this.height = height;
-        return this;
+    public get mesh(): BABYLON.Mesh
+    {
+        return this._mesh;
+    }
+    public get inputController(): InputController
+    {
+        return this._inputController;
+    }
+    public get height(): number
+    {
+        return this._height;
+    }
+    public get maxHP(): number
+    {
+        return this._maxHP;
+    }
+    public get maxMP(): number
+    {
+        return this._maxMP;
+    }
+    public get maxSP(): number
+    {
+        return this._maxSP;
     }
 
-    public setMesh(mesh: BABYLON.Mesh): Entity {
-        this.mesh = mesh;
-        return this;
+    public get world(): World
+    {
+        return this._world;
+    }
+    public get pos(): BABYLON.Vector3
+    {
+        return this._pos;
+    }
+    public get vel(): BABYLON.Vector3
+    {
+        return this._vel;
+    }
+    public get rot(): BABYLON.Quaternion
+    {
+        return this._rot;
+    }
+    public get facingDirection(): BABYLON.Vector3
+    {
+        return this._facingDirection;
+    }
+    public get hp(): number
+    {
+        return this._hp;
+    }
+    public get mp(): number
+    {
+        return this._mp;
+    }
+    public get skills(): Skills[]
+    {
+        return this._skills;
+    }
+    public get moves(): Move[]
+    {
+        return this._moves;
+    }
+
+    public get gravity(): number
+    {
+        return this._gravity;
+    }
+
+    public set height(height: number) {
+        if (this._height) return;
+        this._height = height;
+    }
+
+    public set mesh(mesh: BABYLON.Mesh) {
+        if (this._mesh) return;
+        this._mesh = mesh;
+    }
+
+    public set world(world: World) {
+        if (this._world) return;
+        this._world = world;
     }
 
     public setPositionAndRotation(
         pos: BABYLON.Vector3,
         rot: BABYLON.Quaternion
     ): Entity {
-        this.pos = this.mesh.position = pos;
-        this.rot = this.mesh.rotationQuaternion = rot;
+        this._pos = this.mesh.position = pos;
+        this._rot = this.mesh.rotationQuaternion = rot;
         return this;
     }
 
     protected checkCollisions(): void {
-        let ray: BABYLON.Ray = new BABYLON.Ray(this.pos, BABYLON.Vector3.Down(), this.height / 2);
-        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this.world.game.scene.pickWithRay(ray,
-            (mesh: BABYLON.AbstractMesh) => {
-                return this.world.grounds.map((ground) => ground.mesh).includes(mesh);
-            });
-        this.onGround = !!(hit && hit.pickedPoint);
-        this.onWall = this.world.walls
-            .map((wall: Wall) =>
-                this.mesh.intersectsMesh(wall.mesh, false)
-                    ? this.mesh.intersectsMesh(wall.mesh, true)
-                    : false
-            )
-            .reduce((p, c) => p || c, false);
-    }
-
-    public setWorld(world: World): Entity {
-        this.world = world;
-        return this;
+        this._world.collidablesPerType.forEach((collidables, key) => {
+            let ray: BABYLON.Ray = new BABYLON.Ray(this._pos,
+                this._vel.length() == 0 ? BABYLON.Vector3.Down() : this._vel, this._height / 2);
+            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
+                (mesh: BABYLON.AbstractMesh) => {
+                    return collidables.map((collidable) => collidable.mesh).includes(mesh);
+                });
+            this.on.set(key, !!(hit && hit.pickedPoint));
+        });
     }
 }
 
 export class Player extends Entity {
-    public maxHSpeed: number = -1.0;
-    public canWallJump: boolean = true;
-    public lastWallWallJumpedFrom: BABYLON.Nullable<Wall> = null;
-    public jumpState: boolean = false;
+    protected _maxSpeed: number = -1.0;
+    protected _canWallJump: boolean = true;
+    protected _lastWallWallJumpedFrom: BABYLON.Nullable<BABYLON.AbstractMesh> = null;
+    protected _jumpState: boolean = false;
+    public readonly friction: number = 0.7;
+
+    public get maxSpeed(): number {
+        return this._maxSpeed;
+    }
+    public get canWallJump(): boolean {
+        return this._canWallJump;
+    }
+    public get lastWallWallJumpedFrom(): BABYLON.Nullable<AbstractMesh>
+    {
+        return this._lastWallWallJumpedFrom;
+    }
+    public get jumpState(): boolean
+    {
+        return this._jumpState;
+    }
 
     public accelerateAndRotateH(x: number, z: number): void {
         let r = Math.sqrt(x ** 2 + z ** 2);
 
-        // Deadzone
-        if (r > 0.01) {
+        if (r > 0.01) { // Deadzone
             let r1 = Math.abs(x) + Math.abs(z);
             x *= r / r1;
             z *= r / r1;
 
-            if (this.onGround) {
+            if (this.on.get("ground")) {
                 this.mesh.rotationQuaternion = BABYLON.Vector3.Up()
                     .scale(Math.atan2(z, x))
                     .toQuaternion();
 
-                this.facingDirection = new BABYLON.Vector3(z, 0.0, x).normalize();
+                this._facingDirection.set(z, 0.0, x).normalize();
             }
 
-            this.velH = this.velH.add(
-                new BABYLON.Vector3(
-                    this.hMovementScaleFactor * z,
-                    0.0,
-                    this.hMovementScaleFactor * x
-                )
-            );
+            this._vel.set(
+                this._vel.x - this.hMovementScaleFactor * z,
+                this._vel.y,
+                this._vel.z + this.hMovementScaleFactor * x
+            )
         }
 
-        if (this.onGround) {
-            this.velH.scaleToRef(0.7, this.velH);
+        if (this.on.get("ground")) {
+            this.vel.set(this.friction * this._vel.x, this._vel.y, this.friction * this._vel.z);
         }
     }
 
     public jump(): void {
-        this.vely = 28.0;
+        this._vel.y = 28.0;
     }
 
     public wallJump(): void {
-        if (!this.facingDirection) return;
-        let ray: BABYLON.Ray = new BABYLON.Ray(this.pos, this.facingDirection, this.height / 2);
+        if (!this._facingDirection) return;
+        let ray: BABYLON.Ray = new BABYLON.Ray(this._pos, this._facingDirection, this._height / 2);
         let rayHelper: BABYLON.RayHelper = new BABYLON.RayHelper(ray);
-        rayHelper.show(this.world.game.scene, BABYLON.Color3.Red());
-        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this.world.game.scene.pickWithRay(ray,
+        rayHelper.show(this._world.game.scene, BABYLON.Color3.Red());
+        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
             (mesh: BABYLON.AbstractMesh) => {
-                return this.world.walls.map((wall) => wall.mesh).includes(mesh);
+                let walls = this._world.collidablesPerType.get("wall");
+                if (!walls) return false;
+                return walls.map((wall) => wall.mesh).includes(mesh);
             });
         if (!hit) return;
         if (!hit.pickedMesh) return;
         let wall: BABYLON.AbstractMesh = hit.pickedMesh;
-        if (!(this.lastWallWallJumpedFrom === null) && this.lastWallWallJumpedFrom?.mesh !== wall) {
+        if (this._lastWallWallJumpedFrom == wall) {
             let normalVectorNullable: BABYLON.Nullable<BABYLON.Vector3> = hit.getNormal(true);
             if (!normalVectorNullable) return;
             let normalVector: BABYLON.Vector3 = normalVectorNullable;
@@ -148,7 +225,7 @@ export class Player extends Entity {
             if (!hit.pickedPoint) return;
             let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalVector, 1);
             new BABYLON.RayHelper(rayNormal).show(
-                this.world.game.scene,
+                this._world.game.scene,
                 BABYLON.Color3.Blue()
             );
             let normal: BABYLON.Quaternion = new BABYLON.Quaternion(
@@ -157,120 +234,112 @@ export class Player extends Entity {
                 normalVector.z,
                 0.0
             );
-            console.assert(!!this.mesh.rotationQuaternion, "Rotation Quaternion cannot be null");
-            this.mesh.rotationQuaternion = normal
+            console.assert(!!this._mesh.rotationQuaternion, "Rotation Quaternion cannot be null");
+            this._mesh.rotationQuaternion = normal
                 .multiply((this.mesh.rotationQuaternion as BABYLON.Quaternion).multiply(normal))
                 .normalize();
-            this.velH = this.velH.subtract(
-                normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.velH, normalVectorNullable))
-            );
-            this.vely = 28.0;
-            this.canWallJump = false;
-            this.lastWallWallJumpedFrom.mesh = wall as BABYLON.AbstractMesh;
+            this._vel.subtractInPlace(
+                normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.vel, normalVectorNullable)));
+            this._vel.set(this._vel.x, 28.0, this._vel.z);
+            this._canWallJump = false;
+            this._lastWallWallJumpedFrom = wall as BABYLON.AbstractMesh;
         }
     }
 
     private executeJumpRoutine(): void {
-        if (!this.inputController.jumpPressed) {
-            this.jumpState = false;
-            this.canWallJump = true;
+        if (!this._inputController.jumpPressed) {
+            this._jumpState = false;
+            this._canWallJump = true;
         } else {
-            if (this.onGround && !this.jumpState) {
+            if (this.on.get("ground") && !this._jumpState) {
                 this.jump();
-                this.jumpState = true;
+                this._jumpState = true;
             }
             if (
-                this.canWallJump &&
-                this.onWall &&
-                !this.onGround &&
-                this.inputController.joystick.length() > 0.1
+                this._canWallJump &&
+                this.on.get("wall") &&
+                !this.on.get("ground") &&
+                this._inputController.joystick.length() > 0.1
             ) {
                 this.wallJump();
             }
         }
-        if (this.onGround) {
-            this.lastWallWallJumpedFrom = null;
+        if (this.on.get("ground")) {
+            this._lastWallWallJumpedFrom = null;
         }
     }
 
-    private applyHMovementInfluences(): void {
-        if (this.inputController.sprintHeld && this.onGround) {
-            this.maxHSpeed *= 1.3;
-        } else if (this.inputController.sprintHeld && !this.onGround) {
-            this.maxHSpeed *= 1.2;
+    private applyMovementInfluences(): void {
+        if (this._inputController.sprintHeld && this.on.get("ground")) {
+            this._maxSpeed *= 1.3;
+        } else if (this._inputController.sprintHeld && !this.on.get("ground")) {
+            this._maxSpeed *= 1.2;
         }
-        if (this.velH.length() > this.maxHSpeed) {
-            this.velH = this.velH.normalize().scale(this.maxHSpeed);
+        if (this._vel.length() > this._maxSpeed) {
+            this._vel.normalize().scaleInPlace(this._maxSpeed);
         }
     }
 
     private applyGravity(getDeltaTime: () => number): void {
-        if (!this.onGround) {
-            this.vely += 0.5 * this.gravity * (getDeltaTime() / 1000.0);
+        if (!this.on.get("ground")) {
+            this._vel.y += 0.5 * this.gravity * (getDeltaTime() / 1000.0);
         }
-        if (this.onGround && this.vely < 0.0) {
-            this.vely = 0.0;
-        }
-    }
-
-    private capYVelocity(): void {
-        if (Math.abs(this.vely) > 50) {
-            this.vely = 50 * (this.vely === 0 ? 0 : this.vely > 0 ? 1 : -1);
+        if (this.on.get("ground") && this._vel.y < 0.0) {
+            this._vel.y = 0.0;
         }
     }
 
     private moveMesh(getDeltaTime: () => number): void {
-        this.maxHSpeed = 2.5 + 10.0 * this.inputController.joystick.length();
+        this._maxSpeed = 2.5 + 10.0 * this._inputController.joystick.length();
 
-        if (this.inputController.joystick != null) {
+        if (this._inputController.joystick != null) {
             this.accelerateAndRotateH(
-                this.inputController.joystick.x,
-                this.inputController.joystick.z
+                this._inputController.joystick.x,
+                this._inputController.joystick.z
             );
         }
         this.executeJumpRoutine();
 
-        this.applyHMovementInfluences();
+        this.applyMovementInfluences();
         this.applyGravity(getDeltaTime);
-        this.capYVelocity();
 
-        let deltaPos = new BABYLON.Vector3(this.velH.x, this.vely, this.velH.z)
-            .scale(getDeltaTime() / 1000.0);
+        let deltaPos = this._vel.scale(getDeltaTime() / 1000.0);
 
         if (deltaPos.length() > 0) {
-            let ray: BABYLON.Ray = new BABYLON.Ray(this.pos, deltaPos, deltaPos.length());
-            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this.world.game.scene.pickWithRay(ray,
-                (mesh: BABYLON.AbstractMesh) => {
-                    return this.world.grounds.map((ground) => ground.mesh).includes(mesh);
-                });
-            if (hit && hit.pickedPoint) {
-                this.mesh.position = this.pos = hit.pickedPoint as BABYLON.Vector3;
-            } else {
-                this.mesh.position = this.pos = this.pos.add(deltaPos);
-            }
+            this._world.collidablesPerType.forEach((collidables, _key) => {
+                let ray: BABYLON.Ray = new BABYLON.Ray(this._pos, deltaPos, deltaPos.length());
+                let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
+                    (mesh: BABYLON.AbstractMesh) => {
+                        return collidables.map((collidable) => collidable.mesh).includes(mesh);
+                    });
+                if (hit && hit.pickedPoint) {
+                    this._mesh.position = this._pos = hit.pickedPoint as BABYLON.Vector3;
+                } else {
+                    this._mesh.position = this._pos = this._pos.add(deltaPos);
+                }
+            });
         }
-        console.assert(!!this.mesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
-        this.rot = this.mesh.rotationQuaternion as BABYLON.Quaternion;
+        console.assert(!!this._mesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
+        this._rot = this._mesh.rotationQuaternion as BABYLON.Quaternion;
         this.checkCollisions();
         this.applyGravity(getDeltaTime);
-        this.capYVelocity();
     }
 
     public tick(cameraAngle: BABYLON.Quaternion, getDeltaTime: () => number): void {
         console.assert(!!cameraAngle, "Camera angle cannot be undefined");
         this.checkCollisions();
-        this.inputController.tick(this, this.world);
-        this.inputController.joystick.rotateByQuaternionToRef(cameraAngle, this.inputController.joystick);
+        this._inputController.tick(this, this._world);
+        this._inputController.joystick.rotateByQuaternionToRef(cameraAngle, this._inputController.joystick);
         this.moveMesh(getDeltaTime);
     }
 
-    public get gravity(): number {
-        if (this.onWall) return -83.333;
-        if (this.inputController.jumpPressed) return -90.0;
+    public get _gravity(): number {
+        if (this.on.get("wall")) return -83.333;
+        if (this._inputController.jumpPressed) return -90.0;
         return -100.0;
     }
 
     protected get hMovementScaleFactor() {
-        return this.onGround ? 5.0 : 1.0;
+        return this.on.get("ground") ? 5.0 : 1.0;
     }
 }

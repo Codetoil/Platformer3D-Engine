@@ -19,24 +19,25 @@
 import * as BABYLON from "@babylonjs/core";
 import {World} from "../common/world";
 import {Player} from "../common/entity";
-import {Ground} from "../common/ground";
-import {Wall} from "../common/wall";
+import {Collidable} from "../common/collidable";
 
 export class WorldServer extends World {
-    public players!: Player[];
+    private _players!: Player[];
+
+    public get players(): Player[] {
+        return this._players;
+    }
 
     public async read(): Promise<void> {
         console.debug("Reading world...");
         console.debug("(TEMP: HARDCODED)");
-        this.grounds = [];
-        this.walls = [];
 
-        //Ground
-        console.debug("(TEMP: Ground)");
+        //Collidable
+        console.debug("(TEMP: Collidable)");
         const ground: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane(
             "ground",
             {width: 20.0, height: 20.0},
-            this.game.scene
+            this._game.scene
         );
         ground.material = new BABYLON.StandardMaterial("groundMat", this.game.scene);
         (ground.material as BABYLON.StandardMaterial).diffuseColor =
@@ -44,13 +45,13 @@ export class WorldServer extends World {
         ground.material.backFaceCulling = false;
         ground.position = new BABYLON.Vector3(5, -10, -15);
         ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
-        this.grounds.push(new Ground().setMesh(ground));
+        this.collidablesPerType.get("ground")!.push(new Collidable(ground));
 
         console.debug("(TEMP: Wall)");
-        var wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
+        let wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall",
             {width: 15, height: 15, depth: 0.75},
-            this.game.scene
+            this._game.scene
         );
         wall.material = new BABYLON.StandardMaterial("wallMat", this.game.scene);
         (wall.material as BABYLON.StandardMaterial).diffuseColor =
@@ -58,34 +59,34 @@ export class WorldServer extends World {
         wall.material.backFaceCulling = false;
         wall.position = new BABYLON.Vector3(3.2, -2.5, -15);
         wall.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        this.walls.push(new Wall().setMesh(wall));
+        this.collidablesPerType.get("wall")!.push(new Collidable(wall));
 
         console.debug("(TEMP: Wall2)")
         var wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall2",
             {width: 15, height: 15, depth: 0.75},
-            this.game.scene
+            this._game.scene
         );
         wall2.material = wall.material;
         wall2.position = new BABYLON.Vector3(6.8, -2.5, -15);
         wall2.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        this.walls.push(new Wall().setMesh(wall2));
+        this.collidablesPerType.get("wall")!.push(new Collidable(wall2));
 
         console.debug("(TEMP: Platform)");
         const platform = BABYLON.MeshBuilder.CreateBox(
             "platform1",
             {width: 5.0, depth: 5.0, height: 0.5},
-            this.game.scene
+            this._game.scene
         );
         platform.material = wall.material;
         platform.position = new BABYLON.Vector3(17, -10, -10);
-        this.grounds.push(new Ground().setMesh(platform));
+        this.collidablesPerType.get("ground")!.push(new Collidable(platform));
 
         console.debug("(TEMP: DBox)");
         const dbox = BABYLON.MeshBuilder.CreateBox(
             "dbox",
             {width: 1, height: 2, depth: 1},
-            this.game.scene
+            this._game.scene
         );
         dbox.position = wall.position;
         dbox.material = new BABYLON.StandardMaterial("dboxMat", this.game.scene);
@@ -99,11 +100,11 @@ export class WorldServer extends World {
         new BABYLON.HemisphericLight(
             "hemi",
             new BABYLON.Vector3(0, 1, 0),
-            this.game.scene
+            this._game.scene
         );
 
         console.debug("Initializing Camera...");
-        this.game.camera = new BABYLON.ArcRotateCamera(
+        this._game.camera = new BABYLON.ArcRotateCamera(
             "fake_camera",
             Math.PI / 2,
             0.5,
@@ -111,12 +112,12 @@ export class WorldServer extends World {
             new BABYLON.Vector3(0, 0, 0),
             this.game.scene
         );
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoBottom = -10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoLeft = -10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoRight = 10;
-        (this.game.camera as BABYLON.ArcFollowCamera).orthoTop = 10;
-        this.game.camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+        (this._game.camera as BABYLON.ArcFollowCamera).orthoBottom = -10;
+        (this._game.camera as BABYLON.ArcFollowCamera).orthoLeft = -10;
+        (this._game.camera as BABYLON.ArcFollowCamera).orthoRight = 10;
+        (this._game.camera as BABYLON.ArcFollowCamera).orthoTop = 10;
+        this._game.camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        (this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
             Math.PI / 2,
             0.0,
             0.0

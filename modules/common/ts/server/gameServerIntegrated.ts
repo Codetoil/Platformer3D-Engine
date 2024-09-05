@@ -22,10 +22,11 @@ import { Game } from "../common/game";
 import {GameServer} from "./gameServer";
 
 export class GameServerIntegrated extends GameServer {
-    public name: string = "Game3D Integrated Server";
-    public ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly name: string = "Game3D Integrated Server";
+    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
         this.init(resolve, reject);
     });
+
     public init(
         resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
@@ -34,8 +35,8 @@ export class GameServerIntegrated extends GameServer {
     }
 
     public async createEngine(): Promise<BABYLON.NullEngine> {
-        this.engine = new BABYLON.NullEngine();
+        this._engine = new BABYLON.NullEngine();
         console.log("Engine initialized...")
-        return this.engine as unknown as BABYLON.NullEngine;
+        return this._engine as unknown as BABYLON.NullEngine;
     }
 }

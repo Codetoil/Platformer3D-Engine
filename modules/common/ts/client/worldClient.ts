@@ -20,15 +20,25 @@ import * as BABYLON from "@babylonjs/core";
 import {PlayerClient} from "./entityClient";
 import {World} from "../common/world";
 import {GameClient} from "./gameClient";
+import {Player} from "../common/entity";
 
 export class WorldClient extends World {
-    public player!: PlayerClient;
-    public worker!: Worker;
+    protected _player!: PlayerClient;
+    protected _worker!: Worker;
+
+    public get player(): Player
+    {
+        return this._player;
+    }
+    public get worker(): Worker
+    {
+        return this._worker;
+    }
 
     public async read(): Promise<void> {
         console.debug("Loading world from network...");
-        this.worker = new Worker(new URL("../server/integratedServerWorker.ts", import.meta.url));
-        this.worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
+        this._worker = new Worker(new URL("../server/integratedServerWorker.ts", import.meta.url));
+        this._worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
             if (typeof(event.data) === "string") {
                 console.info("Received: " + (event.data as string))
             } else
@@ -39,9 +49,7 @@ export class WorldClient extends World {
         this.worker.postMessage(import.meta.url);
         this.worker.postMessage(Uint8Array.of());
 
-        // TEMP
-        this.grounds = [];
-        this.walls = [];
+        // TODO - Load world from network into `this.collidablesPerType`
     }
 
     public async load(): Promise<void> {
@@ -49,42 +57,35 @@ export class WorldClient extends World {
         await this.read();
         console.debug("Initializing Player...");
         // Create the player entity
-        this.player = new PlayerClient()
-            .setWorld(this)
-            .setHeight(3)
-            .setMesh(
-                BABYLON.MeshBuilder.CreateCapsule(
-                    "player",
-                    {
-                        capSubdivisions: 10,
-                        height: 3,
-                        radius: 0.75,
-                        subdivisions: 10,
-                        tessellation: 10,
-                    },
-                    this.game.scene
-                )
-            )
-            .setPositionAndRotation(
-                new BABYLON.Vector3(5, -5, -10),
-                BABYLON.Quaternion.Identity()
-            ) as PlayerClient;
-        this.player.mesh.material = new BABYLON.StandardMaterial(
+        this._player = new PlayerClient();
+        this._player.mesh = BABYLON.MeshBuilder.CreateSphere(
+            "player",
+            {
+                diameter: 1.5
+            },
+            this._game.scene
+        );
+        this._player.setPositionAndRotation(
+            new BABYLON.Vector3(5, -5, -10),
+            BABYLON.Quaternion.Identity()
+        );
+        this._player.height = 3.;
+        this._player.world = this;
+        this._player.mesh.material = new BABYLON.StandardMaterial(
             "playerMat",
             this.game.scene
         );
-
-        this.player.texture = new BABYLON.Texture(
+        this._player.texture = new BABYLON.Texture(
             (this.game as GameClient).assetsDir() + "temp_player.png",
             this.game.scene
         );
-        (this.player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
-            this.player.texture;
-        this.player.texture.hasAlpha = true;
-        this.player.onGround = true;
+        (this._player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
+            this._player.texture;
+        this._player.texture.hasAlpha = true;
+        this._player.on.set("ground", true);
 
         console.debug("Initializing Camera...");
-        this.game.camera = new BABYLON.ArcFollowCamera(
+        this._game.camera = new BABYLON.ArcFollowCamera(
             "camera",
             Math.PI / 2,
             0.5,
@@ -92,7 +93,7 @@ export class WorldClient extends World {
             this.player.mesh,
             this.game.scene
         );
-        (this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+        (this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
             Math.PI / 2,
             0,
             0.25
@@ -101,11 +102,11 @@ export class WorldClient extends World {
     }
 
     public tick() {
-        this.player.tick((this.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion,
+        this._player.tick((this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion,
             () => (((a: number | undefined): number => {
                 if (a != undefined)
                     return a;
                 return 0.0;
-            })(this.game.scene.deltaTime)));
+            })(this._game.scene.deltaTime)));
     }
 }

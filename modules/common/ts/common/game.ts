@@ -21,22 +21,48 @@ import type {World} from "./world";
 import {VERSION} from "./version";
 
 export abstract class Game {
-    public abstract name: string;
-    public world: World | undefined;
-    public engine!: BABYLON.Engine;
-    public scene!: BABYLON.Scene;
-    public camera!: BABYLON.Camera;
-    public started: boolean = false;
-    public stopped: boolean = false;
+    public readonly abstract name: string;
+    protected _world: World | undefined;
+    protected _engine!: BABYLON.Engine;
+    protected _scene!: BABYLON.Scene;
+    protected _camera!: BABYLON.Camera;
+    protected _started: boolean = false;
+    protected _stopped: boolean = false;
+
+    public get world(): World | undefined {
+        return this._world;
+    }
+    public get engine(): BABYLON.Engine {
+        return this._engine;
+    }
+    public get scene(): BABYLON.Scene {
+        return this._scene;
+    }
+    public get camera(): BABYLON.Camera {
+        return this._camera;
+    }
+    public get started(): boolean
+    {
+        return this._started;
+    }
+    public get stopped(): boolean
+    {
+        return this._stopped;
+    }
+
+    public set camera(camera: BABYLON.Camera) {
+        if (this._camera) return;
+        this._camera = camera;
+    }
 
     public abstract createEngine(): Promise<BABYLON.Engine>;
 
     public async createScene(): Promise<BABYLON.Scene> {
-        this.scene = new BABYLON.Scene(this.engine);
-        this.world = this.createWorld();
-        this.scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
+        this._scene = new BABYLON.Scene(this._engine);
+        this._world = this.createWorld();
+        this._scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
 
-        return this.scene;
+        return this._scene;
     }
 
     public abstract createWorld(): World;
@@ -46,11 +72,11 @@ export abstract class Game {
         this.createEngine()
             .then((engine) => {
                 if (!engine) reject(new Error("engine should not be null."));
-                this.engine = engine;
+                this._engine = engine;
                 this.createScene()
                     .then((scene) => {
                         if (!scene) reject(new Error("scene should not be null."));
-                        this.scene = scene;
+                        this._scene = scene;
                         resolve(this);
                     })
                     .catch(function (e: any) {
@@ -65,7 +91,7 @@ export abstract class Game {
                 reject(e);
             }).then(
             () => {
-                this.started = true
+                this._started = true
                 console.info("Started " + this.name);
             }
         );
@@ -77,27 +103,27 @@ export abstract class Game {
 
     public tick(): void {
         if (this.shouldStop()) return;
-        this.world?.tick();
+        this._world?.tick();
     }
 
     public initLoop() {
-        this.engine.runRenderLoop(() => {
+        this._engine.runRenderLoop(() => {
             if (!this.shouldStop()) {
                 try {
-                    this.scene.render();
+                    this._scene.render();
                 } catch (e: any) {
                     console.error(e);
-                    this.stopped = true;
+                    this._stopped = true;
                 }
-            } else if (this.engine) {
-                this.engine.stopRenderLoop();
+            } else if (this._engine) {
+                this._engine.stopRenderLoop();
                 console.error("Stopped game.");
             }
         });
     }
 
     public shouldStop(): boolean {
-        return !this.started || this.stopped || this.additionalStoppingConditions();
+        return !this._started || this._stopped || this.additionalStoppingConditions();
     }
 
     public abstract additionalStoppingConditions(): boolean;

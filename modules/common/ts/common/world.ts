@@ -17,17 +17,20 @@
  */
 
 import type {Game} from "./game";
-import {Wall} from "./wall";
-import {Ground} from "./ground";
+import {Collidable} from "./collidable";
 
 export abstract class World {
-    public game: Game;
+    protected _game: Game;
     protected _loaded!: boolean;
-    public grounds!: Ground[];
-    public walls!: Wall[];
+    public readonly collidablesPerType: Map<string, Collidable[]> = new Map([["ground", []], ["wall", []]]);
 
     constructor(game: Game) {
-        this.game = game;
+        this._game = game;
+    }
+
+    public get game(): Game
+    {
+        return this._game;
     }
 
     public get loaded(): boolean

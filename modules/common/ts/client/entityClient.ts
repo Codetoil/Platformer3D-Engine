@@ -24,19 +24,28 @@ import {Entity, Player} from "../common/entity";
 import type {World} from "../common/world";
 
 export abstract class EntityClient extends Entity {
-    public texture?: BABYLON.Texture;
+    protected _texture?: BABYLON.Texture;
+
+    public get texture(): BABYLON.Texture | undefined
+    {
+        return this._texture;
+    }
+
+    public set texture(texture: BABYLON.Texture)
+    {
+        this._texture = texture;
+    }
 }
 
 export class PlayerClient extends Mixin(EntityClient, Player) {
 
     public constructor() {
         super();
-        this.inputController = new PlayerInputController();
+        this._inputController = new PlayerInputController();
     }
 
-    public setWorld(world: World): Player {
-        super.setWorld(world);
-        (this.inputController as PlayerInputController).setEngine(this.world.game.engine);
-        return this;
+    public set world(world: World) {
+        this._world = world;
+        (this._inputController as PlayerInputController).setEngine(this._world.game.engine);
     }
 }

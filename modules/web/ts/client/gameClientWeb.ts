@@ -21,19 +21,23 @@ import {Game} from "game3d-common/ts/common/game";
 import {GameClient} from "game3d-common/ts/client/gameClient";
 
 export class GameClientWeb extends GameClient {
-    public name: string = "Game3D Web Client";
-    public ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly name: string = "Game3D Web Client";
+    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
             this.init(resolve, reject);
         });
     });
-    public canvas!: HTMLCanvasElement;
+    protected _canvas!: HTMLCanvasElement;
+
+    public get canvas(): HTMLCanvasElement {
+        return this._canvas;
+    }
 
     public init(
         resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
     ) {
-        this.canvas = document.getElementById(
+        this._canvas = document.getElementById(
             "renderCanvas"
         ) as HTMLCanvasElement;
         super.init(resolve, reject);
@@ -44,15 +48,15 @@ export class GameClientWeb extends GameClient {
     }
 
     public async createWebGPUEngine(): Promise<void> {
-        this.engine = new BABYLON.WebGPUEngine(this.canvas, {
+        this._engine = new BABYLON.WebGPUEngine(this.canvas, {
             antialias: true,
             stencil: true
         }) as unknown as BABYLON.Engine;
-        await (this.engine as unknown as BABYLON.WebGPUEngine).initAsync();
+        await (this._engine as unknown as BABYLON.WebGPUEngine).initAsync();
     }
 
     public createWebGLEngine(): void {
-        this.engine = new BABYLON.Engine(this.canvas, true, {
+        this._engine = new BABYLON.Engine(this.canvas, true, {
             stencil: true,
             disableWebGL2Support: false,
         });
@@ -67,7 +71,7 @@ export class GameClientWeb extends GameClient {
             this.createWebGLEngine();
         }
         console.log("Engine initialized...")
-        return this.engine;
+        return this._engine;
     }
 }
 

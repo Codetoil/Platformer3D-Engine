@@ -16,6 +16,23 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export class Badge {
+import type * as BABYLON from "@babylonjs/core";
+
+export class Collidable {
+    protected _mesh!: BABYLON.AbstractMesh;
+
+    public get mesh(): BABYLON.AbstractMesh {
+        return this._mesh;
+    }
+
+    public set mesh(mesh: BABYLON.AbstractMesh) {
+        if (this._mesh) return;
+        this._mesh = mesh;
+    }
+
+    constructor(mesh?: BABYLON.AbstractMesh) {
+        if (mesh)
+            this._mesh = mesh;
+    }
 
 }

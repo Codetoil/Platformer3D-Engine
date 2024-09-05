@@ -16,13 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type * as BABYLON from "@babylonjs/core";
+export class Skills {
 
-export class Wall {
-    public mesh!: BABYLON.AbstractMesh;
-
-    public setMesh(mesh: BABYLON.AbstractMesh): Wall {
-        this.mesh = mesh;
-        return this;
-    }
 }

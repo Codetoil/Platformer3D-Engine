@@ -13,7 +13,7 @@ export default defineConfig({
 				badge: "./ts/common/badge.ts",
 				entity: "./ts/common/entity.ts",
 				game: "./ts/common/game.ts",
-				ground: "./ts/common/ground.ts",
+				ground: "./ts/common/collidable.ts",
 				inputController: "./ts/common/inputController.ts",
 				move: "./ts/common/move.ts",
 				version: "./ts/common/version.ts",
