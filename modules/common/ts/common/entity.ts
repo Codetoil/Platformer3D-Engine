@@ -150,14 +150,16 @@ export abstract class Entity {
 }
 
 export class Player extends Entity {
-    protected _maxSpeed: number = -1.0;
+    protected _maxHorizontalSpeed: number = -1.0;
     protected _canWallJump: boolean = true;
     protected _lastWallWallJumpedFrom: BABYLON.Nullable<BABYLON.AbstractMesh> = null;
     protected _jumpState: boolean = false;
+    public readonly maxVerticalSpeed: number = 50.0;
+    public readonly jumpVerticalVelocity: number = 28.0;
     public readonly friction: number = 0.7;
 
-    public get maxSpeed(): number {
-        return this._maxSpeed;
+    public get maxHorizontalSpeed(): number {
+        return this._maxHorizontalSpeed;
     }
     public get canWallJump(): boolean {
         return this._canWallJump;
@@ -200,7 +202,7 @@ export class Player extends Entity {
     }
 
     public jump(): void {
-        this._vel.y = 28.0;
+        this._vel.y = this.jumpVerticalVelocity;
     }
 
     public wallJump(): void {
@@ -240,7 +242,7 @@ export class Player extends Entity {
                 .normalize();
             this._vel.subtractInPlace(
                 normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.vel, normalVectorNullable)));
-            this._vel.set(this._vel.x, 28.0, this._vel.z);
+            this._vel.set(this._vel.x, this.jumpVerticalVelocity, this._vel.z);
             this._canWallJump = false;
             this._lastWallWallJumpedFrom = wall as BABYLON.AbstractMesh;
         }
@@ -269,28 +271,34 @@ export class Player extends Entity {
         }
     }
 
-    private applyMovementInfluences(): void {
+    private applyHorizontalMovementInfluences(): void {
         if (this._inputController.sprintHeld && this.on.get("ground")) {
-            this._maxSpeed *= 1.3;
+            this._maxHorizontalSpeed *= 1.3;
         } else if (this._inputController.sprintHeld && !this.on.get("ground")) {
-            this._maxSpeed *= 1.2;
+            this._maxHorizontalSpeed *= 1.2;
         }
-        if (this._vel.length() > this._maxSpeed) {
-            this._vel.normalize().scaleInPlace(this._maxSpeed);
+        if (this._vel.length() ** 2 - this._vel.y ** 2 > this._maxHorizontalSpeed ** 2) {
+            this._vel.normalizeFromLength(this._maxHorizontalSpeed);
         }
     }
 
     private applyGravity(getDeltaTime: () => number): void {
         if (!this.on.get("ground")) {
-            this._vel.y += 0.5 * this.gravity * (getDeltaTime() / 1000.0);
+            this._vel.y += 0.5 * this._gravity * (getDeltaTime() / 1000.0);
         }
         if (this.on.get("ground") && this._vel.y < 0.0) {
             this._vel.y = 0.0;
         }
     }
 
+    private capYVelocity(): void {
+        if (Math.abs(this._vel.y) > this.maxVerticalSpeed) {
+            this._vel.y = this.maxVerticalSpeed * (this._vel.y === 0 ? 0 : this._vel.y > 0 ? 1 : -1);
+        }
+    }
+
     private moveMesh(getDeltaTime: () => number): void {
-        this._maxSpeed = 2.5 + 10.0 * this._inputController.joystick.length();
+        this._maxHorizontalSpeed = 2.5 + 10.0 * this._inputController.joystick.length();
 
         if (this._inputController.joystick != null) {
             this.accelerateAndRotateH(
@@ -300,8 +308,9 @@ export class Player extends Entity {
         }
         this.executeJumpRoutine();
 
-        this.applyMovementInfluences();
+        this.applyHorizontalMovementInfluences();
         this.applyGravity(getDeltaTime);
+        this.capYVelocity();
 
         let deltaPos = this._vel.scale(getDeltaTime() / 1000.0);
 
@@ -323,6 +332,7 @@ export class Player extends Entity {
         this._rot = this._mesh.rotationQuaternion as BABYLON.Quaternion;
         this.checkCollisions();
         this.applyGravity(getDeltaTime);
+        this.capYVelocity();
     }
 
     public tick(cameraAngle: BABYLON.Quaternion, getDeltaTime: () => number): void {
