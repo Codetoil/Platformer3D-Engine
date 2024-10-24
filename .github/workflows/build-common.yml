@@ -1,4 +1,4 @@
-name: Build for Web
+name: Build (Common)
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd modules/web
+      - run: cd modules/common
       - run: npm install
       - run: npm run build
       - name: Upload Output

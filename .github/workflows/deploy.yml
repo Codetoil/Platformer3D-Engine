@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
@@ -13,15 +13,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
-      - name: Use Node.js 20.x
+      - name: Use Node.js 22.x
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 22.x
 
+      - run: cd modules/web
       - run: npm install
       - run: npm run build-gh-pages
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist/client
+          folder: dist/gh-pages
