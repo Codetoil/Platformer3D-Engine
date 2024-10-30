@@ -15,7 +15,12 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import {NamespacedKey} from "./namespacedKey";
 
-export class Skills {
+export class Skill {
+    public readonly key: NamespacedKey;
 
+    public constructor(key: NamespacedKey) {
+        this.key = key;
+    }
 }

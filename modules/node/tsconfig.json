@@ -4,9 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ES2022",
     "lib": [
-      "es2022",
-      "dom",
-      "dom.iterable"
+      "es2022"
     ],
     "skipLibCheck": true,
     "allowJs": true,
@@ -28,7 +26,6 @@
     "outDir": "dist"
   },
   "include": [
-    "ts/client",
     "ts/server"
   ]
 }

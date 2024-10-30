@@ -15,10 +15,8 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-export abstract class MoveType {
-
-}
+import {Item} from "./item";
+import {NamespacedKey} from "./namespacedKey";
 
 export enum MoveLevel {
     REGULAR,
@@ -27,11 +25,11 @@ export enum MoveLevel {
 }
 
 export class Move {
-    public readonly type: MoveType;
+    public readonly key: NamespacedKey;
     public readonly level: MoveLevel;
 
-    public constructor(type: MoveType, level: MoveLevel) {
-        this.type = type;
+    public constructor(key: NamespacedKey, level: MoveLevel) {
+        this.key = key;
         this.level = level;
     }
 }

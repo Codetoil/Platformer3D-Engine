@@ -27,6 +27,10 @@ export class GameServerIntegrated extends GameServer {
         this.init(resolve, reject);
     });
 
+    public constructor() {
+        super();
+    }
+
     public init(
         resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
@@ -39,4 +43,5 @@ export class GameServerIntegrated extends GameServer {
         console.log("Engine initialized...")
         return this._engine as unknown as BABYLON.NullEngine;
     }
+
 }

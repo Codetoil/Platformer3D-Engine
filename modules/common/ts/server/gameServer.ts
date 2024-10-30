@@ -22,14 +22,18 @@ import {WorldServer} from "./worldServer";
 import {World} from "../common/world";
 
 export abstract class GameServer extends Game {
+    public constructor() {
+        super();
+    }
+
     public abstract createEngine(): Promise<BABYLON.NullEngine>;
 
-    public createWorld(): World
+    public onLoad()
     {
-        return new WorldServer(this);
+        // return new WorldServer(this);
     }
 
     public additionalStoppingConditions(): boolean {
-        return !this._world || !this._world.loaded;
+        return false;//!this._world || !this._world.loaded;
     }
 }

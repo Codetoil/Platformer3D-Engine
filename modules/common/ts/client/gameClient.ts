@@ -27,9 +27,9 @@ export abstract class GameClient extends Game {
 
     public abstract createEngine(): Promise<BABYLON.Engine>;
 
-    public createWorld(): World
+    public onLoad()
     {
-        return new WorldClient(this);
+        this.worlds.push(new WorldClient(this));
     }
 
     public setMenuCamera(): void {

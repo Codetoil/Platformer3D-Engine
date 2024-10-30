@@ -18,11 +18,16 @@
 
 import type {Game} from "./game";
 import {Collidable} from "./collidable";
+import {NamespacedKey} from "./namespacedKey";
 
 export abstract class World {
     protected _game: Game;
     protected _loaded!: boolean;
-    public readonly collidablesPerType: Map<string, Collidable[]> = new Map([["ground", []], ["wall", []]]);
+    public readonly collidablesPerType: Map<NamespacedKey, Collidable[]>
+        = new Map([
+            [new NamespacedKey("game3d", "ground"), []],
+            [new NamespacedKey("game3d", "wall"), []]
+        ]);
 
     constructor(game: Game) {
         this._game = game;

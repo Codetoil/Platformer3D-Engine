@@ -20,7 +20,7 @@ import * as BABYLON from "@babylonjs/core";
 import type {InputController} from "./inputController";
 import type {World} from "./world";
 import {Move} from "./move";
-import {Skills} from "./skills";
+import {Skill} from "./skill";
 import {AbstractMesh} from "@babylonjs/core";
 
 export abstract class Entity {
@@ -38,7 +38,7 @@ export abstract class Entity {
     protected _facingDirection: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1).normalize();
     protected _hp!: number;
     protected _mp!: number;
-    protected _skills!: Skills[];
+    protected _skills!: Skill[];
     protected _moves!: Move[];
 
     public readonly on: Map<string, boolean> = new Map([["ground",  false], ["wall", false]]);
@@ -98,7 +98,7 @@ export abstract class Entity {
     {
         return this._mp;
     }
-    public get skills(): Skills[]
+    public get skills(): Skill[]
     {
         return this._skills;
     }

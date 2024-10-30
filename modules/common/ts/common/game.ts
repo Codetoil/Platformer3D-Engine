@@ -22,16 +22,13 @@ import {VERSION} from "./version";
 
 export abstract class Game {
     public readonly abstract name: string;
-    protected _world: World | undefined;
+    public readonly worlds: World[] = [];
     protected _engine!: BABYLON.Engine;
     protected _scene!: BABYLON.Scene;
     protected _camera!: BABYLON.Camera;
     protected _started: boolean = false;
     protected _stopped: boolean = false;
 
-    public get world(): World | undefined {
-        return this._world;
-    }
     public get engine(): BABYLON.Engine {
         return this._engine;
     }
@@ -59,13 +56,12 @@ export abstract class Game {
 
     public async createScene(): Promise<BABYLON.Scene> {
         this._scene = new BABYLON.Scene(this._engine);
-        this._world = this.createWorld();
         this._scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
 
         return this._scene;
     }
 
-    public abstract createWorld(): World;
+    public abstract onLoad();
 
     public init(resolve: (value: Game | Promise<Game>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
@@ -77,6 +73,7 @@ export abstract class Game {
                     .then((scene) => {
                         if (!scene) reject(new Error("scene should not be null."));
                         this._scene = scene;
+                        this.onLoad();
                         resolve(this);
                     })
                     .catch(function (e: any) {
@@ -103,7 +100,7 @@ export abstract class Game {
 
     public tick(): void {
         if (this.shouldStop()) return;
-        this._world?.tick();
+        this.worlds.forEach(world => world.tick);
     }
 
     public initLoop() {
