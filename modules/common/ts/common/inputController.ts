@@ -17,13 +17,13 @@
  */
 
 import type * as BABYLON from "@babylonjs/core";
-import type {Entity} from "./entity";
+import type {Character} from "./character";
 import type {World} from "./world";
 
 export interface InputController {
-    sprintHeld: boolean;
-    jumpPressed: boolean;
-    joystick: BABYLON.Vector3;
+    isSprintActive: boolean;
+    isJumpActive: boolean;
+    normalizedHorizontalAcceleration: BABYLON.Vector3;
 
-    tick(entity: Entity, world: World): void;
+    preformTick(entity: Character, world: World): void;
 }

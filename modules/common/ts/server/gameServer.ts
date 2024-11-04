@@ -26,9 +26,9 @@ export abstract class GameServer extends Game {
         super();
     }
 
-    public abstract createEngine(): Promise<BABYLON.NullEngine>;
+    public abstract createBabylonEngine(): Promise<BABYLON.NullEngine>;
 
-    public onLoad()
+    public onLoad(): void
     {
         // return new WorldServer(this);
     }

@@ -20,23 +20,26 @@ import * as BABYLON from "@babylonjs/core";
 import type {World} from "./world";
 import {VERSION} from "./version";
 
+/**
+ * Base class for the Game Engine
+ */
 export abstract class Game {
     public readonly abstract name: string;
     public readonly worlds: World[] = [];
-    protected _engine!: BABYLON.Engine;
-    protected _scene!: BABYLON.Scene;
-    protected _camera!: BABYLON.Camera;
+    protected _babylonEngine!: BABYLON.Engine;
+    protected _babylonScene!: BABYLON.Scene;
+    protected _babylonCamera!: BABYLON.Camera;
     protected _started: boolean = false;
     protected _stopped: boolean = false;
 
-    public get engine(): BABYLON.Engine {
-        return this._engine;
+    public get babylonEngine(): BABYLON.Engine {
+        return this._babylonEngine;
     }
-    public get scene(): BABYLON.Scene {
-        return this._scene;
+    public get babylonScene(): BABYLON.Scene {
+        return this._babylonScene;
     }
-    public get camera(): BABYLON.Camera {
-        return this._camera;
+    public get babylonCamera(): BABYLON.Camera {
+        return this._babylonCamera;
     }
     public get started(): boolean
     {
@@ -47,32 +50,32 @@ export abstract class Game {
         return this._stopped;
     }
 
-    public set camera(camera: BABYLON.Camera) {
-        if (this._camera) return;
-        this._camera = camera;
+    public set babylonCamera(camera: BABYLON.Camera) {
+        if (this._babylonCamera) return;
+        this._babylonCamera = camera;
     }
 
-    public abstract createEngine(): Promise<BABYLON.Engine>;
+    public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
 
-    public async createScene(): Promise<BABYLON.Scene> {
-        this._scene = new BABYLON.Scene(this._engine);
-        this._scene.onBeforeRenderObservable.add(this.beforeRender.bind(this));
+    public async createBabylonScene(): Promise<BABYLON.Scene> {
+        this._babylonScene = new BABYLON.Scene(this._babylonEngine);
+        this._babylonScene.onBeforeRenderObservable.add(this.onBeforeRender.bind(this));
 
-        return this._scene;
+        return this._babylonScene;
     }
 
-    public abstract onLoad();
+    public abstract onLoad(): void;
 
-    public init(resolve: (value: Game | Promise<Game>) => void, reject: (reason?: any) => void) {
+    public initialize(resolve: (value: Game | Promise<Game>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
-        this.createEngine()
+        this.createBabylonEngine()
             .then((engine) => {
                 if (!engine) reject(new Error("engine should not be null."));
-                this._engine = engine;
-                this.createScene()
+                this._babylonEngine = engine;
+                this.createBabylonScene()
                     .then((scene) => {
                         if (!scene) reject(new Error("scene should not be null."));
-                        this._scene = scene;
+                        this._babylonScene = scene;
                         this.onLoad();
                         resolve(this);
                     })
@@ -94,26 +97,26 @@ export abstract class Game {
         );
     }
 
-    protected beforeRender(): void {
-        this.tick();
+    protected onBeforeRender(): void {
+        this.preformTick();
     }
 
-    public tick(): void {
+    public preformTick(): void {
         if (this.shouldStop()) return;
         this.worlds.forEach(world => world.tick);
     }
 
-    public initLoop() {
-        this._engine.runRenderLoop(() => {
+    public initializeMainLoop() {
+        this._babylonEngine.runRenderLoop(() => {
             if (!this.shouldStop()) {
                 try {
-                    this._scene.render();
+                    this._babylonScene.render();
                 } catch (e: any) {
                     console.error(e);
                     this._stopped = true;
                 }
-            } else if (this._engine) {
-                this._engine.stopRenderLoop();
+            } else if (this._babylonEngine) {
+                this._babylonEngine.stopRenderLoop();
                 console.error("Stopped game.");
             }
         });

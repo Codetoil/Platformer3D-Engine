@@ -17,10 +17,10 @@
  */
 
 import * as BABYLON from "@babylonjs/core";
-import {PlayerClient} from "./entityClient";
+import {PlayerClient} from "./characterClient";
 import {World} from "../common/world";
 import {GameClient} from "./gameClient";
-import {Player} from "../common/entity";
+import {Player} from "../common/character";
 
 export class WorldClient extends World {
     protected _player!: PlayerClient;
@@ -63,7 +63,7 @@ export class WorldClient extends World {
             {
                 diameter: 1.5
             },
-            this._game.scene
+            this._game.babylonScene
         );
         this._player.setPositionAndRotation(
             new BABYLON.Vector3(5, -5, -10),
@@ -73,11 +73,11 @@ export class WorldClient extends World {
         this._player.world = this;
         this._player.mesh.material = new BABYLON.StandardMaterial(
             "playerMat",
-            this.game.scene
+            this.game.babylonScene
         );
         this._player.texture = new BABYLON.Texture(
             (this.game as GameClient).assetsDir() + "temp_player.png",
-            this.game.scene
+            this.game.babylonScene
         );
         (this._player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
             this._player.texture;
@@ -85,15 +85,15 @@ export class WorldClient extends World {
         this._player.on.set("ground", true);
 
         console.debug("Initializing Camera...");
-        this._game.camera = new BABYLON.ArcFollowCamera(
+        this._game.babylonCamera = new BABYLON.ArcFollowCamera(
             "camera",
             Math.PI / 2,
             0.5,
             10,
             this.player.mesh,
-            this.game.scene
+            this.game.babylonScene
         );
-        (this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
             Math.PI / 2,
             0,
             0.25
@@ -102,11 +102,11 @@ export class WorldClient extends World {
     }
 
     public tick() {
-        this._player.tick((this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion,
+        this._player.tick((this._game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
             () => (((a: number | undefined): number => {
                 if (a != undefined)
                     return a;
                 return 0.0;
-            })(this._game.scene.deltaTime)));
+            })(this._game.babylonScene.deltaTime)));
     }
 }

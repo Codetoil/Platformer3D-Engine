@@ -18,62 +18,68 @@
 
 import * as BABYLON from "@babylonjs/core";
 import type {InputController} from "./inputController";
-import type {World} from "./world";
+import {World} from "./world";
 import {Move} from "./move";
 import {Skill} from "./skill";
 import {AbstractMesh} from "@babylonjs/core";
+import {NamespacedKey} from "./namespacedKey";
 
-export abstract class Entity {
+/**
+ * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
+ */
+export class Character {
     protected _mesh!: BABYLON.Mesh;
-    protected _inputController!: InputController;
-    protected _height!: number;
-    protected _maxHP!: number;
-    protected _maxMP!: number;
-    protected _maxSP!: number;
-
     protected _world!: World;
+    protected _inputController!: InputController;
+
+    // Character Location and Rotation
     protected _pos!: BABYLON.Vector3;
     protected _vel: BABYLON.Vector3 = new BABYLON.Vector3(0.0, 0.0, 0.0);
     protected _rot!: BABYLON.Quaternion;
     protected _facingDirection: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1).normalize();
+
+    // Character Properties
+    // TODO: Load in at runtime
+    protected _height: number = 2.0;
+    protected _maxHP: number = 10;
+    protected _maxMP: number = 10;
+    protected _maxSP: number = 10;
+    protected _maxHorizontalSpeedJoystickNeutral: number = 2.5;
+    protected _maxHorizontalSpeedJoystickFull: number = 12.5;
+    protected _maxVerticalSpeed: number = 50.0;
+    protected _jumpVerticalVelocity: number = 28.0;
+    protected _friction: number = 0.7;
+    protected _wallGravity: number = -83.333;
+    protected _jumpingGravity: number = -90.0;
+    protected _fullGravity: number = -100.0;
+
+    // Character State
     protected _hp!: number;
     protected _mp!: number;
     protected _skills!: Skill[];
     protected _moves!: Move[];
-
-    public readonly on: Map<string, boolean> = new Map([["ground",  false], ["wall", false]]);
-
-    protected abstract _gravity: number;
+    protected _canWallJumpNow: boolean = true;
+    protected _lastWallWallJumpedFrom: BABYLON.Nullable<BABYLON.AbstractMesh> = null;
+    protected _jumpState: boolean = false;
+    public readonly on: Map<NamespacedKey, boolean> = new Map([
+        [new NamespacedKey("game3d", "ground"),  false],
+        [new NamespacedKey("game3d", "wall"), false]
+    ]);
 
     public get mesh(): BABYLON.Mesh
     {
         return this._mesh;
     }
-    public get inputController(): InputController
-    {
-        return this._inputController;
-    }
-    public get height(): number
-    {
-        return this._height;
-    }
-    public get maxHP(): number
-    {
-        return this._maxHP;
-    }
-    public get maxMP(): number
-    {
-        return this._maxMP;
-    }
-    public get maxSP(): number
-    {
-        return this._maxSP;
-    }
-
     public get world(): World
     {
         return this._world;
     }
+    public get inputController(): InputController
+    {
+        return this._inputController;
+    }
+
+    // Character Location and Rotation
     public get pos(): BABYLON.Vector3
     {
         return this._pos;
@@ -90,6 +96,46 @@ export abstract class Entity {
     {
         return this._facingDirection;
     }
+
+    // Character Properties
+    public get height(): number
+    {
+        return this._height;
+    }
+    public get maxHP(): number
+    {
+        return this._maxHP;
+    }
+    public get maxMP(): number
+    {
+        return this._maxMP;
+    }
+    public get maxSP(): number
+    {
+        return this._maxSP;
+    }
+    public get maxHorizontalSpeedJoystickNeutral(): number {
+        return this._maxHorizontalSpeedJoystickNeutral;
+    }
+    public get maxHorizontalSpeedJoystickFull(): number {
+        return this._maxHorizontalSpeedJoystickFull;
+    }
+    public get maxVerticalSpeed(): number {
+        return this._maxVerticalSpeed;
+    }
+    public get jumpVerticalVelocity(): number {
+        return this._jumpVerticalVelocity;
+    }
+    public get friction(): number {
+        return this._friction;
+    }
+    public get gravity(): number {
+        if (this.on.get(World.WALL_KEY)) return this._wallGravity;
+        if (this._inputController.isJumpActive) return this._jumpingGravity;
+        return this._fullGravity;
+    }
+
+    // Character State
     public get hp(): number
     {
         return this._hp;
@@ -106,10 +152,16 @@ export abstract class Entity {
     {
         return this._moves;
     }
-
-    public get gravity(): number
+    public get canWallJumpNow(): boolean {
+        return this._canWallJumpNow;
+    }
+    public get lastWallWallJumpedFrom(): BABYLON.Nullable<AbstractMesh>
     {
-        return this._gravity;
+        return this._lastWallWallJumpedFrom;
+    }
+    public get jumpState(): boolean
+    {
+        return this._jumpState;
     }
 
     public set height(height: number) {
@@ -127,10 +179,11 @@ export abstract class Entity {
         this._world = world;
     }
 
+
     public setPositionAndRotation(
         pos: BABYLON.Vector3,
         rot: BABYLON.Quaternion
-    ): Entity {
+    ): Character {
         this._pos = this.mesh.position = pos;
         this._rot = this.mesh.rotationQuaternion = rot;
         return this;
@@ -140,40 +193,15 @@ export abstract class Entity {
         this._world.collidablesPerType.forEach((collidables, key) => {
             let ray: BABYLON.Ray = new BABYLON.Ray(this._pos,
                 this._vel.length() == 0 ? BABYLON.Vector3.Down() : this._vel, this._height / 2);
-            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
+            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.babylonScene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
-                    return collidables.map((collidable) => collidable.mesh).includes(mesh);
+                    return collidables.map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
             this.on.set(key, !!(hit && hit.pickedPoint));
         });
     }
-}
 
-export class Player extends Entity {
-    protected _maxHorizontalSpeed: number = -1.0;
-    protected _canWallJump: boolean = true;
-    protected _lastWallWallJumpedFrom: BABYLON.Nullable<BABYLON.AbstractMesh> = null;
-    protected _jumpState: boolean = false;
-    public readonly maxVerticalSpeed: number = 50.0;
-    public readonly jumpVerticalVelocity: number = 28.0;
-    public readonly friction: number = 0.7;
-
-    public get maxHorizontalSpeed(): number {
-        return this._maxHorizontalSpeed;
-    }
-    public get canWallJump(): boolean {
-        return this._canWallJump;
-    }
-    public get lastWallWallJumpedFrom(): BABYLON.Nullable<AbstractMesh>
-    {
-        return this._lastWallWallJumpedFrom;
-    }
-    public get jumpState(): boolean
-    {
-        return this._jumpState;
-    }
-
-    public accelerateAndRotateH(x: number, z: number): void {
+    public accelerateAndRotateHorizontalComponents(x: number, z: number): void {
         let r = Math.sqrt(x ** 2 + z ** 2);
 
         if (r > 0.01) { // Deadzone
@@ -181,7 +209,7 @@ export class Player extends Entity {
             x *= r / r1;
             z *= r / r1;
 
-            if (this.on.get("ground")) {
+            if (this.on.get(World.GROUND_KEY)) {
                 this.mesh.rotationQuaternion = BABYLON.Vector3.Up()
                     .scale(Math.atan2(z, x))
                     .toQuaternion();
@@ -190,31 +218,31 @@ export class Player extends Entity {
             }
 
             this._vel.set(
-                this._vel.x + this.hMovementScaleFactor * z,
+                this._vel.x + this.horizontalMovementScaleFactor * z,
                 this._vel.y,
-                this._vel.z + this.hMovementScaleFactor * x
+                this._vel.z + this.horizontalMovementScaleFactor * x
             )
         }
 
-        if (this.on.get("ground")) {
+        if (this.on.get(World.GROUND_KEY)) {
             this._vel.set(this.friction * this._vel.x, this._vel.y, this.friction * this._vel.z);
         }
     }
 
-    public jump(): void {
+    public preformJump(): void {
         this._vel.y = this.jumpVerticalVelocity;
     }
 
-    public wallJump(): void {
+    public preformWallJump(): void {
         if (!this._facingDirection) return;
         let ray: BABYLON.Ray = new BABYLON.Ray(this._pos, this._facingDirection, this._height / 2);
         let rayHelper: BABYLON.RayHelper = new BABYLON.RayHelper(ray);
-        rayHelper.show(this._world.game.scene, BABYLON.Color3.Red());
-        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
+        rayHelper.show(this._world.game.babylonScene, BABYLON.Color3.Red());
+        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.babylonScene.pickWithRay(ray,
             (mesh: BABYLON.AbstractMesh) => {
-                let walls = this._world.collidablesPerType.get("wall");
+                let walls = this._world.collidablesPerType.get(World.WALL_KEY);
                 if (!walls) return false;
-                return walls.map((wall) => wall.mesh).includes(mesh);
+                return walls.map((wall) => wall.babylonMesh).includes(mesh);
             });
         if (!hit) return;
         if (!hit.pickedMesh) return;
@@ -227,7 +255,7 @@ export class Player extends Entity {
             if (!hit.pickedPoint) return;
             let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalVector, 1);
             new BABYLON.RayHelper(rayNormal).show(
-                this._world.game.scene,
+                this._world.game.babylonScene,
                 BABYLON.Color3.Blue()
             );
             let normal: BABYLON.Quaternion = new BABYLON.Quaternion(
@@ -243,50 +271,32 @@ export class Player extends Entity {
             this._vel.subtractInPlace(
                 normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.vel, normalVectorNullable)));
             this._vel.set(this._vel.x, this.jumpVerticalVelocity, this._vel.z);
-            this._canWallJump = false;
+            this._canWallJumpNow = false;
             this._lastWallWallJumpedFrom = wall as BABYLON.AbstractMesh;
         }
     }
 
-    private executeJumpRoutine(): void {
-        if (!this._inputController.jumpPressed) {
-            this._jumpState = false;
-            this._canWallJump = true;
-        } else {
-            if (this.on.get("ground") && !this._jumpState) {
-                this.jump();
-                this._jumpState = true;
-            }
-            if (
-                this._canWallJump &&
-                this.on.get("wall") &&
-                !this.on.get("ground") &&
-                this._inputController.joystick.length() > 0.1
-            ) {
-                this.wallJump();
-            }
-        }
-        if (this.on.get("ground")) {
-            this._lastWallWallJumpedFrom = null;
-        }
-    }
-
     private applyHorizontalMovementInfluences(): void {
-        if (this._inputController.sprintHeld && this.on.get("ground")) {
-            this._maxHorizontalSpeed *= 1.3;
-        } else if (this._inputController.sprintHeld && !this.on.get("ground")) {
-            this._maxHorizontalSpeed *= 1.2;
+        let proportionalityConstant: number = 1.0;
+        if (this._inputController.isSprintActive && this.on.get(World.GROUND_KEY)) {
+            proportionalityConstant = 1.3;
+        } else if (this._inputController.isSprintActive && !this.on.get(World.GROUND_KEY)) {
+            proportionalityConstant = 1.2;
         }
-        if (this._vel.length() ** 2 - this._vel.y ** 2 > this._maxHorizontalSpeed ** 2) {
-            this._vel.normalizeFromLength(this._maxHorizontalSpeed);
+        if (this._vel.length() ** 2 - this._vel.y ** 2 > (proportionalityConstant *
+            (this._maxHorizontalSpeedJoystickNeutral * (1.0 - this._inputController.normalizedHorizontalAcceleration.length()) +
+                this._maxHorizontalSpeedJoystickFull * this._inputController.normalizedHorizontalAcceleration.length())) ** 2) {
+            this._vel.normalizeFromLength(proportionalityConstant *
+                (this._maxHorizontalSpeedJoystickNeutral * (1.0 - this._inputController.normalizedHorizontalAcceleration.length()) +
+                    this._maxHorizontalSpeedJoystickFull * this._inputController.normalizedHorizontalAcceleration.length()));
         }
     }
 
     private applyGravity(getDeltaTime: () => number): void {
-        if (!this.on.get("ground")) {
-            this._vel.y += 0.5 * this._gravity * (getDeltaTime() / 1000.0);
+        if (!this.on.get(World.GROUND_KEY)) {
+            this._vel.y += 0.5 * this.gravity * (getDeltaTime() / 1000.0);
         }
-        if (this.on.get("ground") && this._vel.y < 0.0) {
+        if (this.on.get(World.GROUND_KEY) && this._vel.y < 0.0) {
             this._vel.y = 0.0;
         }
     }
@@ -297,16 +307,33 @@ export class Player extends Entity {
         }
     }
 
-    private moveMesh(getDeltaTime: () => number): void {
-        this._maxHorizontalSpeed = 2.5 + 10.0 * this._inputController.joystick.length();
-
-        if (this._inputController.joystick != null) {
-            this.accelerateAndRotateH(
-                this._inputController.joystick.x,
-                this._inputController.joystick.z
+    private move(getDeltaTime: () => number): void {
+        if (this._inputController.normalizedHorizontalAcceleration != null) {
+            this.accelerateAndRotateHorizontalComponents(
+                this._inputController.normalizedHorizontalAcceleration.x,
+                this._inputController.normalizedHorizontalAcceleration.z
             );
         }
-        this.executeJumpRoutine();
+        if (!this._inputController.isJumpActive) {
+            this._jumpState = false;
+            this._canWallJumpNow = true;
+        } else {
+            if (this.on.get(World.GROUND_KEY) && !this._jumpState) {
+                this.preformJump();
+                this._jumpState = true;
+            }
+            if (
+                this._canWallJumpNow &&
+                this.on.get(World.WALL_KEY) &&
+                !this.on.get(World.GROUND_KEY) &&
+                this._inputController.normalizedHorizontalAcceleration.length() > 0.1
+            ) {
+                this.preformWallJump();
+            }
+        }
+        if (this.on.get(World.GROUND_KEY)) {
+            this._lastWallWallJumpedFrom = null;
+        }
 
         this.applyHorizontalMovementInfluences();
         this.applyGravity(getDeltaTime);
@@ -317,9 +344,9 @@ export class Player extends Entity {
         if (deltaPos.length() > 0) {
             this._world.collidablesPerType.forEach((collidables, _key) => {
                 let ray: BABYLON.Ray = new BABYLON.Ray(this._pos, deltaPos, deltaPos.length());
-                let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.scene.pickWithRay(ray,
+                let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._world.game.babylonScene.pickWithRay(ray,
                     (mesh: BABYLON.AbstractMesh) => {
-                        return collidables.map((collidable) => collidable.mesh).includes(mesh);
+                        return collidables.map((collidable) => collidable.babylonMesh).includes(mesh);
                     });
                 if (hit && hit.pickedPoint) {
                     this._mesh.position = this._pos = hit.pickedPoint as BABYLON.Vector3;
@@ -335,21 +362,15 @@ export class Player extends Entity {
         this.capYVelocity();
     }
 
-    public tick(cameraAngle: BABYLON.Quaternion, getDeltaTime: () => number): void {
+    public preformTick(cameraAngle: BABYLON.Quaternion, getDeltaTime: () => number): void {
         console.assert(!!cameraAngle, "Camera angle cannot be undefined");
         this.checkCollisions();
-        this._inputController.tick(this, this._world);
-        this._inputController.joystick.rotateByQuaternionToRef(cameraAngle, this._inputController.joystick);
-        this.moveMesh(getDeltaTime);
+        this._inputController.preformTick(this, this._world);
+        this._inputController.normalizedHorizontalAcceleration.rotateByQuaternionToRef(cameraAngle, this._inputController.normalizedHorizontalAcceleration);
+        this.move(getDeltaTime);
     }
 
-    public get _gravity(): number {
-        if (this.on.get("wall")) return -83.333;
-        if (this._inputController.jumpPressed) return -90.0;
-        return -100.0;
-    }
-
-    protected get hMovementScaleFactor() {
-        return this.on.get("ground") ? 5.0 : 1.0;
+    protected get horizontalMovementScaleFactor() {
+        return this.on.get(World.GROUND_KEY) ? 5.0 : 1.0;
     }
 }

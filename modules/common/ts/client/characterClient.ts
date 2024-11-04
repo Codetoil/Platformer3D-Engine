@@ -20,11 +20,16 @@
 import * as BABYLON from "@babylonjs/core";
 import {Mixin} from "ts-mixer";
 import {PlayerInputController} from "./clientInputController";
-import {Entity, Player} from "../common/entity";
+import {Character, Player} from "../common/character";
 import type {World} from "../common/world";
 
-export abstract class EntityClient extends Entity {
+export class CharacterClient extends Character {
     protected _texture?: BABYLON.Texture;
+
+    public constructor() {
+        super();
+        this._inputController = new PlayerInputController();
+    }
 
     public get texture(): BABYLON.Texture | undefined
     {
@@ -35,17 +40,9 @@ export abstract class EntityClient extends Entity {
     {
         this._texture = texture;
     }
-}
-
-export class PlayerClient extends Mixin(EntityClient, Player) {
-
-    public constructor() {
-        super();
-        this._inputController = new PlayerInputController();
-    }
 
     public set world(world: World) {
         this._world = world;
-        (this._inputController as PlayerInputController).setEngine(this._world.game.engine);
+        (this._inputController as PlayerInputController).setEngine(this._world.game.babylonEngine);
     }
 }

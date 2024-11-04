@@ -18,7 +18,7 @@
 
 import * as BABYLON from "@babylonjs/core";
 import type {InputController} from "../common/inputController";
-import {PlayerClient} from "./entityClient";
+import {PlayerClient} from "./characterClient";
 import {WorldClient} from "./worldClient";
 
 export class PlayerInputController implements InputController {
@@ -27,15 +27,15 @@ export class PlayerInputController implements InputController {
     protected _jumpPressed: boolean = false;
     private deviceSourceManager!: BABYLON.DeviceSourceManager;
 
-    public get joystick(): BABYLON.Vector3 {
+    public get normalizedHorizontalAcceleration(): BABYLON.Vector3 {
         return this._joystick;
     }
 
-    public get sprintHeld(): boolean {
+    public get isSprintActive(): boolean {
         return this._sprintHeld;
     }
 
-    public get jumpPressed(): boolean {
+    public get isJumpActive(): boolean {
         return this._jumpPressed;
     }
 
@@ -52,7 +52,7 @@ export class PlayerInputController implements InputController {
         }
     }
 
-    public tick(_entity: PlayerClient, world: WorldClient): void {
+    public preformTick(_entity: PlayerClient, world: WorldClient): void {
         this._sprintHeld = false;
         this._jumpPressed = false;
         this._joystick = BABYLON.Vector3.Zero();
@@ -169,7 +169,7 @@ export class PlayerInputController implements InputController {
                 gamepadSource.getInput(BABYLON.DualShockInput.Cross) === 1;
         }
         this._joystick.rotateByQuaternionToRef(
-            (world.game.camera as BABYLON.ArcFollowCamera).rotationQuaternion,
+            (world.game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
             this._joystick
         );
     }

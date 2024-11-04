@@ -29,7 +29,7 @@ function startServer(gameServerIntegratedType: { GameServerIntegrated: GameServe
             console.error("FAILED TO LOAD WORLD: ");
             console.error(reason);
         });
-        value.initLoop();
+        value.initializeMainLoop();
     });
 }
 

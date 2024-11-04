@@ -18,9 +18,9 @@
 import {NamespacedKey} from "./namespacedKey";
 
 export class Item {
-    public readonly key: NamespacedKey;
+    public readonly namespacedKey: NamespacedKey;
 
     public constructor(key: NamespacedKey) {
-        this.key = key;
+        this.namespacedKey = key;
     }
 }

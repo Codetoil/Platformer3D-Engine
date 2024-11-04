@@ -15,21 +15,20 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import {Item} from "./item";
 import {NamespacedKey} from "./namespacedKey";
 
-export enum MoveLevel {
-    REGULAR,
-    SUPER,
-    ULTRA
+export class MoveLevel {
+    public static readonly REGULAR_KEY: NamespacedKey = new NamespacedKey("game3d", "regular");
+    public static readonly SUPER_KEY: NamespacedKey = new NamespacedKey("game3d", "super");
+    public static readonly ULTRA_KEY: NamespacedKey = new NamespacedKey("game3d", "ultra");
 }
 
 export class Move {
-    public readonly key: NamespacedKey;
-    public readonly level: MoveLevel;
+    public readonly namespacedKey: NamespacedKey;
+    public readonly moveLevel: NamespacedKey;
 
-    public constructor(key: NamespacedKey, level: MoveLevel) {
-        this.key = key;
-        this.level = level;
+    public constructor(key: NamespacedKey, level: NamespacedKey) {
+        this.namespacedKey = key;
+        this.moveLevel = level;
     }
 }

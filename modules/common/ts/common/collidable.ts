@@ -18,21 +18,24 @@
 
 import type * as BABYLON from "@babylonjs/core";
 
+/**
+ * An object that can collide with surfaces.
+ */
 export class Collidable {
-    protected _mesh!: BABYLON.AbstractMesh;
+    protected _babylonMesh!: BABYLON.AbstractMesh;
 
-    public get mesh(): BABYLON.AbstractMesh {
-        return this._mesh;
+    public get babylonMesh(): BABYLON.AbstractMesh {
+        return this._babylonMesh;
     }
 
-    public set mesh(mesh: BABYLON.AbstractMesh) {
-        if (this._mesh) return;
-        this._mesh = mesh;
+    public set babylonMesh(mesh: BABYLON.AbstractMesh) {
+        if (this._babylonMesh) return;
+        this._babylonMesh = mesh;
     }
 
-    constructor(mesh?: BABYLON.AbstractMesh) {
-        if (mesh)
-            this._mesh = mesh;
+    constructor(babylonMesh?: BABYLON.AbstractMesh) {
+        if (babylonMesh)
+            this._babylonMesh = babylonMesh;
     }
 
 }

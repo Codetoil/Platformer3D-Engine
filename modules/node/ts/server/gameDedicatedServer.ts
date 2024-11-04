@@ -25,19 +25,19 @@ import { GameServer } from "game3d-common/ts/server/gameServer";
 export class GameDedicatedServer extends GameServer {
     public readonly name: string = "Game3D Dedicated Server";
     public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
-        this.init(resolve, reject);
+        this.initialize(resolve, reject);
     });
-    public init(
+    public initialize(
         resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
     ) {
-        super.init(resolve, reject);
+        super.initialize(resolve, reject);
     }
 
-    public async createEngine(): Promise<BABYLON.NullEngine> {
-        this._engine = new BABYLON.NullEngine();
+    public async createBabylonEngine(): Promise<BABYLON.NullEngine> {
+        this._babylonEngine = new BABYLON.NullEngine();
         console.log("Engine initialized...")
-        return this._engine as unknown as BABYLON.NullEngine;
+        return this._babylonEngine as unknown as BABYLON.NullEngine;
     }
 }
 
@@ -48,5 +48,5 @@ gameDedicatedServer.ready.then((value) => {
             console.error("FAILED TO LOAD WORLD: ");
             console.error(reason);
     });
-    value.initLoop();
+    value.initializeMainLoop();
 });

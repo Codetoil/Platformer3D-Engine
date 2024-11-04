@@ -24,7 +24,7 @@ export class GameClientWeb extends GameClient {
     public readonly name: string = "Game3D Web Client";
     public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
-            this.init(resolve, reject);
+            this.initialize(resolve, reject);
         });
     });
     protected _canvas!: HTMLCanvasElement;
@@ -33,14 +33,14 @@ export class GameClientWeb extends GameClient {
         return this._canvas;
     }
 
-    public init(
+    public initialize(
         resolve: (value: Game | Promise<Game>) => void,
         reject: (reason?: any) => void
     ) {
         this._canvas = document.getElementById(
             "renderCanvas"
         ) as HTMLCanvasElement;
-        super.init(resolve, reject);
+        super.initialize(resolve, reject);
     }
 
     public assetsDir(): string {
@@ -48,21 +48,21 @@ export class GameClientWeb extends GameClient {
     }
 
     public async createWebGPUEngine(): Promise<void> {
-        this._engine = new BABYLON.WebGPUEngine(this.canvas, {
+        this._babylonEngine = new BABYLON.WebGPUEngine(this.canvas, {
             antialias: true,
             stencil: true
         }) as unknown as BABYLON.Engine;
-        await (this._engine as unknown as BABYLON.WebGPUEngine).initAsync();
+        await (this._babylonEngine as unknown as BABYLON.WebGPUEngine).initAsync();
     }
 
     public createWebGLEngine(): void {
-        this._engine = new BABYLON.Engine(this.canvas, true, {
+        this._babylonEngine = new BABYLON.Engine(this.canvas, true, {
             stencil: true,
             disableWebGL2Support: false,
         });
     }
 
-    public async createEngine(): Promise<BABYLON.Engine> {
+    public async createBabylonEngine(): Promise<BABYLON.Engine> {
         const webGPUSupported = await BABYLON.WebGPUEngine.IsSupportedAsync;
         console.info("Using WebGPU: " + webGPUSupported);
         if (webGPUSupported) {
@@ -71,13 +71,13 @@ export class GameClientWeb extends GameClient {
             this.createWebGLEngine();
         }
         console.log("Engine initialized...")
-        return this._engine;
+        return this._babylonEngine;
     }
 }
 
 export class EventHandler {
     public static onResize(gameClient: GameClientWeb) {
-        gameClient.engine.resize();
+        gameClient.babylonEngine.resize();
     }
 }
 
@@ -90,5 +90,5 @@ gameClient.ready.then((value) => {
     });
     // ^temporary, will add menu later.
     window.addEventListener("resize", EventHandler.onResize.bind(null, value as GameClientWeb));
-    value.initLoop();
+    value.initializeMainLoop();
 });

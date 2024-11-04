@@ -25,23 +25,23 @@ import {World} from "../common/world";
 export abstract class GameClient extends Game {
     public abstract assetsDir(): string;
 
-    public abstract createEngine(): Promise<BABYLON.Engine>;
+    public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
 
-    public onLoad()
+    public onLoad(): void
     {
         this.worlds.push(new WorldClient(this));
     }
 
     public setMenuCamera(): void {
-        this.camera = new BABYLON.UniversalCamera(
+        this.babylonCamera = new BABYLON.UniversalCamera(
             "default",
             new BABYLON.Vector3(0, 0, 0),
-            this.scene
+            this.babylonScene
         );
     }
 
     public additionalStoppingConditions(): boolean {
-        return !this.scene.activeCamera;
+        return !this.babylonScene.activeCamera;
     }
 }
 

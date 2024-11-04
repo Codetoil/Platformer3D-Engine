@@ -18,7 +18,7 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {World} from "../common/world";
-import {Player} from "../common/entity";
+import {Player} from "../common/character";
 import {Collidable} from "../common/collidable";
 
 export class WorldServer extends World {
@@ -37,9 +37,9 @@ export class WorldServer extends World {
         const ground: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane(
             "ground",
             {width: 20.0, height: 20.0},
-            this._game.scene
+            this._game.babylonScene
         );
-        ground.material = new BABYLON.StandardMaterial("groundMat", this.game.scene);
+        ground.material = new BABYLON.StandardMaterial("groundMat", this.game.babylonScene);
         (ground.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(1, 1, 1);
         ground.material.backFaceCulling = false;
@@ -51,9 +51,9 @@ export class WorldServer extends World {
         let wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall",
             {width: 15, height: 15, depth: 0.75},
-            this._game.scene
+            this._game.babylonScene
         );
-        wall.material = new BABYLON.StandardMaterial("wallMat", this.game.scene);
+        wall.material = new BABYLON.StandardMaterial("wallMat", this.game.babylonScene);
         (wall.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(1, 1, 1);
         wall.material.backFaceCulling = false;
@@ -65,7 +65,7 @@ export class WorldServer extends World {
         var wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall2",
             {width: 15, height: 15, depth: 0.75},
-            this._game.scene
+            this._game.babylonScene
         );
         wall2.material = wall.material;
         wall2.position = new BABYLON.Vector3(6.8, -2.5, -15);
@@ -76,7 +76,7 @@ export class WorldServer extends World {
         const platform = BABYLON.MeshBuilder.CreateBox(
             "platform1",
             {width: 5.0, depth: 5.0, height: 0.5},
-            this._game.scene
+            this._game.babylonScene
         );
         platform.material = wall.material;
         platform.position = new BABYLON.Vector3(17, -10, -10);
@@ -86,10 +86,10 @@ export class WorldServer extends World {
         const dbox = BABYLON.MeshBuilder.CreateBox(
             "dbox",
             {width: 1, height: 2, depth: 1},
-            this._game.scene
+            this._game.babylonScene
         );
         dbox.position = wall.position;
-        dbox.material = new BABYLON.StandardMaterial("dboxMat", this.game.scene);
+        dbox.material = new BABYLON.StandardMaterial("dboxMat", this.game.babylonScene);
         (dbox.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(0, 1, 1);
         dbox.material.backFaceCulling = false;
@@ -100,24 +100,24 @@ export class WorldServer extends World {
         new BABYLON.HemisphericLight(
             "hemi",
             new BABYLON.Vector3(0, 1, 0),
-            this._game.scene
+            this._game.babylonScene
         );
 
         console.debug("Initializing Camera...");
-        this._game.camera = new BABYLON.ArcRotateCamera(
+        this._game.babylonCamera = new BABYLON.ArcRotateCamera(
             "fake_camera",
             Math.PI / 2,
             0.5,
             10,
             new BABYLON.Vector3(0, 0, 0),
-            this.game.scene
+            this.game.babylonScene
         );
-        (this._game.camera as BABYLON.ArcFollowCamera).orthoBottom = -10;
-        (this._game.camera as BABYLON.ArcFollowCamera).orthoLeft = -10;
-        (this._game.camera as BABYLON.ArcFollowCamera).orthoRight = 10;
-        (this._game.camera as BABYLON.ArcFollowCamera).orthoTop = 10;
-        this._game.camera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        (this._game.camera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).orthoBottom = -10;
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).orthoLeft = -10;
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).orthoRight = 10;
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).orthoTop = 10;
+        this._game.babylonCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        (this._game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
             Math.PI / 2,
             0.0,
             0.0

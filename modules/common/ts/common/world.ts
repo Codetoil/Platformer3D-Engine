@@ -23,10 +23,12 @@ import {NamespacedKey} from "./namespacedKey";
 export abstract class World {
     protected _game: Game;
     protected _loaded!: boolean;
+    public static readonly GROUND_KEY: NamespacedKey = new NamespacedKey("game3d", "ground");
+    public static readonly WALL_KEY: NamespacedKey = new NamespacedKey("game3d", "wall");
     public readonly collidablesPerType: Map<NamespacedKey, Collidable[]>
         = new Map([
-            [new NamespacedKey("game3d", "ground"), []],
-            [new NamespacedKey("game3d", "wall"), []]
+            [World.GROUND_KEY, []],
+            [World.WALL_KEY, []]
         ]);
 
     constructor(game: Game) {
