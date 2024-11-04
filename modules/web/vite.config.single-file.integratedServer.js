@@ -1,5 +1,6 @@
 import {defineConfig} from 'vite';
 import resolve from '@rollup/plugin-node-resolve'
+import {viteSingleFile} from "vite-plugin-singlefile";
 
 export default defineConfig({
 	build: {
@@ -10,14 +11,14 @@ export default defineConfig({
 			formats: ['es']
 		},
 		output: {
-			dir: 'dist/gh-pages'
+			dir: 'dist/single-file'
 		},
 		emptyOutDir: false
 	},
 	plugins: [
 		resolve({
 			extensions: ['.js', '.ts']
-		})
-	],
-	base: "https://game3d.codetoil.io"
+		}),
+		viteSingleFile()
+	]
 });

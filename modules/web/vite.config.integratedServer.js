@@ -1,4 +1,4 @@
-import {defineConfig, searchForWorkspaceRoot} from 'vite';
+import {defineConfig} from 'vite';
 import resolve from '@rollup/plugin-node-resolve'
 
 export default defineConfig({

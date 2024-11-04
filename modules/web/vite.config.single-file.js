@@ -1,17 +1,19 @@
 import { defineConfig } from 'vite';
+import {viteSingleFile} from "vite-plugin-singlefile";
 
 export default defineConfig({
 	build: {
 		rollupOptions: {
 			input: {
-				client: '/index.html'
+				client: '/index-single-file.html'
 			},
 			output: {
 				format: 'es',
-				dir: 'dist/gh-pages'
+				dir: 'dist/single-file'
 			}
 		},
 	},
-	plugins: [],
-	base: "https://game3d.codetoil.io"
+	plugins: [
+		viteSingleFile()
+	]
 });
