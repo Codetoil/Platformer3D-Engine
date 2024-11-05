@@ -16,13 +16,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type {Game} from "./game";
+import type {GameEngine} from "./gameEngine";
 import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
 
 export abstract class World {
-    protected _game: Game;
-    protected _loaded!: boolean;
+    protected _gameEngine: GameEngine;
+    protected _isWorldLoaded!: boolean;
+    public readonly namespacedKey: NamespacedKey;
     public static readonly GROUND_KEY: NamespacedKey = new NamespacedKey("game3d", "ground");
     public static readonly WALL_KEY: NamespacedKey = new NamespacedKey("game3d", "wall");
     public readonly collidablesPerType: Map<NamespacedKey, Collidable[]>
@@ -31,21 +32,22 @@ export abstract class World {
             [World.WALL_KEY, []]
         ]);
 
-    constructor(game: Game) {
-        this._game = game;
+    constructor(game: GameEngine, namespacedKey: NamespacedKey) {
+        this._gameEngine = game;
+        this.namespacedKey = namespacedKey;
     }
 
-    public get game(): Game
+    public get gameEngine(): GameEngine
     {
-        return this._game;
+        return this._gameEngine;
     }
 
-    public get loaded(): boolean
+    public get isWorldLoaded(): boolean
     {
-        return this._loaded;
+        return this._isWorldLoaded;
     }
 
-    public abstract load(): Promise<void>;
+    public abstract loadWorld(): Promise<void>;
 
-    public abstract tick(): void;
+    public abstract preformTick(): void;
 }

@@ -18,12 +18,12 @@
 
 
 import * as BABYLON from "@babylonjs/core";
-import { Game } from "../common/game";
+import { GameEngine } from "../common/gameEngine";
 import {GameServer} from "./gameServer";
 
 export class GameServerIntegrated extends GameServer {
     public readonly name: string = "Game3D Integrated Server";
-    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         this.initialize(resolve, reject);
     });
 
@@ -32,7 +32,7 @@ export class GameServerIntegrated extends GameServer {
     }
 
     public initialize(
-        resolve: (value: Game | Promise<Game>) => void,
+        resolve: (value: GameEngine | Promise<GameEngine>) => void,
         reject: (reason?: any) => void
     ) {
         super.initialize(resolve, reject);

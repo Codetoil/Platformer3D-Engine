@@ -17,12 +17,12 @@
  */
 
 import * as BABYLON from "@babylonjs/core";
-import {Game} from "game3d-common/ts/common/game";
+import {GameEngine} from "game3d-common/ts/common/gameEngine";
 import {GameClient} from "game3d-common/ts/client/gameClient";
 
 export class GameClientWeb extends GameClient {
     public readonly name: string = "Game3D Web Client";
-    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
             this.initialize(resolve, reject);
         });
@@ -34,7 +34,7 @@ export class GameClientWeb extends GameClient {
     }
 
     public initialize(
-        resolve: (value: Game | Promise<Game>) => void,
+        resolve: (value: GameEngine | Promise<GameEngine>) => void,
         reject: (reason?: any) => void
     ) {
         this._canvas = document.getElementById(

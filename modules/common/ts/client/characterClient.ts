@@ -28,7 +28,7 @@ export class CharacterClient extends Character {
 
     public constructor() {
         super();
-        this._inputController = new PlayerInputController();
+        this._characterInputController = new PlayerInputController();
     }
 
     public get texture(): BABYLON.Texture | undefined
@@ -41,8 +41,8 @@ export class CharacterClient extends Character {
         this._texture = texture;
     }
 
-    public set world(world: World) {
-        this._world = world;
-        (this._inputController as PlayerInputController).setEngine(this._world.game.babylonEngine);
+    public set characterWorld(world: World) {
+        this._characterWorld = world;
+        (this._characterInputController as PlayerInputController).setEngine(this._characterWorld.gameEngine.babylonEngine);
     }
 }

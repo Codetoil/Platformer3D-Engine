@@ -52,7 +52,7 @@ export class WorldClient extends World {
         // TODO - Load world from network into `this.collidablesPerType`
     }
 
-    public async load(): Promise<void> {
+    public async loadWorld(): Promise<void> {
         console.info("Loading World...");
         await this.read();
         console.debug("Initializing Player...");
@@ -63,7 +63,7 @@ export class WorldClient extends World {
             {
                 diameter: 1.5
             },
-            this._game.babylonScene
+            this._gameEngine.babylonScene
         );
         this._player.setPositionAndRotation(
             new BABYLON.Vector3(5, -5, -10),
@@ -73,11 +73,11 @@ export class WorldClient extends World {
         this._player.world = this;
         this._player.mesh.material = new BABYLON.StandardMaterial(
             "playerMat",
-            this.game.babylonScene
+            this.gameEngine.babylonScene
         );
         this._player.texture = new BABYLON.Texture(
-            (this.game as GameClient).assetsDir() + "temp_player.png",
-            this.game.babylonScene
+            (this.gameEngine as GameClient).assetsDir() + "temp_player.png",
+            this.gameEngine.babylonScene
         );
         (this._player.mesh.material as BABYLON.StandardMaterial).diffuseTexture =
             this._player.texture;
@@ -85,28 +85,28 @@ export class WorldClient extends World {
         this._player.on.set("ground", true);
 
         console.debug("Initializing Camera...");
-        this._game.babylonCamera = new BABYLON.ArcFollowCamera(
+        this._gameEngine.babylonCamera = new BABYLON.ArcFollowCamera(
             "camera",
             Math.PI / 2,
             0.5,
             10,
             this.player.mesh,
-            this.game.babylonScene
+            this.gameEngine.babylonScene
         );
-        (this._game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+        (this._gameEngine.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
             Math.PI / 2,
             0,
             0.25
         ).toQuaternion();
-        this._loaded = true;
+        this._isWorldLoaded = true;
     }
 
-    public tick() {
-        this._player.tick((this._game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
+    public preformTick() {
+        this._player.tick((this._gameEngine.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
             () => (((a: number | undefined): number => {
                 if (a != undefined)
                     return a;
                 return 0.0;
-            })(this._game.babylonScene.deltaTime)));
+            })(this._gameEngine.babylonScene.deltaTime)));
     }
 }

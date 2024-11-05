@@ -16,6 +16,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * A namespaced key. Contains a namespace and a key.
+ */
 export class NamespacedKey {
     public readonly namespace: string;
     public readonly key: string;

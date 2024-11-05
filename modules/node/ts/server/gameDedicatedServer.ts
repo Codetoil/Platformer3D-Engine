@@ -19,16 +19,16 @@
 /// <reference lib="es2022" />
 
 import * as BABYLON from "@babylonjs/core";
-import { Game } from "game3d-common/ts/common/game";
+import { GameEngine } from "game3d-common/ts/common/gameEngine";
 import { GameServer } from "game3d-common/ts/server/gameServer";
 
 export class GameDedicatedServer extends GameServer {
     public readonly name: string = "Game3D Dedicated Server";
-    public readonly ready: Promise<Game> = new Promise((resolve, reject) => {
+    public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         this.initialize(resolve, reject);
     });
     public initialize(
-        resolve: (value: Game | Promise<Game>) => void,
+        resolve: (value: GameEngine | Promise<GameEngine>) => void,
         reject: (reason?: any) => void
     ) {
         super.initialize(resolve, reject);

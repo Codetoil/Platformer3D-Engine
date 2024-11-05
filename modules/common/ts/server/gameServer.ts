@@ -17,11 +17,11 @@
  */
 
 import * as BABYLON from "@babylonjs/core";
-import {Game} from "../common/game";
+import {GameEngine} from "../common/gameEngine";
 import {WorldServer} from "./worldServer";
 import {World} from "../common/world";
 
-export abstract class GameServer extends Game {
+export abstract class GameServer extends GameEngine {
     public constructor() {
         super();
     }

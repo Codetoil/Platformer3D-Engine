@@ -20,10 +20,13 @@ import type * as BABYLON from "@babylonjs/core";
 import type {Character} from "./character";
 import type {World} from "./world";
 
-export interface InputController {
+/**
+ * Controls a character.
+ */
+export interface CharacterInputController {
     isSprintActive: boolean;
     isJumpActive: boolean;
-    normalizedHorizontalAcceleration: BABYLON.Vector3;
+    normalizedHorizontalMovement: BABYLON.Vector2;
 
     preformTick(entity: Character, world: World): void;
 }

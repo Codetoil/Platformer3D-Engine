@@ -18,11 +18,11 @@
 
 
 import * as BABYLON from "@babylonjs/core";
-import {Game} from "../common/game";
+import {GameEngine} from "../common/gameEngine";
 import {WorldClient} from "./worldClient";
 import {World} from "../common/world";
 
-export abstract class GameClient extends Game {
+export abstract class GameClient extends GameEngine {
     public abstract assetsDir(): string;
 
     public abstract createBabylonEngine(): Promise<BABYLON.Engine>;

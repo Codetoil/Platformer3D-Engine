@@ -23,7 +23,7 @@ import {VERSION} from "./version";
 /**
  * Base class for the Game Engine
  */
-export abstract class Game {
+export abstract class GameEngine {
     public readonly abstract name: string;
     public readonly worlds: World[] = [];
     protected _babylonEngine!: BABYLON.Engine;
@@ -66,7 +66,7 @@ export abstract class Game {
 
     public abstract onLoad(): void;
 
-    public initialize(resolve: (value: Game | Promise<Game>) => void, reject: (reason?: any) => void) {
+    public initialize(resolve: (value: GameEngine | Promise<GameEngine>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
         this.createBabylonEngine()
             .then((engine) => {
@@ -103,7 +103,7 @@ export abstract class Game {
 
     public preformTick(): void {
         if (this.shouldStop()) return;
-        this.worlds.forEach(world => world.tick);
+        this.worlds.forEach(world => world.preformTick);
     }
 
     public initializeMainLoop() {

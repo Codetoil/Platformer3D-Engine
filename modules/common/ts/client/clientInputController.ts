@@ -17,17 +17,17 @@
  */
 
 import * as BABYLON from "@babylonjs/core";
-import type {InputController} from "../common/inputController";
+import type {CharacterInputController} from "../common/characterInputController";
 import {PlayerClient} from "./characterClient";
 import {WorldClient} from "./worldClient";
 
-export class PlayerInputController implements InputController {
+export class PlayerInputController implements CharacterInputController {
     protected _joystick: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     protected _sprintHeld: boolean = false;
     protected _jumpPressed: boolean = false;
     private deviceSourceManager!: BABYLON.DeviceSourceManager;
 
-    public get normalizedHorizontalAcceleration(): BABYLON.Vector3 {
+    public get normalizedHorizontalMovement(): BABYLON.Vector3 {
         return this._joystick;
     }
 
@@ -169,7 +169,7 @@ export class PlayerInputController implements InputController {
                 gamepadSource.getInput(BABYLON.DualShockInput.Cross) === 1;
         }
         this._joystick.rotateByQuaternionToRef(
-            (world.game.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
+            (world.gameEngine.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
             this._joystick
         );
     }
