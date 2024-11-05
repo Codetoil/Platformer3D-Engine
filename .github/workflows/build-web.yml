@@ -21,11 +21,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd modules/web
       - run: npm install
+        working-directory: ./modules/web
       - run: npm run build
+        working-directory: ./modules/web
       - name: Upload Output
         uses: actions/upload-artifact@v4
+        working-directory: ./modules/web
         with:
           name: dist
           path: dist
