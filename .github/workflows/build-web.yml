@@ -27,7 +27,6 @@ jobs:
         working-directory: ./modules/web
       - name: Upload Output
         uses: actions/upload-artifact@v4
-        working-directory: ./modules/web
         with:
           name: dist
-          path: dist
+          path: modules/web/dist
