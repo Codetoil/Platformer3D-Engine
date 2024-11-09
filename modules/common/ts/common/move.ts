@@ -18,7 +18,19 @@
 import {NamespacedKey} from "./namespacedKey";
 
 export class MoveLevel {
-    public static readonly REGULAR_KEY: NamespacedKey = new NamespacedKey("game3d", "regular");
-    public static readonly SUPER_KEY: NamespacedKey = new NamespacedKey("game3d", "super");
-    public static readonly ULTRA_KEY: NamespacedKey = new NamespacedKey("game3d", "ultra");
+    public readonly key: NamespacedKey;
+
+    public constructor(key: NamespacedKey) {
+        this.key = key;
+    }
+}
+
+export class Move {
+    public readonly key: NamespacedKey;
+    public readonly moveLevel: MoveLevel;
+
+    public constructor(key: NamespacedKey, moveLevel: MoveLevel) {
+        this.key = key;
+        this.moveLevel = moveLevel;
+    }
 }

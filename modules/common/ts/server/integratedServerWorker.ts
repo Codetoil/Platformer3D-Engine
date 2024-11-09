@@ -20,15 +20,13 @@
 /// <reference lib="webworker" />
 
 import type { GameServerIntegrated } from "./gameServerIntegrated";
+import {Levelpack} from "../levelpack/levelpack";
 
 function startServer(gameServerIntegratedType: { GameServerIntegrated: GameServerIntegrated }): void {
     const gameServerIntegrated: GameServerIntegrated = new gameServerIntegratedType.GameServerIntegrated();
 
     gameServerIntegrated.ready.then((value) => {
-        value.world!.load().catch((reason: any) => {
-            console.error("FAILED TO LOAD WORLD: ");
-            console.error(reason);
-        });
+        Levelpack.load();
         value.initializeMainLoop();
     });
 }

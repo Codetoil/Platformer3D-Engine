@@ -27,7 +27,7 @@ export abstract class GameClient extends GameEngine {
 
     public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
 
-    public onLoad(): void
+    public async onLoad(): Promise<void>
     {
         this.worlds.push(new WorldClient(this));
     }

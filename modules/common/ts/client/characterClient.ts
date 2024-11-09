@@ -19,7 +19,7 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {Mixin} from "ts-mixer";
-import {PlayerInputController} from "./clientInputController";
+import {PlayerInputController} from "./playerInputController";
 import {Character, Player} from "../common/character";
 import type {World} from "../common/world";
 

@@ -15,18 +15,15 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-import type * as BABYLON from "@babylonjs/core";
-import type {Character} from "./character";
-import type {World} from "./world";
+import {NamespacedKey} from "./namespacedKey";
 
 /**
- * Controls a character.
+ * A slot in a {@link Character.characterInventory}
  */
-export interface CharacterInputController {
-    isSprintActive: boolean;
-    isJumpActive: boolean;
-    normalizedHorizontalMovement: BABYLON.Vector2;
+export class InventorySlot {
+    public readonly key: NamespacedKey;
 
-    preformTick(character: Character, world: World): void;
+    public constructor(key: NamespacedKey) {
+        this.key = key;
+    }
 }

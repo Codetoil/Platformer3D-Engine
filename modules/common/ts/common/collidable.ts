@@ -17,25 +17,37 @@
  */
 
 import type * as BABYLON from "@babylonjs/core";
+import {NamespacedKey} from "./namespacedKey";
 
 /**
- * An object that can collide with surfaces.
+ * A type of {@link Collidable}
+ */
+export class CollidableType {
+    public readonly key: NamespacedKey;
+
+    public constructor(key: NamespacedKey) {
+        this.key = key;
+    }
+}
+
+/**
+ * An object that can collide with characters.
  */
 export class Collidable {
-    protected _babylonMesh!: BABYLON.AbstractMesh;
+    protected _babylonMesh: BABYLON.AbstractMesh;
+    protected _collidableCategory: CollidableType;
 
     public get babylonMesh(): BABYLON.AbstractMesh {
         return this._babylonMesh;
     }
 
-    public set babylonMesh(mesh: BABYLON.AbstractMesh) {
-        if (this._babylonMesh) return;
-        this._babylonMesh = mesh;
+    public get collidableCategory(): CollidableType {
+        return this._collidableCategory;
     }
 
-    constructor(babylonMesh?: BABYLON.AbstractMesh) {
-        if (babylonMesh)
-            this._babylonMesh = babylonMesh;
+    constructor(babylonMesh: BABYLON.AbstractMesh, collidableCategory: CollidableType) {
+        this._babylonMesh = babylonMesh;
+        this._collidableCategory = collidableCategory;
     }
 
 }

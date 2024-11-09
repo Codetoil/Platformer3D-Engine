@@ -27,19 +27,11 @@ export abstract class GameEngine {
     public readonly abstract name: string;
     public readonly worlds: World[] = [];
     protected _babylonEngine!: BABYLON.Engine;
-    protected _babylonScene!: BABYLON.Scene;
-    protected _babylonCamera!: BABYLON.Camera;
     protected _started: boolean = false;
     protected _stopped: boolean = false;
 
     public get babylonEngine(): BABYLON.Engine {
         return this._babylonEngine;
-    }
-    public get babylonScene(): BABYLON.Scene {
-        return this._babylonScene;
-    }
-    public get babylonCamera(): BABYLON.Camera {
-        return this._babylonCamera;
     }
     public get started(): boolean
     {
@@ -50,40 +42,18 @@ export abstract class GameEngine {
         return this._stopped;
     }
 
-    public set babylonCamera(camera: BABYLON.Camera) {
-        if (this._babylonCamera) return;
-        this._babylonCamera = camera;
-    }
-
     public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
 
-    public async createBabylonScene(): Promise<BABYLON.Scene> {
-        this._babylonScene = new BABYLON.Scene(this._babylonEngine);
-        this._babylonScene.onBeforeRenderObservable.add(this.onBeforeRender.bind(this));
+    public abstract onLoad(): Promise<void>;
 
-        return this._babylonScene;
-    }
-
-    public abstract onLoad(): void;
-
-    public initialize(resolve: (value: GameEngine | Promise<GameEngine>) => void, reject: (reason?: any) => void) {
+    public initializeEngine(resolve: (value: GameEngine | Promise<GameEngine>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
         this.createBabylonEngine()
             .then((engine) => {
                 if (!engine) reject(new Error("engine should not be null."));
                 this._babylonEngine = engine;
-                this.createBabylonScene()
-                    .then((scene) => {
-                        if (!scene) reject(new Error("scene should not be null."));
-                        this._babylonScene = scene;
-                        this.onLoad();
-                        resolve(this);
-                    })
-                    .catch(function (e: any) {
-                        console.error("The available createScene function failed.");
-                        console.error(e);
-                        reject(e);
-                    });
+                this.onLoad();
+                resolve(this);
             })
             .catch((e: any) => {
                 console.error("The available createEngine function failed.");
@@ -97,20 +67,13 @@ export abstract class GameEngine {
         );
     }
 
-    protected onBeforeRender(): void {
-        this.preformTick();
-    }
-
-    public preformTick(): void {
-        if (this.shouldStop()) return;
-        this.worlds.forEach(world => world.preformTick);
-    }
-
     public initializeMainLoop() {
         this._babylonEngine.runRenderLoop(() => {
             if (!this.shouldStop()) {
                 try {
-                    this._babylonScene.render();
+                    this.worlds.forEach(world => {
+                        world.babylonScene.render();
+                    });
                 } catch (e: any) {
                     console.error(e);
                     this._stopped = true;

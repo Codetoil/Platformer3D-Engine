@@ -20,7 +20,11 @@ import * as BABYLON from "@babylonjs/core";
 import type {CharacterInputController} from "./characterInputController";
 import {World} from "./world";
 import {AbstractMesh} from "@babylonjs/core";
-import {NamespacedKey} from "./namespacedKey";
+import {CollidableType} from "./collidable";
+import {CollidableTypes} from "../levelpack/levelpack";
+import {Skill} from "./skill";
+import {Item} from "./item";
+import {InventorySlot} from "./inventory";
 
 /**
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
@@ -61,35 +65,35 @@ export class Character {
     /**
      * A map from a world surface type to a boolean
      */
-    public readonly isCharacterOnWorldSurface: Map<NamespacedKey, boolean> = new Map([
-        [new NamespacedKey("game3d", "ground"),  false],
-        [new NamespacedKey("game3d", "wall"), false]
-    ]);
+    public readonly isCharacterOnWorldSurface: Map<CollidableType, boolean> = new Map([]);
 
     /**
      * An array of skills this character is using right now.
      */
-    public readonly characterSkillsEquiped: Array<NamespacedKey> = new Array(
+    public readonly characterSkillsEquiped: Array<Skill> = new Array(
 
     );
 
     /**
-     * A map from an inventory slot to the item.
+     * Every character possesses an inventory.
+     * This maps from an {@link InventorySlot} to an {@link Item}.
      */
-    public readonly characterInventory: Map<NamespacedKey, NamespacedKey> = new Map(
+    public readonly characterInventory: Map<InventorySlot, Item> = new Map(
 
     );
 
-    public get mesh(): BABYLON.Mesh
-    {
+    public get mesh(): BABYLON.Mesh {
         return this._mesh;
     }
-    public get characterWorld(): World
-    {
+
+    /**
+     * The world the character is currently in.
+     */
+    public get characterWorld(): World {
         return this._characterWorld;
     }
-    public get characterInputController(): CharacterInputController
-    {
+
+    public get characterInputController(): CharacterInputController {
         return this._characterInputController;
     }
 
@@ -98,91 +102,94 @@ export class Character {
     /**
      * Character position in 3D Space.
      */
-    public get characterPosition(): BABYLON.Vector3
-    {
+    public get characterPosition(): BABYLON.Vector3 {
         return this._characterPosition;
     }
 
     /**
      * Character Velocity in 3D Space.
      */
-    public get characterVelocity(): BABYLON.Vector3
-    {
+    public get characterVelocity(): BABYLON.Vector3 {
         return this._characterVelocity;
     }
 
     /**
      * Character Orientation in 3D Space (as a Quaternion)
      */
-    public get characterOrientation(): BABYLON.Quaternion
-    {
+    public get characterOrientation(): BABYLON.Quaternion {
         return this._characterOrientation;
     }
 
     /**
      * Character Ray of View in 3D Space
      */
-    public get characterRayOfView(): BABYLON.Vector3
-    {
+    public get characterRayOfView(): BABYLON.Vector3 {
         return this._characterRayOfView;
     }
 
     // Character Properties
-    public get characterHeight(): number
-    {
+    public get characterHeight(): number {
         return this._characterHeight;
     }
-    public get characterMaximumHealthPoints(): number
-    {
+
+    public get characterMaximumHealthPoints(): number {
         return this._characterMaximumHealthPoints;
     }
-    public get characterMaximumManaPoints(): number
-    {
+
+    public get characterMaximumManaPoints(): number {
         return this._characterMaximumManaPoints;
     }
-    public get characterMaximumSkillPoints(): number
-    {
+
+    public get characterMaximumSkillPoints(): number {
         return this._characterMaximumSkillPoints;
     }
+
     public get characterMaximumHorizontalSpeedUponJoystickNeutral(): number {
         return this._characterMaximumHorizontalSpeedUponJoystickNeutral;
     }
+
     public get characterMaximumHorizontalSpeedUponJoystickFullyActive(): number {
         return this._characterMaximumHorizontalSpeedUponJoystickFullyActive;
     }
+
     public get characterMaximumVerticalSpeed(): number {
         return this._characterMaximumVerticalSpeed;
     }
+
     public get characterVerticalJumpVelocity(): number {
         return this._characterVerticalJumpVelocity;
     }
+
     public get characterGroundFriction(): number {
         return this._characterGroundFriction;
     }
+
     public get characterGravitationalAcceleration(): number {
-        if (this.isCharacterOnWorldSurface.get(World.WALL_KEY)) return this._characterWallSlideGravitationalAcceleration;
-        if (this._characterInputController.isJumpActive) return this._characterGravitionalAccelerationUponHoldingJump;
+        if (this.isCharacterOnWorldSurface.get(CollidableTypes.WALL))
+            return this._characterWallSlideGravitationalAcceleration;
+        if (this._characterInputController.isJumpActive)
+            return this._characterGravitionalAccelerationUponHoldingJump;
         return this._characterNormalGravititationalAcceleration;
     }
 
     // Character State
-    public get healthPoints(): number
-    {
+    public get healthPoints(): number {
         return this._healthPoints;
     }
-    public get manaPoints(): number
-    {
+
+    public get manaPoints(): number {
         return this._manaPoints;
     }
+
     public get canWallJumpNow(): boolean {
         return this._canWallJumpNow;
     }
-    public get lastWallWallJumpedFrom(): BABYLON.Nullable<AbstractMesh>
-    {
+
+    public get lastWallWallJumpedFrom(): BABYLON.Nullable<AbstractMesh> {
         return this._lastWallWallJumpedFrom;
     }
-    public get jumpState(): boolean
-    {
+
+    public get jumpState(): boolean {
         return this._jumpState;
     }
 
@@ -212,14 +219,15 @@ export class Character {
     }
 
     protected checkCollisions(): void {
-        this._characterWorld.collidablesPerType.forEach((collidables, key) => {
+        this._characterWorld.collidables.forEach((collidable) => {
             let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition,
                 this._characterVelocity.length() == 0 ? BABYLON.Vector3.Down() : this._characterVelocity, this._characterHeight / 2);
-            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.gameEngine.babylonScene.pickWithRay(ray,
+            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
-                    return collidables.map((collidable) => collidable.babylonMesh).includes(mesh);
+                    return this._characterWorld.collidables
+                        .map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
-            this.isCharacterOnWorldSurface.set(key, !!(hit && hit.pickedPoint));
+            this.isCharacterOnWorldSurface.set(collidable.collidableCategory, !!(hit && hit.pickedPoint));
         });
     }
 
@@ -231,7 +239,7 @@ export class Character {
             x *= r / r1;
             z *= r / r1;
 
-            if (this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+            if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
                 this.mesh.rotationQuaternion = BABYLON.Vector3.Up()
                     .scale(Math.atan2(z, x))
                     .toQuaternion();
@@ -246,7 +254,7 @@ export class Character {
             )
         }
 
-        if (this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+        if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             this._characterVelocity.set(this.characterGroundFriction * this._characterVelocity.x, this._characterVelocity.y, this.characterGroundFriction * this._characterVelocity.z);
         }
     }
@@ -259,10 +267,11 @@ export class Character {
         if (!this._characterRayOfView) return;
         let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, this._characterRayOfView, this._characterHeight / 2);
         let rayHelper: BABYLON.RayHelper = new BABYLON.RayHelper(ray);
-        rayHelper.show(this._characterWorld.gameEngine.babylonScene, BABYLON.Color3.Red());
-        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.gameEngine.babylonScene.pickWithRay(ray,
+        rayHelper.show(this._characterWorld.babylonScene, BABYLON.Color3.Red());
+        let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
             (mesh: BABYLON.AbstractMesh) => {
-                let walls = this._characterWorld.collidablesPerType.get(World.WALL_KEY);
+                let walls = this._characterWorld.collidables.filter(collidable =>
+                    collidable.collidableCategory === CollidableTypes.WALL);
                 if (!walls) return false;
                 return walls.map((wall) => wall.babylonMesh).includes(mesh);
             });
@@ -277,7 +286,7 @@ export class Character {
             if (!hit.pickedPoint) return;
             let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalVector, 1);
             new BABYLON.RayHelper(rayNormal).show(
-                this._characterWorld.gameEngine.babylonScene,
+                this._characterWorld.babylonScene,
                 BABYLON.Color3.Blue()
             );
             let normal: BABYLON.Quaternion = new BABYLON.Quaternion(
@@ -300,9 +309,9 @@ export class Character {
 
     private applyHorizontalMovementInfluences(): void {
         let proportionalityConstant: number = 1.0;
-        if (this._characterInputController.isSprintActive && this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+        if (this._characterInputController.isSprintActive && this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             proportionalityConstant = 1.3;
-        } else if (this._characterInputController.isSprintActive && !this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+        } else if (this._characterInputController.isSprintActive && !this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             proportionalityConstant = 1.2;
         }
         if (this._characterVelocity.length() ** 2 - this._characterVelocity.y ** 2 > (proportionalityConstant *
@@ -315,10 +324,10 @@ export class Character {
     }
 
     private applyGravity(getDeltaTime: () => number): void {
-        if (!this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+        if (!this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             this._characterVelocity.y += 0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0);
         }
-        if (this.isCharacterOnWorldSurface.get(World.GROUND_KEY) && this._characterVelocity.y < 0.0) {
+        if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) && this._characterVelocity.y < 0.0) {
             this._characterVelocity.y = 0.0;
         }
     }
@@ -340,20 +349,20 @@ export class Character {
             this._jumpState = false;
             this._canWallJumpNow = true;
         } else {
-            if (this.isCharacterOnWorldSurface.get(World.GROUND_KEY) && !this._jumpState) {
+            if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) && !this._jumpState) {
                 this.preformJump();
                 this._jumpState = true;
             }
             if (
                 this._canWallJumpNow &&
-                this.isCharacterOnWorldSurface.get(World.WALL_KEY) &&
-                !this.isCharacterOnWorldSurface.get(World.GROUND_KEY) &&
+                this.isCharacterOnWorldSurface.get(CollidableTypes.WALL) &&
+                !this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) &&
                 this._characterInputController.normalizedHorizontalMovement.length() > 0.1
             ) {
                 this.preformWallJump();
             }
         }
-        if (this.isCharacterOnWorldSurface.get(World.GROUND_KEY)) {
+        if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             this._lastWallWallJumpedFrom = null;
         }
 
@@ -364,18 +373,17 @@ export class Character {
         let deltaPos = this._characterVelocity.scale(getDeltaTime() / 1000.0);
 
         if (deltaPos.length() > 0) {
-            this._characterWorld.collidablesPerType.forEach((collidables, _key) => {
-                let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos, deltaPos.length());
-                let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.gameEngine.babylonScene.pickWithRay(ray,
-                    (mesh: BABYLON.AbstractMesh) => {
-                        return collidables.map((collidable) => collidable.babylonMesh).includes(mesh);
-                    });
-                if (hit && hit.pickedPoint) {
-                    this._mesh.position = this._characterPosition = hit.pickedPoint as BABYLON.Vector3;
-                } else {
-                    this._mesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
-                }
-            });
+            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos, deltaPos.length());
+            let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
+                (mesh: BABYLON.AbstractMesh) => {
+                    return this._characterWorld.collidables
+                        .map((collidable) => collidable.babylonMesh).includes(mesh);
+                });
+            if (hit && hit.pickedPoint) {
+                this._mesh.position = this._characterPosition = hit.pickedPoint as BABYLON.Vector3;
+            } else {
+                this._mesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
+            }
         }
         console.assert(!!this._mesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
         this._characterOrientation = this._mesh.rotationQuaternion as BABYLON.Quaternion;
@@ -391,6 +399,6 @@ export class Character {
     }
 
     protected get horizontalMovementScaleFactor() {
-        return this.isCharacterOnWorldSurface.get(World.GROUND_KEY) ? 5.0 : 1.0;
+        return this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) ? 5.0 : 1.0;
     }
 }

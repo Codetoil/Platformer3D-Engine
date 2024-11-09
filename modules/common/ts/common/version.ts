@@ -17,3 +17,4 @@
  */
 
 export const VERSION = "0.2.0"
+export const LEVELPACK_VERSION = 0

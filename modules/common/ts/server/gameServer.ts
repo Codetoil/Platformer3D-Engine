@@ -20,6 +20,7 @@ import * as BABYLON from "@babylonjs/core";
 import {GameEngine} from "../common/gameEngine";
 import {WorldServer} from "./worldServer";
 import {World} from "../common/world";
+import {Levelpack} from "../levelpack/levelpack";
 
 export abstract class GameServer extends GameEngine {
     public constructor() {
@@ -28,12 +29,12 @@ export abstract class GameServer extends GameEngine {
 
     public abstract createBabylonEngine(): Promise<BABYLON.NullEngine>;
 
-    public onLoad(): void
+    public async onLoad(): Promise<void>
     {
-        // return new WorldServer(this);
+        await Levelpack.load(this);
     }
 
     public additionalStoppingConditions(): boolean {
-        return false;//!this._world || !this._world.loaded;
+        return false;
     }
 }

@@ -19,27 +19,37 @@
 import type {GameEngine} from "./gameEngine";
 import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
+import * as BABYLON from "@babylonjs/core";
 
 export abstract class World {
     protected _gameEngine: GameEngine;
     protected _isWorldLoaded!: boolean;
+    protected _babylonScene: BABYLON.Scene;
+    protected _babylonCamera!: BABYLON.Camera;
     public readonly namespacedKey: NamespacedKey;
-    public static readonly GROUND_KEY: NamespacedKey = new NamespacedKey("game3d", "ground");
-    public static readonly WALL_KEY: NamespacedKey = new NamespacedKey("game3d", "wall");
-    public readonly collidablesPerType: Map<NamespacedKey, Collidable[]>
-        = new Map([
-            [World.GROUND_KEY, []],
-            [World.WALL_KEY, []]
-        ]);
+    public readonly collidables: Collidable[] = [];
 
     constructor(game: GameEngine, namespacedKey: NamespacedKey) {
         this._gameEngine = game;
         this.namespacedKey = namespacedKey;
+        this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
+        this._babylonScene.onBeforeRenderObservable.add(this.preformTick.bind(this));
     }
 
     public get gameEngine(): GameEngine
     {
         return this._gameEngine;
+    }
+    public get babylonScene(): BABYLON.Scene {
+        return this._babylonScene;
+    }
+    public get babylonCamera(): BABYLON.Camera {
+        return this._babylonCamera;
+    }
+
+    public set babylonCamera(camera: BABYLON.Camera) {
+        if (this._babylonCamera) return;
+        this._babylonCamera = camera;
     }
 
     public get isWorldLoaded(): boolean

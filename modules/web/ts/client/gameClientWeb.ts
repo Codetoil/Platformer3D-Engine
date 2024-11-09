@@ -24,7 +24,7 @@ export class GameClientWeb extends GameClient {
     public readonly name: string = "Game3D Web Client";
     public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
-            this.initialize(resolve, reject);
+            this.initializeEngine(resolve, reject);
         });
     });
     protected _canvas!: HTMLCanvasElement;
@@ -33,14 +33,14 @@ export class GameClientWeb extends GameClient {
         return this._canvas;
     }
 
-    public initialize(
+    public initializeEngine(
         resolve: (value: GameEngine | Promise<GameEngine>) => void,
         reject: (reason?: any) => void
     ) {
         this._canvas = document.getElementById(
             "renderCanvas"
         ) as HTMLCanvasElement;
-        super.initialize(resolve, reject);
+        super.initializeEngine(resolve, reject);
     }
 
     public assetsDir(): string {
