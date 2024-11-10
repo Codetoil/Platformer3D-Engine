@@ -63,6 +63,7 @@ export class WorldSingleplayer extends World {
         (this._player.babylonMesh.material as BABYLON.StandardMaterial).diffuseTexture =
             this._player.babylonTexture;
         this._player.babylonTexture.hasAlpha = true;
+        this.characters.push(this._player);
 
         console.debug("Initializing Camera...");
         this.babylonCamera = new BABYLON.ArcFollowCamera(
@@ -82,10 +83,10 @@ export class WorldSingleplayer extends World {
     }
 
     public preformTick() {
-        this._player.preformTick(() => (((a: number | undefined): number => {
-                if (a != undefined)
-                    return a;
-                return 0.0;
-            })(this.babylonScene.deltaTime)));
+        this.characters.forEach(character => character.preformTick(() => (((a: number | undefined): number => {
+            if (a != undefined)
+                return a;
+            return 0.0;
+        })(this.babylonScene.deltaTime))));
     }
 }

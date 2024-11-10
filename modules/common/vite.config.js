@@ -27,7 +27,7 @@ export default defineConfig({
 				worldServer: "./ts/server/worldServer.ts",
 				characterSingleplayer: "./ts/singleplayer/characterSingleplayer.ts",
 				gameSingleplayer: "./ts/singleplayer/gameSingleplayer.ts",
-				worldSingleplayer: "./ts/singleplayer/worldSingleplay.ts"
+				worldSingleplayer: "./ts/singleplayer/worldSingleplayer.ts"
 			},
 			formats: ['es']
 		},
