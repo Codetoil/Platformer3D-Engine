@@ -21,10 +21,13 @@ export default defineConfig({
 				skill: "./ts/common/skill.ts",
 				version: "./ts/common/version.ts",
 				world: "./ts/common/world.ts",
+				levelpack: "./ts/levelpack/levelpack.ts",
 				gameServer: "./ts/server/gameServer.ts",
-				gameServerIntegrated: "./ts/server/gameServerIntegrated.ts",
 				integratedServerWorker: "./ts/server/integratedServerWorker.ts",
 				worldServer: "./ts/server/worldServer.ts",
+				characterSingleplayer: "./ts/singleplayer/characterSingleplayer.ts",
+				gameSingleplayer: "./ts/singleplayer/gameSingleplayer.ts",
+				worldSingleplayer: "./ts/singleplayer/worldSingleplay.ts"
 			},
 			formats: ['es']
 		},

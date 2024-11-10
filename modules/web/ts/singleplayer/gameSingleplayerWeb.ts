@@ -18,10 +18,10 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {GameEngine} from "game3d-common/ts/common/gameEngine";
-import {GameClient} from "game3d-common/ts/client/gameClient";
+import {GameSingleplayer} from "game3d-common/ts/singleplayer/gameSingleplayer";
 
-export class GameClientWeb extends GameClient {
-    public readonly name: string = "Game3D Web Client";
+export class GameSingleplayerWeb extends GameSingleplayer {
+    public readonly name: string = "Game3D Web Client (Singleplayer)";
     public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
             this.initializeEngine(resolve, reject);
@@ -76,14 +76,14 @@ export class GameClientWeb extends GameClient {
 }
 
 export class EventHandler {
-    public static onResize(gameClient: GameClientWeb) {
+    public static onResize(gameClient: GameSingleplayerWeb) {
         gameClient.babylonEngine.resize();
     }
 }
 
-const gameClient: GameClientWeb = new GameClientWeb();
+const gameSingleplayer: GameSingleplayerWeb = new GameSingleplayerWeb();
 
-gameClient.ready.then((value) => {
-    window.addEventListener("resize", EventHandler.onResize.bind(null, value as GameClientWeb));
+gameSingleplayer.ready.then((value) => {
+    window.addEventListener("resize", EventHandler.onResize.bind(null, value as GameSingleplayerWeb));
     value.initializeMainLoop();
 });

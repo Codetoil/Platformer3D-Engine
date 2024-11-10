@@ -19,8 +19,9 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {GameEngine} from "../common/gameEngine";
-import {WorldClient} from "./worldClient";
+import {NamespacedKey} from "../common/namespacedKey";
 import {World} from "../common/world";
+import {WorldClient} from "./worldClient";
 
 export abstract class GameClient extends GameEngine {
     public abstract assetsDir(): string;
@@ -29,19 +30,10 @@ export abstract class GameClient extends GameEngine {
 
     public async onLoad(): Promise<void>
     {
-        this.worlds.push(new WorldClient(this));
     }
 
-    public setMenuCamera(): void {
-        this.babylonCamera = new BABYLON.UniversalCamera(
-            "default",
-            new BABYLON.Vector3(0, 0, 0),
-            this.babylonScene
-        );
-    }
-
-    public additionalStoppingConditions(): boolean {
-        return !this.babylonScene.activeCamera;
+    public createWorld(namespacedKey: NamespacedKey): World {
+        return new WorldClient(this, namespacedKey);
     }
 }
 

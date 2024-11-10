@@ -16,6 +16,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { GameServerIntegrated } from "game3d-common/ts/server/gameServerIntegrated"
 
-export { GameServerIntegrated };
+import * as BABYLON from "@babylonjs/core";
+import {Character} from "../common/character";
+
+export class CharacterSingleplayer extends Character {
+    protected _babylonTexture?: BABYLON.Texture;
+
+    public get babylonTexture(): BABYLON.Texture | undefined
+    {
+        return this._babylonTexture;
+    }
+
+    public set babylonTexture(texture: BABYLON.Texture)
+    {
+        this._babylonTexture = texture;
+    }
+}

@@ -16,15 +16,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type * as BABYLON from "@babylonjs/core";
 
-/**
- * Controls a character.
- */
-export interface CharacterInputController {
-    isSprintActive: boolean;
-    isJumpActive: boolean;
-    normalizedHorizontalMovement: BABYLON.Vector2;
+import * as BABYLON from "@babylonjs/core";
+import {GameEngine} from "../common/gameEngine";
+import {Levelpack, Worlds} from "../levelpack/levelpack";
+import {NamespacedKey} from "../common/namespacedKey";
+import {World} from "../common/world";
+import {WorldSingleplayer} from "./worldSingleplayer";
 
-    preformTick(): void;
+export abstract class GameSingleplayer extends GameEngine {
+    public abstract assetsDir(): string;
+
+    public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
+
+    public async onLoad(): Promise<void>
+    {
+        await Levelpack.load();
+        this.worlds.push(await Levelpack.initializeWorld(this, Worlds.TEST));
+    }
+
+    public createWorld(namespaceKey: NamespacedKey): World {
+        return new WorldSingleplayer(this, namespaceKey);
+    }
 }
+

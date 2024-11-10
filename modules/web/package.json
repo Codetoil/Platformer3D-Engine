@@ -5,9 +5,12 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite dev --host",
-    "build": "vite build && vite build --config vite.config.integratedServer.js",
-    "build-gh-pages": "vite build --config vite.config.gh-pages.js && vite build --config vite.config.gh-pages.integratedServer.js",
-    "build-single-file": "vite build --config vite.config.single-file.js && vite build --config vite.config.single-file.integratedServer.js",
+    "build-gh-pages": "vite build --config vite.config.gh-pages.js",
+    "build": "vite build",
+    "build-multiplayer": "vite build && vite build --config vite.config.multiplayer.integratedServer.js",
+    "build-single-file": "vite build --config vite.config.single-file.js",
+    "build-multiplayer-gh-pages": "vite build --config vite.config.multiplayer-gh-pages.js && vite build --config vite.config.mutiplayer-gh-pages.integratedServer.js",
+    "build-multiplayer-single-file": "vite build --config vite.config.multiplayer-single-file.js",
     "preview": "vite preview",
     "test": "vitest",
     "update": "npm-check-updates -u"

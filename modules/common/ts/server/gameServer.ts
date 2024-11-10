@@ -18,23 +18,33 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {GameEngine} from "../common/gameEngine";
-import {WorldServer} from "./worldServer";
-import {World} from "../common/world";
 import {Levelpack} from "../levelpack/levelpack";
+import {World} from "../common/world";
+import {NamespacedKey} from "../common/namespacedKey";
+import {WorldServer} from "./worldServer";
 
-export abstract class GameServer extends GameEngine {
+export class GameServer extends GameEngine {
+    public readonly name: string = "Game3D Server";
+    public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
+        this.initializeEngine(resolve, reject);
+    });
+
     public constructor() {
         super();
     }
 
-    public abstract createBabylonEngine(): Promise<BABYLON.NullEngine>;
+    public async createBabylonEngine(): Promise<BABYLON.NullEngine> {
+        this._babylonEngine = new BABYLON.NullEngine();
+        console.log("Engine initialized...")
+        return this._babylonEngine as unknown as BABYLON.NullEngine;
+    }
 
     public async onLoad(): Promise<void>
     {
         await Levelpack.load(this);
     }
 
-    public additionalStoppingConditions(): boolean {
-        return false;
+    public createWorld(namespaceKey: NamespacedKey): World {
+        return new WorldServer(this, namespaceKey);
     }
 }

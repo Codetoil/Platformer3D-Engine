@@ -30,6 +30,7 @@
   "include": [
     "ts/client",
     "ts/common",
-    "ts/server"
+    "ts/server",
+    "ts/singleplayer"
   ]
 }

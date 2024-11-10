@@ -18,51 +18,30 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {World} from "../common/world";
-import {GameClient} from "./gameClient";
-import {CharacterClient} from "./characterClient";
+import {GameSingleplayer} from "./gameSingleplayer";
+import {CharacterSingleplayer} from "./characterSingleplayer";
 import {Character} from "../common/character";
-import {PlayerInputController} from "./playerInputController";
+import {PlayerInputController} from "../client/playerInputController";
 import {DeviceSourceManager} from "@babylonjs/core";
 
-export class WorldClient extends World {
-    protected _player!: CharacterClient;
-    protected _worker!: Worker;
+export class WorldSingleplayer extends World {
+    protected _player!: CharacterSingleplayer;
 
     public get player(): Character
     {
         return this._player;
-    }
-    public get worker(): Worker
-    {
-        return this._worker;
-    }
-
-    public async loadFromNetwork(): Promise<void> {
-        console.debug("Loading world from network...");
-        this._worker = new Worker(new URL("../server/integratedServerWorker.ts", import.meta.url));
-        this._worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
-            if (typeof(event.data) === "string") {
-                console.info("Received: " + (event.data as string))
-            } else
-            {
-                console.info("Received: " + (event.data as Uint8Array).toString())
-            }
-        }
-        this.worker.postMessage(import.meta.url);
-        this.worker.postMessage(Uint8Array.of());
-
-        // TODO - Load world from network
     }
 
     public async loadWorld(): Promise<void> {
         console.info("Loading World...");
         console.debug("Creating Scene")
         this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
+        if (!this._babylonScene) throw new Error("Couldn't create Scene!");
+        this._babylonScene.onBeforeRenderObservable.add(this.preformTick.bind(this));
 
-        await this.loadFromNetwork();
         console.debug("Initializing Player...");
         // Create the player entity
-        this._player = new CharacterClient(3., BABYLON.MeshBuilder.CreateSphere(
+        this._player = new CharacterSingleplayer(3., BABYLON.MeshBuilder.CreateSphere(
             "player",
             {
                 diameter: 1.5
@@ -78,7 +57,7 @@ export class WorldClient extends World {
             this.babylonScene
         );
         this._player.babylonTexture = new BABYLON.Texture(
-            (this.gameEngine as GameClient).assetsDir() + "temp_player.png",
+            (this.gameEngine as GameSingleplayer).assetsDir() + "temp_player.png",
             this.babylonScene
         );
         (this._player.babylonMesh.material as BABYLON.StandardMaterial).diffuseTexture =

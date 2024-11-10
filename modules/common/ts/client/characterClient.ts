@@ -18,31 +18,18 @@
 
 
 import * as BABYLON from "@babylonjs/core";
-import {Mixin} from "ts-mixer";
-import {PlayerInputController} from "./playerInputController";
-import {Character, Player} from "../common/character";
-import type {World} from "../common/world";
+import {Character} from "../common/character";
 
 export class CharacterClient extends Character {
-    protected _texture?: BABYLON.Texture;
+    protected _babylonTexture?: BABYLON.Texture;
 
-    public constructor() {
-        super();
-        this._characterInputController = new PlayerInputController();
-    }
-
-    public get texture(): BABYLON.Texture | undefined
+    public get babylonTexture(): BABYLON.Texture | undefined
     {
-        return this._texture;
+        return this._babylonTexture;
     }
 
-    public set texture(texture: BABYLON.Texture)
+    public set babylonTexture(texture: BABYLON.Texture)
     {
-        this._texture = texture;
-    }
-
-    public set characterWorld(world: World) {
-        this._characterWorld = world;
-        (this._characterInputController as PlayerInputController).setEngine(this._characterWorld.gameEngine.babylonEngine);
+        this._babylonTexture = texture;
     }
 }

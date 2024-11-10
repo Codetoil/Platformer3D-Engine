@@ -30,7 +30,7 @@ import {InventorySlot} from "./inventory";
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
  */
 export class Character {
-    protected _mesh!: BABYLON.Mesh;
+    protected _babylonMesh!: BABYLON.Mesh;
     protected _characterWorld!: World;
     protected _characterInputController!: CharacterInputController;
 
@@ -82,8 +82,8 @@ export class Character {
 
     );
 
-    public get mesh(): BABYLON.Mesh {
-        return this._mesh;
+    public get babylonMesh(): BABYLON.Mesh {
+        return this._babylonMesh;
     }
 
     /**
@@ -193,19 +193,12 @@ export class Character {
         return this._jumpState;
     }
 
-    public set characterHeight(height: number) {
-        if (this._characterHeight) return;
-        this._characterHeight = height;
-    }
-
-    public set mesh(mesh: BABYLON.Mesh) {
-        if (this._mesh) return;
-        this._mesh = mesh;
-    }
-
-    public set characterWorld(world: World) {
-        if (this._characterWorld) return;
-        this._characterWorld = world;
+    constructor(characterHeight: number, babylonMesh: BABYLON.Mesh, characterWorld: World,
+                characterInputController: CharacterInputController) {
+        this._characterHeight = characterHeight;
+        this._babylonMesh = babylonMesh;
+        this._characterWorld = characterWorld;
+        this._characterInputController = characterInputController;
     }
 
 
@@ -213,8 +206,8 @@ export class Character {
         pos: BABYLON.Vector3,
         rot: BABYLON.Quaternion
     ): Character {
-        this._characterPosition = this.mesh.position = pos;
-        this._characterOrientation = this.mesh.rotationQuaternion = rot;
+        this._characterPosition = this.babylonMesh.position = pos;
+        this._characterOrientation = this.babylonMesh.rotationQuaternion = rot;
         return this;
     }
 
@@ -240,7 +233,7 @@ export class Character {
             z *= r / r1;
 
             if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-                this.mesh.rotationQuaternion = BABYLON.Vector3.Up()
+                this.babylonMesh.rotationQuaternion = BABYLON.Vector3.Up()
                     .scale(Math.atan2(z, x))
                     .toQuaternion();
 
@@ -295,9 +288,9 @@ export class Character {
                 normalVector.z,
                 0.0
             );
-            console.assert(!!this._mesh.rotationQuaternion, "Rotation Quaternion cannot be null");
-            this._mesh.rotationQuaternion = normal
-                .multiply((this.mesh.rotationQuaternion as BABYLON.Quaternion).multiply(normal))
+            console.assert(!!this._babylonMesh.rotationQuaternion, "Rotation Quaternion cannot be null");
+            this._babylonMesh.rotationQuaternion = normal
+                .multiply((this.babylonMesh.rotationQuaternion as BABYLON.Quaternion).multiply(normal))
                 .normalize();
             this._characterVelocity.subtractInPlace(
                 normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.characterVelocity, normalVectorNullable)));
@@ -380,13 +373,13 @@ export class Character {
                         .map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
             if (hit && hit.pickedPoint) {
-                this._mesh.position = this._characterPosition = hit.pickedPoint as BABYLON.Vector3;
+                this._babylonMesh.position = this._characterPosition = hit.pickedPoint as BABYLON.Vector3;
             } else {
-                this._mesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
+                this._babylonMesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
             }
         }
-        console.assert(!!this._mesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
-        this._characterOrientation = this._mesh.rotationQuaternion as BABYLON.Quaternion;
+        console.assert(!!this._babylonMesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
+        this._characterOrientation = this._babylonMesh.rotationQuaternion as BABYLON.Quaternion;
         this.checkCollisions();
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
@@ -394,7 +387,7 @@ export class Character {
 
     public preformTick(getDeltaTime: () => number): void {
         this.checkCollisions();
-        this._characterInputController.preformTick(this, this._characterWorld);
+        this._characterInputController.preformTick();
         this.move(getDeltaTime);
     }
 

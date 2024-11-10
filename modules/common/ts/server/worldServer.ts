@@ -17,20 +17,34 @@
  */
 
 import {World} from "../common/world";
-import {Character} from "../common/character";
+import * as BABYLON from "@babylonjs/core";
 
 export class WorldServer extends World {
-    private _characters!: Character[];
-
-    public get characters(): Character[] {
-        return this._characters;
-    }
 
     public async loadWorld(): Promise<void> {
         console.info("Loading World...");
-        this._isWorldLoaded = true;
-    }
+        console.debug("Creating Scene")
+        this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
 
-    public preformTick() {
+        console.debug("Initializing Camera...");
+        this.babylonCamera = new BABYLON.ArcRotateCamera(
+            "fake_camera",
+            Math.PI / 2,
+            0.5,
+            10,
+            new BABYLON.Vector3(0, 0, 0),
+            this.babylonScene
+        );
+        (this.babylonCamera as BABYLON.ArcFollowCamera).orthoBottom = -10;
+        (this.babylonCamera as BABYLON.ArcFollowCamera).orthoLeft = -10;
+        (this.babylonCamera as BABYLON.ArcFollowCamera).orthoRight = 10;
+        (this.babylonCamera as BABYLON.ArcFollowCamera).orthoTop = 10;
+        this.babylonCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
+        (this.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
+            Math.PI / 2,
+            0.0,
+            0.0
+        ).toQuaternion();
+        this._isWorldLoaded = true;
     }
 }

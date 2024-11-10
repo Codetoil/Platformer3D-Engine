@@ -19,6 +19,7 @@
 import * as BABYLON from "@babylonjs/core";
 import type {World} from "./world";
 import {VERSION} from "./version";
+import {NamespacedKey} from "./namespacedKey";
 
 /**
  * Base class for the Game Engine
@@ -46,14 +47,15 @@ export abstract class GameEngine {
 
     public abstract onLoad(): Promise<void>;
 
+    public abstract createWorld(namespaceKey: NamespacedKey): World;
+
     public initializeEngine(resolve: (value: GameEngine | Promise<GameEngine>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
         this.createBabylonEngine()
             .then((engine) => {
                 if (!engine) reject(new Error("engine should not be null."));
                 this._babylonEngine = engine;
-                this.onLoad();
-                resolve(this);
+                this.onLoad().then(() => resolve(this), (error) => reject(error));
             })
             .catch((e: any) => {
                 console.error("The available createEngine function failed.");
@@ -86,8 +88,6 @@ export abstract class GameEngine {
     }
 
     public shouldStop(): boolean {
-        return !this._started || this._stopped || this.additionalStoppingConditions();
+        return !this._started || this._stopped;
     }
-
-    public abstract additionalStoppingConditions(): boolean;
 }

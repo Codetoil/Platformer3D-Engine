@@ -16,15 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type * as BABYLON from "@babylonjs/core";
+import { GameServer } from "game3d-common/ts/server/gameServer"
 
-/**
- * Controls a character.
- */
-export interface CharacterInputController {
-    isSprintActive: boolean;
-    isJumpActive: boolean;
-    normalizedHorizontalMovement: BABYLON.Vector2;
-
-    preformTick(): void;
-}
+export { GameServer };

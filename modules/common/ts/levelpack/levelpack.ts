@@ -20,7 +20,6 @@ import {NamespacedKey} from "../common/namespacedKey";
 import {MoveLevel} from "../common/move";
 import * as BABYLON from "@babylonjs/core";
 import {Collidable, CollidableType} from "../common/collidable";
-import {WorldServer} from "../server/worldServer";
 import {GameEngine} from "../common/gameEngine";
 import {World} from "../common/world";
 
@@ -48,75 +47,85 @@ export class CollidableTypes {
 }
 
 export class Worlds {
-    public static TEST: World;
+    public static TEST: NamespacedKey = new NamespacedKey("game3d", "test");
 }
 
 export class Levelpack {
     public static readonly VERSION = 0;
 
-    public static async load(gameEngine: GameEngine): Promise<void> {
-        console.debug("Reading world...");
+    public static async load(): Promise<void> {
+        console.debug("Loading levelpack...");
         console.debug("(TEMP: HARDCODED)");
-        Worlds.TEST = new WorldServer(gameEngine, new NamespacedKey("game3d", "test"));
+
+        // TODO Load world data from
+    }
+
+    public static async initializeWorld(gameEngine: GameEngine, namespacedKey: NamespacedKey): Promise<World> {
+        console.debug(`Reading world ${namespacedKey}...`);
+        let world: World;
+
+        if (namespacedKey !== Worlds.TEST) throw new Error("World could not be found.");
+        world = gameEngine.createWorld(namespacedKey);
+        await world.loadWorld();
 
         //Collidable
         console.debug("(TEMP: Collidable)");
         const ground: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane(
             "ground",
             {width: 20.0, height: 20.0},
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
-        ground.material = new BABYLON.StandardMaterial("groundMat", Worlds.TEST.babylonScene);
+        ground.material = new BABYLON.StandardMaterial("groundMat", world.babylonScene);
         (ground.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(1, 1, 1);
         ground.material.backFaceCulling = false;
         ground.position = new BABYLON.Vector3(5, -10, -15);
         ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
-        Worlds.TEST.collidables.push(new Collidable(ground, CollidableTypes.GROUND));
+        world.collidables.push(new Collidable(ground, CollidableTypes.GROUND));
 
         console.debug("(TEMP: Wall)");
         const wall: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall",
             {width: 15, height: 15, depth: 0.75},
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
-        wall.material = new BABYLON.StandardMaterial("wallMat", Worlds.TEST.babylonScene);
+        wall.material = new BABYLON.StandardMaterial("wallMat", world.babylonScene);
         (wall.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(1, 1, 1);
         wall.material.backFaceCulling = false;
         wall.position = new BABYLON.Vector3(3.2, -2.5, -15);
         wall.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        Worlds.TEST.collidables.push(new Collidable(wall, CollidableTypes.WALL));
+        world.collidables.push(new Collidable(wall, CollidableTypes.WALL));
 
         console.debug("(TEMP: Wall2)")
         const wall2: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox(
             "wall2",
             {width: 15, height: 15, depth: 0.75},
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
         wall2.material = wall.material;
         wall2.position = new BABYLON.Vector3(6.8, -2.5, -15);
         wall2.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
-        Worlds.TEST.collidables.push(new Collidable(wall2, CollidableTypes.WALL));
+        world.collidables.push(new Collidable(wall2, CollidableTypes.WALL));
 
         console.debug("(TEMP: Platform)");
         const platform = BABYLON.MeshBuilder.CreateBox(
             "platform1",
             {width: 5.0, depth: 5.0, height: 0.5},
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
         platform.material = wall.material;
         platform.position = new BABYLON.Vector3(17, -10, -10);
-        Worlds.TEST.collidables.push(new Collidable(platform, CollidableTypes.GROUND));
+        world.collidables.push(new Collidable(platform, CollidableTypes.GROUND));
 
         console.debug("(TEMP: DBox)");
         const dbox = BABYLON.MeshBuilder.CreateBox(
             "dbox",
             {width: 1, height: 2, depth: 1},
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
         dbox.position = wall.position;
-        dbox.material = new BABYLON.StandardMaterial("dboxMat", Worlds.TEST.babylonScene);
+        dbox.material = new BABYLON.StandardMaterial("dboxMat", world.babylonScene);
         (dbox.material as BABYLON.StandardMaterial).diffuseColor =
             new BABYLON.Color3(0, 1, 1);
         dbox.material.backFaceCulling = false;
@@ -127,27 +136,8 @@ export class Levelpack {
         new BABYLON.HemisphericLight(
             "hemi",
             new BABYLON.Vector3(0, 1, 0),
-            Worlds.TEST.babylonScene
+            world.babylonScene
         );
-
-        console.debug("Initializing Camera...");
-        Worlds.TEST.babylonCamera = new BABYLON.ArcRotateCamera(
-            "fake_camera",
-            Math.PI / 2,
-            0.5,
-            10,
-            new BABYLON.Vector3(0, 0, 0),
-            Worlds.TEST.babylonScene
-        );
-        (Worlds.TEST.babylonCamera as BABYLON.ArcFollowCamera).orthoBottom = -10;
-        (Worlds.TEST.babylonCamera as BABYLON.ArcFollowCamera).orthoLeft = -10;
-        (Worlds.TEST.babylonCamera as BABYLON.ArcFollowCamera).orthoRight = 10;
-        (Worlds.TEST.babylonCamera as BABYLON.ArcFollowCamera).orthoTop = 10;
-        Worlds.TEST.babylonCamera.mode = BABYLON.Camera.ORTHOGRAPHIC_CAMERA;
-        (Worlds.TEST.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
-            Math.PI / 2,
-            0.0,
-            0.0
-        ).toQuaternion();
+        return world;
     }
 }

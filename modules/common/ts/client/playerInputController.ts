@@ -18,16 +18,18 @@
 
 import * as BABYLON from "@babylonjs/core";
 import type {CharacterInputController} from "../common/characterInputController";
-import {PlayerClient} from "./characterClient";
-import {WorldClient} from "./worldClient";
 
 export class PlayerInputController implements CharacterInputController {
-    protected _joystick: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    protected _joystick: BABYLON.Vector2 = BABYLON.Vector2.Zero();
     protected _sprintHeld: boolean = false;
     protected _jumpPressed: boolean = false;
-    private deviceSourceManager!: BABYLON.DeviceSourceManager;
+    private readonly _deviceSourceManager!: BABYLON.DeviceSourceManager;
 
-    public get normalizedHorizontalMovement(): BABYLON.Vector3 {
+    public constructor(deviceSourceManager: BABYLON.DeviceSourceManager) {
+        this._deviceSourceManager = deviceSourceManager;
+    }
+
+    public get normalizedHorizontalMovement(): BABYLON.Vector2 {
         return this._joystick;
     }
 
@@ -39,23 +41,23 @@ export class PlayerInputController implements CharacterInputController {
         return this._jumpPressed;
     }
 
-    public setEngine(engine: BABYLON.Engine): void {
-        if (this.deviceSourceManager)
-            throw new Error("Device Source Manager has already been set");
-        this.deviceSourceManager = new BABYLON.DeviceSourceManager(engine);
-    }
-
-    private setJoystickIfBigger(x: number, z: number): void {
-        if (x ** 2 + z ** 2 > this._joystick.lengthSquared()) {
+    private setJoystickIfBigger(x: number, y: number): void {
+        if (x ** 2 + y ** 2 > this._joystick.lengthSquared()) {
             this._joystick.x = x;
-            this._joystick.z = z;
+            this._joystick.y = y;
         }
     }
 
-    public preformTick(_entity: PlayerClient, world: WorldClient): void {
+    public get deviceSourceManager(): BABYLON.DeviceSourceManager
+    {
+        return this._deviceSourceManager;
+    }
+
+
+    public preformTick(): void {
         this._sprintHeld = false;
         this._jumpPressed = false;
-        this._joystick = BABYLON.Vector3.Zero();
+        this._joystick = BABYLON.Vector2.Zero();
         if (this.deviceSourceManager.getDeviceSource(BABYLON.DeviceType.Keyboard)) {
             let keyboardSource = this.deviceSourceManager.getDeviceSource(
                 BABYLON.DeviceType.Keyboard
@@ -168,9 +170,5 @@ export class PlayerInputController implements CharacterInputController {
                 gamepadSource.getInput(BABYLON.DualShockInput.Circle) === 1 ||
                 gamepadSource.getInput(BABYLON.DualShockInput.Cross) === 1;
         }
-        this._joystick.rotateByQuaternionToRef(
-            (world.gameEngine.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion,
-            this._joystick
-        );
     }
 }

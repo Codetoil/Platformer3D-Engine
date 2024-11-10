@@ -2,9 +2,9 @@
   "name": "game3d-node",
   "version": "0.1.0",
   "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
-  "main": "ts/server/gameDedicatedServer.ts",
+  "main": "ts/server/run.ts",
   "scripts": {
-    "run": "node --import=tsx ./ts/server/gameDedicatedServer.ts",
+    "run": "node --import=tsx ts/server/run.ts",
     "update": "npm-check-updates -u"
   },
   "repository": {

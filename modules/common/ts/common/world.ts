@@ -20,20 +20,20 @@ import type {GameEngine} from "./gameEngine";
 import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
 import * as BABYLON from "@babylonjs/core";
+import {Character} from "./character";
 
 export abstract class World {
     protected _gameEngine: GameEngine;
     protected _isWorldLoaded!: boolean;
-    protected _babylonScene: BABYLON.Scene;
+    protected _babylonScene!: BABYLON.Scene;
     protected _babylonCamera!: BABYLON.Camera;
     public readonly namespacedKey: NamespacedKey;
     public readonly collidables: Collidable[] = [];
+    public readonly characters: Character[] = [];
 
     constructor(game: GameEngine, namespacedKey: NamespacedKey) {
         this._gameEngine = game;
         this.namespacedKey = namespacedKey;
-        this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
-        this._babylonScene.onBeforeRenderObservable.add(this.preformTick.bind(this));
     }
 
     public get gameEngine(): GameEngine
@@ -59,5 +59,7 @@ export abstract class World {
 
     public abstract loadWorld(): Promise<void>;
 
-    public abstract preformTick(): void;
+    public preformTick() {
+        this.characters.filter(character => character.preformTick);
+    }
 }

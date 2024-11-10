@@ -1,3 +1,5 @@
+import {GameServer} from "game3d-common/ts/server/gameServer";
+
 /**
  *  Game3D, a 3D Platformer built for the web.
  *  Copyright (C) 2021-2024 Codetoil
@@ -15,16 +17,11 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+/// <reference no-default-lib="true" />
+/// <reference lib="es2022" />
 
-import type * as BABYLON from "@babylonjs/core";
+const gameServer: GameServer = new GameServer();
 
-/**
- * Controls a character.
- */
-export interface CharacterInputController {
-    isSprintActive: boolean;
-    isJumpActive: boolean;
-    normalizedHorizontalMovement: BABYLON.Vector2;
-
-    preformTick(): void;
-}
+gameServer.ready.then((value) => {
+    value.initializeMainLoop();
+});

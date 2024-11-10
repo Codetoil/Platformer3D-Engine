@@ -5,7 +5,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: {
-				gameServerIntegrated: "./ts/server/gameServerIntegrated.ts",
+				gameServerIntegrated: "./ts/server/gameServer.ts",
 			},
 			formats: ['es']
 		},

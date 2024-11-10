@@ -1,3 +1,5 @@
+import {GameServer} from "./gameServer";
+
 /**
  *  Game3D, a 3D Platformer built for the web.
  *  Copyright (C) 2021-2024 Codetoil
@@ -19,14 +21,10 @@
 /// <reference lib="es2022" />
 /// <reference lib="webworker" />
 
-import type { GameServerIntegrated } from "./gameServerIntegrated";
-import {Levelpack} from "../levelpack/levelpack";
+function startServer(gameServerType: { GameServer: GameServer }): void {
+    const gameServer: GameServer = new gameServerType.GameServer();
 
-function startServer(gameServerIntegratedType: { GameServerIntegrated: GameServerIntegrated }): void {
-    const gameServerIntegrated: GameServerIntegrated = new gameServerIntegratedType.GameServerIntegrated();
-
-    gameServerIntegrated.ready.then((value) => {
-        Levelpack.load();
+    gameServer.ready.then((value) => {
         value.initializeMainLoop();
     });
 }
@@ -35,12 +33,12 @@ self.onmessage = (event: MessageEvent<string | Uint8Array>) => {
     console.debug("Recieved Data: " + event.data.toString());
     if (typeof (event.data) == "string") {
         const url_base = event.data;
-        const url1: string = new URL("../gameServerIntegrated.js", url_base).toString();
+        const url1: string = new URL("../gameServer.js", url_base).toString();
         import(url1).then(startServer)
             .catch((reason: any) => {
                 console.info("Failed to load production integrated game server, assuming development environment...");
                 console.info(reason);
-                const url2: string = new URL("../server/gameServerIntegrated.ts", url_base).toString();
+                const url2: string = new URL("../server/gameServer.ts", url_base).toString();
                 import(url2).then(startServer);
             });
     }
