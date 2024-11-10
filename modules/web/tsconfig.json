@@ -30,11 +30,6 @@
   "include": [
     "ts/client",
     "ts/server",
-    "ts/singleplayer",
-    "../common/ts/client",
-    "../common/ts/common",
-    "../common/ts/levelpack",
-    "../common/ts/server",
-    "../common/ts/singleplayer"
+    "ts/singleplayer"
   ]
 }

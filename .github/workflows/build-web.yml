@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
+        working-directory: ./modules/common
+      - run: npm install
         working-directory: ./modules/web
       - run: npm run build
         working-directory: ./modules/web
