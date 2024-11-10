@@ -165,6 +165,8 @@ export class Character {
     }
 
     public get characterGravitationalAcceleration(): number {
+        if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND))
+            return 0.0;
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.WALL))
             return this._characterWallSlideGravitationalAcceleration;
         if (this._characterInputController.isJumpActive)
@@ -212,15 +214,18 @@ export class Character {
     }
 
     protected checkCollisions(): void {
+        this.isCharacterOnWorldSurface.forEach((_value: boolean, collidableType: CollidableType) => {
+            this.isCharacterOnWorldSurface.set(collidableType, false);
+        })
         this._characterWorld.collidables.forEach((collidable) => {
             let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition,
-                this._characterVelocity.length() == 0 ? BABYLON.Vector3.Down() : this._characterVelocity, this._characterHeight / 2);
+                this._characterVelocity.add(BABYLON.Vector3.Down()), this._characterHeight / 2);
             let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
-                    return this._characterWorld.collidables
-                        .map((collidable) => collidable.babylonMesh).includes(mesh);
+                    return mesh == collidable.babylonMesh;
                 });
-            this.isCharacterOnWorldSurface.set(collidable.collidableCategory, !!(hit && hit.pickedPoint));
+            this.isCharacterOnWorldSurface.set(collidable.collidableType,
+                this.isCharacterOnWorldSurface.get(collidable.collidableType) || (!!hit && hit.hit));
         });
     }
 
@@ -264,7 +269,7 @@ export class Character {
         let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
             (mesh: BABYLON.AbstractMesh) => {
                 let walls = this._characterWorld.collidables.filter(collidable =>
-                    collidable.collidableCategory === CollidableTypes.WALL);
+                    collidable.collidableType === CollidableTypes.WALL);
                 if (!walls) return false;
                 return walls.map((wall) => wall.babylonMesh).includes(mesh);
             });
@@ -272,9 +277,8 @@ export class Character {
         if (!hit.pickedMesh) return;
         let wall: BABYLON.AbstractMesh = hit.pickedMesh;
         if (this._lastWallWallJumpedFrom == wall) {
-            let normalVectorNullable: BABYLON.Nullable<BABYLON.Vector3> = hit.getNormal(true);
-            if (!normalVectorNullable) return;
-            let normalVector: BABYLON.Vector3 = normalVectorNullable;
+            let normalVector: BABYLON.Nullable<BABYLON.Vector3> = hit.getNormal(true);
+            if (!normalVector) return;
             console.debug([wall, normalVector]);
             if (!hit.pickedPoint) return;
             let rayNormal = new BABYLON.Ray(hit.pickedPoint, normalVector, 1);
@@ -293,7 +297,7 @@ export class Character {
                 .multiply((this.babylonMesh.rotationQuaternion as BABYLON.Quaternion).multiply(normal))
                 .normalize();
             this._characterVelocity.subtractInPlace(
-                normalVectorNullable.scale(2 * BABYLON.Vector3.Dot(this.characterVelocity, normalVectorNullable)));
+                normalVector.scale(2 * BABYLON.Vector3.Dot(this.characterVelocity, normalVector)));
             this._characterVelocity.set(this._characterVelocity.x, this.characterVerticalJumpVelocity, this._characterVelocity.z);
             this._canWallJumpNow = false;
             this._lastWallWallJumpedFrom = wall as BABYLON.AbstractMesh;
@@ -317,9 +321,7 @@ export class Character {
     }
 
     private applyGravity(getDeltaTime: () => number): void {
-        if (!this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-            this._characterVelocity.y += 0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0);
-        }
+        this._characterVelocity.y += 0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0);
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) && this._characterVelocity.y < 0.0) {
             this._characterVelocity.y = 0.0;
         }
@@ -372,8 +374,12 @@ export class Character {
                     return this._characterWorld.collidables
                         .map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
-            if (hit && hit.pickedPoint) {
-                this._babylonMesh.position = this._characterPosition = hit.pickedPoint as BABYLON.Vector3;
+            if (hit && hit.pickedPoint && hit.getNormal()) {
+                this._babylonMesh.position = this._characterPosition =
+                    hit.pickedPoint.subtract(this._characterVelocity.normalize().scale(this._characterHeight / 2));
+                this._characterVelocity = this._characterVelocity
+                    .subtract(hit.getNormal()!.scale(this._characterVelocity.dot(hit.getNormal()!)));
+
             } else {
                 this._babylonMesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
             }

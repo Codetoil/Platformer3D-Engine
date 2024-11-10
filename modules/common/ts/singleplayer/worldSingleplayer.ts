@@ -81,12 +81,4 @@ export class WorldSingleplayer extends World {
         ).toQuaternion();
         this._isWorldLoaded = true;
     }
-
-    public preformTick() {
-        this.characters.forEach(character => character.preformTick(() => (((a: number | undefined): number => {
-            if (a != undefined)
-                return a;
-            return 0.0;
-        })(this.babylonScene.deltaTime))));
-    }
 }

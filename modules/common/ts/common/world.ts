@@ -60,6 +60,10 @@ export abstract class World {
     public abstract loadWorld(): Promise<void>;
 
     public preformTick() {
-        this.characters.filter(character => character.preformTick);
+        this.characters.forEach(character => character.preformTick(() => (((a: number | undefined): number => {
+            if (a != undefined)
+                return a;
+            return 0.0;
+        })(this.babylonScene.deltaTime))));
     }
 }

@@ -35,19 +35,19 @@ export class CollidableType {
  */
 export class Collidable {
     protected _babylonMesh: BABYLON.AbstractMesh;
-    protected _collidableCategory: CollidableType;
+    protected _collidableType: CollidableType;
 
     public get babylonMesh(): BABYLON.AbstractMesh {
         return this._babylonMesh;
     }
 
-    public get collidableCategory(): CollidableType {
-        return this._collidableCategory;
+    public get collidableType(): CollidableType {
+        return this._collidableType;
     }
 
     constructor(babylonMesh: BABYLON.AbstractMesh, collidableCategory: CollidableType) {
         this._babylonMesh = babylonMesh;
-        this._collidableCategory = collidableCategory;
+        this._collidableType = collidableCategory;
     }
 
 }
