@@ -18,9 +18,15 @@ jobs:
         with:
           node-version: 22.x
 
-      - run: cd modules/web
-      - run: npm install
-      - run: npm run build-gh-pages
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Web)
+        run: npm install
+        working-directory: ./modules/web
+      - name: Build NPM
+        run: npm run build-gh-pages
+        working-directory: ./modules/web
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

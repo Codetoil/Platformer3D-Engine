@@ -9,7 +9,6 @@
     "build": "vite build",
     "build-multiplayer": "vite build && vite build --config vite.config.multiplayer.integratedServer.js",
     "build-single-file": "vite build --config vite.config.single-file.js",
-    "build-multiplayer-gh-pages": "vite build --config vite.config.multiplayer-gh-pages.js && vite build --config vite.config.mutiplayer-gh-pages.integratedServer.js",
     "build-multiplayer-single-file": "vite build --config vite.config.multiplayer-single-file.js",
     "preview": "vite preview",
     "test": "vitest",

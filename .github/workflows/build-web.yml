@@ -21,11 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install
+      - name: Install NPM Packages (Common)
+        run: npm install
         working-directory: ./modules/common
-      - run: npm install
+      - name: Install NPM Packages (Web)
+        run: npm install
         working-directory: ./modules/web
-      - run: npm run build
+      - name: Build NPM
+        run: npm run build
         working-directory: ./modules/web
       - name: Upload Output
         uses: actions/upload-artifact@v4
