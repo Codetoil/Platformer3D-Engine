@@ -20,7 +20,7 @@ import * as BABYLON from "@babylonjs/core";
 import type {CharacterInputController} from "./characterInputController";
 import {World} from "./world";
 import {AbstractMesh} from "@babylonjs/core";
-import {CollidableType} from "./collidable";
+import {Collidable, CollidableType} from "./collidable";
 import {CollidableTypes} from "../levelpack/levelpack";
 import {Skill} from "./skill";
 import {Item} from "./item";
@@ -40,6 +40,9 @@ export class Character {
     protected _characterOrientation!: BABYLON.Quaternion;
     protected _characterRayOfView: BABYLON.Vector3 = new BABYLON.Vector3(0, 0, 1).normalize();
 
+    private readonly collisionRayHelper: Map<Collidable, BABYLON.RayHelper> = new Map();
+    protected movementRayHelper!: BABYLON.RayHelper;
+
     // Character Properties
     // TODO: Load in at runtime
     protected _characterHeight: number = 2.0;
@@ -51,9 +54,9 @@ export class Character {
     protected _characterMaximumVerticalSpeed: number = 50.0;
     protected _characterVerticalJumpVelocity: number = 28.0;
     protected _characterGroundFriction: number = 0.7;
-    protected _characterWallSlideGravitationalAcceleration: number = -83.333;
-    protected _characterGravitionalAccelerationUponHoldingJump: number = -90.0;
-    protected _characterNormalGravititationalAcceleration: number = -100.0;
+    protected _characterWallSlideGravitationalAcceleration: number = -0.83333;
+    protected _characterGravitionalAccelerationUponHoldingJump: number = -0.9;
+    protected _characterNormalGravititationalAcceleration: number = -1.0;
 
     // Character State
     protected _healthPoints!: number;
@@ -218,12 +221,22 @@ export class Character {
             this.isCharacterOnWorldSurface.set(collidableType, false);
         })
         this._characterWorld.collidables.forEach((collidable) => {
-            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition,
-                this._characterVelocity.add(BABYLON.Vector3.Down()), this._characterHeight / 2);
+            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, collidable.babylonMesh.position
+                .subtract(this._characterPosition).normalize(), this._characterHeight / 2);
+            if (this.collisionRayHelper.get(collidable)) {
+                this.collisionRayHelper.get(collidable)!.dispose();
+                this.collisionRayHelper.delete(collidable);
+            }
+            this.collisionRayHelper.set(collidable, new BABYLON.RayHelper(ray));
+            this.collisionRayHelper.get(collidable)!.show(
+                this._characterWorld.babylonScene,
+                BABYLON.Color3.Green()
+            );
             let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
                     return mesh == collidable.babylonMesh;
                 });
+            if (!!hit && hit.hit) console.debug("hit")
             this.isCharacterOnWorldSurface.set(collidable.collidableType,
                 this.isCharacterOnWorldSurface.get(collidable.collidableType) || (!!hit && hit.hit));
         });
@@ -368,13 +381,19 @@ export class Character {
         let deltaPos = this._characterVelocity.scale(getDeltaTime() / 1000.0);
 
         if (deltaPos.length() > 0) {
-            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos, deltaPos.length());
+            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos, 2 * deltaPos.length());
+            this.movementRayHelper = new BABYLON.RayHelper(ray);
+            this.movementRayHelper.show(
+                this._characterWorld.babylonScene,
+                BABYLON.Color3.Purple()
+            );
             let hit: BABYLON.Nullable<BABYLON.PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
                 (mesh: BABYLON.AbstractMesh) => {
                     return this._characterWorld.collidables
                         .map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
             if (hit && hit.pickedPoint && hit.getNormal()) {
+                console.debug(hit)
                 this._babylonMesh.position = this._characterPosition =
                     hit.pickedPoint.subtract(this._characterVelocity.normalize().scale(this._characterHeight / 2));
                 this._characterVelocity = this._characterVelocity

@@ -41,13 +41,22 @@ export class WorldSingleplayer extends World {
 
         console.debug("Initializing Player...");
         // Create the player entity
-        this._player = new CharacterSingleplayer(3., BABYLON.MeshBuilder.CreateSphere(
+        this._player = new CharacterSingleplayer(1.5,
+            /*BABYLON.MeshBuilder.CreateSphere(
             "player",
             {
                 diameter: 1.5
             },
             this.babylonScene
-        ), this, new PlayerInputController(new DeviceSourceManager(this._gameEngine.babylonEngine)));
+            )*/
+            BABYLON.MeshBuilder.CreateSphere(
+                "player",
+                {
+                    diameter: 0.01
+                }
+            ,this.babylonScene
+            )
+        , this, new PlayerInputController(new DeviceSourceManager(this._gameEngine.babylonEngine)));
         this._player.setPositionAndRotation(
             new BABYLON.Vector3(5, -5, -10),
             BABYLON.Quaternion.Identity()
