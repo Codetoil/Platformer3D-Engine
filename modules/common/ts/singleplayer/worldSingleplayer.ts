@@ -18,7 +18,7 @@
 
 import * as BABYLON from "@babylonjs/core";
 import {World} from "../common/world";
-import {GameSingleplayer} from "./gameSingleplayer";
+import {GameEngineSingleplayer} from "./gameEngineSingleplayer";
 import {CharacterSingleplayer} from "./characterSingleplayer";
 import {Character} from "../common/character";
 import {PlayerInputController} from "../client/playerInputController";
@@ -66,7 +66,7 @@ export class WorldSingleplayer extends World {
             this.babylonScene
         );
         this._player.babylonTexture = new BABYLON.Texture(
-            (this.gameEngine as GameSingleplayer).assetsDir() + "temp_player.png",
+            (this.gameEngine as GameEngineSingleplayer).assetsDir() + "temp_player.png",
             this.babylonScene
         );
         (this._player.babylonMesh.material as BABYLON.StandardMaterial).diffuseTexture =

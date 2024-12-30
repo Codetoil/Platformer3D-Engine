@@ -1,0 +1,42 @@
+{
+  "name": "game3d-native",
+  "version": "0.2.0",
+  "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "build-multiplayer": "vite build --config vite.config.multiplayer.js",
+    "build-server": "vite build --config vite.config.dedicatedServer.js",
+    "test": "vitest",
+    "update": "npm-check-updates -u"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Codetoil/Game3D.git"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "16.0.0",
+    "@types/node": "22.10.2",
+    "@types/ws": "8.5.13",
+    "npm-check-updates": "17.1.13",
+    "tslib": "2.8.1",
+    "typescript": "5.7.2",
+    "rollup": "4.29.1",
+    "vite": "6.0.6",
+    "vite-plugin-singlefile": "2.1.0",
+    "vitest": "2.1.8"
+  },
+  "type": "module",
+  "dependencies": {
+    "game3d-common": "file:../common",
+    "@babylonjs/core": "7.42.0",
+    "@babylonjs/gui": "7.42.0",
+    "@babylonjs/loaders": "7.42.0",
+    "@babylonjs/materials": "7.42.0",
+    "modern-isomorphic-ws": "1.0.5",
+    "ts-mixer": "6.0.4",
+    "uuid": "11.0.3",
+    "ws": "8.18.0",
+    "xss": "1.0.15"
+  }
+}

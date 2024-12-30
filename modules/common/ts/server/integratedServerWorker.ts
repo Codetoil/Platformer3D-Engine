@@ -1,4 +1,4 @@
-import {GameServer} from "./gameServer";
+import {GameEngineServer} from "./gameEngineServer";
 
 /**
  *  Game3D, a 3D Platformer built for the web.
@@ -21,8 +21,8 @@ import {GameServer} from "./gameServer";
 /// <reference lib="es2022" />
 /// <reference lib="webworker" />
 
-function startServer(gameServerType: { GameServer: GameServer }): void {
-    const gameServer: GameServer = new gameServerType.GameServer();
+function startServer(gameServerType: { GameServer: GameEngineServer }): void {
+    const gameServer: GameEngineServer = new gameServerType.GameServer();
 
     gameServer.ready.then((value) => {
         value.initializeMainLoop();
@@ -38,7 +38,7 @@ self.onmessage = (event: MessageEvent<string | Uint8Array>) => {
             .catch((reason: any) => {
                 console.info("Failed to load production integrated game server, assuming development environment...");
                 console.info(reason);
-                const url2: string = new URL("../server/gameServer.ts", url_base).toString();
+                const url2: string = new URL("../server/gameEngineServer.ts", url_base).toString();
                 import(url2).then(startServer);
             });
     }

@@ -5,7 +5,7 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			input: {
-				client: '/index-single-file.html'
+				singleplayer: '/index-single-file.html'
 			},
 			output: {
 				format: 'es',

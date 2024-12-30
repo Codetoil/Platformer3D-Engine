@@ -1,4 +1,4 @@
-import {GameServer} from "game3d-common/ts/server/gameServer";
+import {GameEngineServer} from "game3d-common/ts/server/gameEngineServer";
 
 /**
  *  Game3D, a 3D Platformer built for the web.
@@ -20,8 +20,8 @@ import {GameServer} from "game3d-common/ts/server/gameServer";
 /// <reference no-default-lib="true" />
 /// <reference lib="es2022" />
 
-const gameServer: GameServer = new GameServer();
+const gameEngineServer: GameEngineServer = new GameEngineServer();
 
-gameServer.ready.then((value) => {
+gameEngineServer.ready.then((value) => {
     value.initializeMainLoop();
 });
