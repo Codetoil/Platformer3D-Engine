@@ -8,7 +8,7 @@ on:
 
 jobs:
   client-linux-x64:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -136,7 +136,7 @@ jobs:
           name: client-mac-x64
           path: modules/native/rust-wrapper/target/debug/client
   dedicated_server-linux-x64:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -264,7 +264,7 @@ jobs:
           name: dedicated_server-mac-x64
           path: modules/native/rust-wrapper/target/debug/dedicated_server
   singleplayer-linux-x64:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
