@@ -41,7 +41,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client-linux-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/client
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   client-win-x64:
     runs-on: ubuntu-24.04
 
@@ -80,7 +83,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
+          path: |
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/client.exe
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/LICENSE.md
   client-mac-arm64:
     runs-on: macos-14
 
@@ -110,12 +116,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-mac-arm64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/client
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   client-mac-x64:
     runs-on: macos-13
 
@@ -145,12 +154,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-mac-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/client
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   dedicated_server-linux-x64:
     runs-on: ubuntu-20.04
 
@@ -180,12 +192,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-linux-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/dedicated_server
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   dedicated_server-win-x64:
     runs-on: ubuntu-24.04
 
@@ -219,12 +234,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
+          path: |
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/dedicated_server.exe
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/LICENSE.md
   dedicated_server-mac-arm64:
     runs-on: macos-14
 
@@ -254,12 +272,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-mac-arm64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/dedicated_server
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   dedicated_server-mac-x64:
     runs-on: macos-13
 
@@ -289,12 +310,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-mac-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/dedicated_server
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   singleplayer-linux-x64:
     runs-on: ubuntu-20.04
 
@@ -324,12 +348,15 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-linux-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/singleplayer
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   singleplayer-win-x64:
     runs-on: ubuntu-24.04
 
@@ -368,7 +395,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
+          path: |
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/singleplayer.exe
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz
+            modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/LICENSE.md
   singleplayer-mac-arm64:
     runs-on: macos-14
 
@@ -403,7 +433,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-mac-arm64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/singleplayer
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
   singleplayer-mac-x64:
     runs-on: macos-13
 
@@ -433,9 +466,12 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-mac-x64
-          path: modules/native/rust-wrapper/target/debug
+          path: |
+            modules/native/rust-wrapper/target/debug/singleplayer
+            modules/native/rust-wrapper/target/debug/source.tar.gz
+            modules/native/rust-wrapper/target/debug/LICENSE.md
