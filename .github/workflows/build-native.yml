@@ -1,4 +1,4 @@
-name: Build for Web
+name: Build for Native
 
 on:
   push:
