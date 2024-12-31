@@ -1,5 +1,5 @@
 /**
- *  Game3D, a 3D Platformer built for the web.
+ *  Platformer3D Engine, a 3D Platformer Engine built for the web.
  *  Copyright (C) 2024 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify

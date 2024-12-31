@@ -29,6 +29,8 @@ jobs:
         working-directory: ./modules/common
       - name: Create source code tarbell
         run: git archive -o modules/common/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/common/dist
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:

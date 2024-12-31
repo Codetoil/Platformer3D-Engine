@@ -1,5 +1,5 @@
 {
-  "name": "game3d-native",
+  "name": "platformer3d-engine-native",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
   "main": "index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Codetoil/Game3D.git"
+    "url": "https://github.com/Codetoil/Platformer3D.git"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "16.0.0",

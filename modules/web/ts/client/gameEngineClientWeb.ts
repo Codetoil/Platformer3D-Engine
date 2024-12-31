@@ -1,5 +1,5 @@
 /**
- *  Game3D, a 3D Platformer built for the web.
+ *  Platformer3D Engine, a 3D Platformer Engine built for the web.
  *  Copyright (C) 2021-2024 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ import {GameEngine} from "game3d-common/ts/common/gameEngine";
 import {GameEngineClient} from "game3d-common/ts/client/gameEngineClient";
 
 export class GameEngineClientWeb extends GameEngineClient {
-    public readonly name: string = "Game3D Web Client";
+    public readonly name: string = "Platformer3D Engine Web Client";
     public readonly ready: Promise<GameEngine> = new Promise((resolve, reject) => {
         document.addEventListener("DOMContentLoaded", () => {
             this.initializeEngine(resolve, reject);

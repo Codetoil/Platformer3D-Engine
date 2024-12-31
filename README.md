@@ -1,3 +1,4 @@
-# Game3D
+# Platformer3D Engine
 
-Game3D, a 3D Platformer built for the web. It is currently in elementary stages. Version 0.2.0
+Platformer3D Engine is a game engine for 3D Platformers written in TypeScript and Rust.
+It is currently in the elementary stages of production. Version 0.2.0

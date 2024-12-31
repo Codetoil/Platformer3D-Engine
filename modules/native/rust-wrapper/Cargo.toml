@@ -1,5 +1,5 @@
 [package]
-name = "game3d-native"
+name = "platformer3d-engine"
 version = "0.1.0"
 edition = "2021"
 
