@@ -6,7 +6,7 @@ export default defineConfig({
 		lib: {
 			entry: {
 				characterClient: "./ts/client/characterClient.ts",
-				gameClient: "./ts/client/gameEngineClient.ts",
+				gameEngineClient: "./ts/client/gameEngineClient.ts",
 				networkingClient: "./ts/client/networkingClient.ts",
 				playerInputController: "./ts/client/playerInputController.ts",
 				worldClient: "./ts/client/worldClient.ts",
@@ -22,11 +22,11 @@ export default defineConfig({
 				version: "./ts/common/version.ts",
 				world: "./ts/common/world.ts",
 				levelpack: "./ts/levelpack/levelpack.ts",
-				gameServer: "./ts/server/gameEngineServer.ts",
+				gameEngineServer: "./ts/server/gameEngineServer.ts",
 				integratedServerWorker: "./ts/server/integratedServerWorker.ts",
 				worldServer: "./ts/server/worldServer.ts",
 				characterSingleplayer: "./ts/singleplayer/characterSingleplayer.ts",
-				gameSingleplayer: "./ts/singleplayer/gameSingleplayer.ts",
+				gameEngineSingleplayer: "./ts/singleplayer/gameEngineSingleplayer.ts",
 				worldSingleplayer: "./ts/singleplayer/worldSingleplayer.ts"
 			},
 			formats: ['es']
