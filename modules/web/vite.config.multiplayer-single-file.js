@@ -9,11 +9,25 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
+				assetFileNames: 'assets/[name][extname]',
+				chunkFileNames: '[name].js',
+				entryFileNames: '[name].js',
 				dir: 'dist/single-file'
 			}
 		},
 	},
 	plugins: [
 		viteSingleFile()
-	]
+	],
+	worker: {
+		format: 'es',
+		rollupOptions: {
+			output: {
+				format: 'es',
+				assetFileNames: 'assets/[name][extname]',
+				chunkFileNames: '[name].js',
+				entryFileNames: '[name].js'
+			},
+		}
+	},
 });

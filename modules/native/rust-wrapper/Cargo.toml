@@ -3,5 +3,17 @@ name = "game3d-native"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "dedicated_server"
+path = "src/dedicated_server/main.rs"
+
+[[bin]]
+name = "client"
+path = "src/client-like/client/main.rs"
+
+[[bin]]
+name = "singleplayer"
+path = "src/client-like/singleplayer/main.rs"
+
 [dependencies]
 quick-js = { version = "0.4.1", features = ["log"] }

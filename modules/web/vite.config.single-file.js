@@ -9,6 +9,9 @@ export default defineConfig({
 			},
 			output: {
 				format: 'es',
+				assetFileNames: 'assets/[name][extname]',
+				chunkFileNames: '[name].js',
+				entryFileNames: '[name].js',
 				dir: 'dist/single-file'
 			}
 		},

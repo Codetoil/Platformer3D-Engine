@@ -57,7 +57,7 @@ export class Levelpack {
         console.debug("Loading levelpack...");
         console.debug("(TEMP: HARDCODED)");
 
-        // TODO Load world data from
+        // TODO Load world data from Levelpack
     }
 
     public static async initializeWorld(gameEngine: GameEngine, namespacedKey: NamespacedKey): Promise<World> {

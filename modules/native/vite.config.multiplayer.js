@@ -17,6 +17,17 @@ export default defineConfig({
 			},
 		}
 	},
+	worker: {
+		format: 'iife',
+		rollupOptions: {
+			output: {
+				format: 'iife',
+				assetFileNames: 'assets/[name][extname]',
+				chunkFileNames: '[name].js',
+				entryFileNames: '[name].js'
+			},
+		}
+	},
 	plugins: [
 		resolve({
 			extensions: ['.js', '.ts']

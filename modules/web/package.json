@@ -7,7 +7,7 @@
     "dev": "vite dev --host",
     "build-gh-pages": "vite build --config vite.config.gh-pages.js",
     "build": "vite build",
-    "build-multiplayer": "vite build --config vite.config.multiplayer.js && vite build --config vite.config.multiplayer.integratedServer.js",
+    "build-multiplayer": "vite build --config vite.config.multiplayer.js",
     "build-single-file": "vite build --config vite.config.single-file.js",
     "build-multiplayer-single-file": "vite build --config vite.config.multiplayer-single-file.js",
     "preview": "vite preview",

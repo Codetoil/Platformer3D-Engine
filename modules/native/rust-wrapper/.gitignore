@@ -1,5 +1,5 @@
 target
-src/singleplayer.js
-src/client.js
-src/gameEngineServerIntegrated.js
-src/server.js
+src/client-like/singleplayer/singleplayer.js
+src/client-like/client/client.js
+src/client-like/client/integratedServerWorker.js
+src/dedicated_server/dedicated_server.js
