@@ -24,7 +24,7 @@ export default defineConfig({
 				searchForWorkspaceRoot(process.cwd()),
 				// your custom rules
 				'../common',
-				'node_modules/game3d-common',
+				'node_modules/platformer3d-engine-common',
 			],
 		},
 	},

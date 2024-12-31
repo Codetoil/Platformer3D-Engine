@@ -13,5 +13,5 @@ export default defineConfig({
 		},
 	},
 	plugins: [],
-	base: "https://game3d.codetoil.io"
+	base: "https://platformer3d-engine.codetoil.io"
 });
