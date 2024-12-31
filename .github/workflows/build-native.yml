@@ -7,7 +7,7 @@ on:
     branches: ["**"]
 
 jobs:
-  client:
+  client-linux-x64:
     runs-on: ubuntu-24.04
 
     strategy:
@@ -36,9 +36,102 @@ jobs:
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: client
-          path: modules/web/dist
-  server:
+          name: client-linux-x64
+          path: modules/native/rust-wrapper/target/debug/client
+  client-win-x64:
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/native
+      - name: Build Client (Cargo)
+        run: cargo build --bin client --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-win-x64
+          path: modules/native/rust-wrapper/target/debug/client.exe
+  client-mac-arm64:
+    runs-on: macos-14
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/native
+      - name: Build Client (Cargo)
+        run: cargo build --bin client --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-mac-arm64
+          path: modules/native/rust-wrapper/target/debug/client
+  client-mac-x64:
+    runs-on: macos-13
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/native
+      - name: Build Client (Cargo)
+        run: cargo build --bin client --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-mac-x64
+          path: modules/native/rust-wrapper/target/debug/client
+  dedicated_server-linux-x64:
     runs-on: ubuntu-24.04
 
     strategy:
@@ -67,9 +160,102 @@ jobs:
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: client
-          path: modules/web/dist
-  singleplayer:
+          name: dedicated_server-linux-x64
+          path: modules/native/rust-wrapper/target/debug/dedicated_server
+  dedicated_server-win-x64:
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        node-version: [ 22.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Server (NPM)
+        run: npm run build-server
+        working-directory: ./modules/native
+      - name: Build Server (Cargo)
+        run: cargo build --bin dedicated_server --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedicated_server-win-x64
+          path: modules/native/rust-wrapper/target/debug/dedicated_server
+  dedicated_server-mac-arm64:
+    runs-on: macos-14
+
+    strategy:
+      matrix:
+        node-version: [ 22.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Server (NPM)
+        run: npm run build-server
+        working-directory: ./modules/native
+      - name: Build Server (Cargo)
+        run: cargo build --bin dedicated_server --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedicated_server-mac-arm64
+          path: modules/native/rust-wrapper/target/debug/dedicated_server
+  dedicated_server-mac-x64:
+    runs-on: macos-13
+
+    strategy:
+      matrix:
+        node-version: [ 22.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Server (NPM)
+        run: npm run build-server
+        working-directory: ./modules/native
+      - name: Build Server (Cargo)
+        run: cargo build --bin dedicated_server --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedicated_server-mac-x64
+          path: modules/native/rust-wrapper/target/debug/dedicated_server
+  singleplayer-linux-x64:
     runs-on: ubuntu-24.04
 
     strategy:
@@ -98,5 +284,98 @@ jobs:
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: singleplayer
-          path: modules/web/dist
+          name: singleplayer-linux-x64
+          path: modules/native/rust-wrapper/target/debug/singleplayer
+  singleplayer-win-x64:
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Singleplayer (NPM)
+        run: npm run build
+        working-directory: ./modules/native
+      - name: Build Singleplayer (Cargo)
+        run: cargo build --bin singleplayer --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer-win-x64
+          path: modules/native/rust-wrapper/target/debug/singleplayer.exe
+  singleplayer-mac-arm64:
+    runs-on: macos-14
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Singleplayer (NPM)
+        run: npm run build
+        working-directory: ./modules/native
+      - name: Build Singleplayer (Cargo)
+        run: cargo build --bin singleplayer --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer-mac-arm64
+          path: modules/native/rust-wrapper/target/debug/singleplayer
+  singleplayer-mac-x64:
+    runs-on: macos-13
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Singleplayer (NPM)
+        run: npm run build
+        working-directory: ./modules/native
+      - name: Build Singleplayer (Cargo)
+        run: cargo build --bin singleplayer --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer-mac-x64
+          path: modules/native/rust-wrapper/target/debug/singleplayer
