@@ -27,8 +27,7 @@ jobs:
       - name: Build Common (NPM)
         run: npm run build
         working-directory: ./modules/common
-      - run: mkdir modules/common/dist
-      - name: Create source out of source code
+      - name: Create source code tarbell
         run: git archive -o modules/common/dist/source.tar.gz HEAD
       - name: Upload Output
         uses: actions/upload-artifact@v4
