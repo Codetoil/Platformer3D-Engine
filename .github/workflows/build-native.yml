@@ -39,7 +39,7 @@ jobs:
           name: client-linux-x64
           path: modules/native/rust-wrapper/target/debug/client
   client-win-x64:
-    runs-on: windows-2022
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
@@ -52,10 +52,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install GNU Toolchain
-        run: rustup toolchain install stable-gnu
-      - name: Switch to MinGW
-        run: rustup set default-host x86_64-pc-windows-gnu
+      - name: Install MinGW Toolchain
+        run: sudo apt-get install mingw-w64
+      - name: Add MinGW Toolchain to Rust
+        run: rustup target add x86_64-pc-windows-gnu
       - name: Install NPM Packages (Common)
         run: npm install
         working-directory: ./modules/common
@@ -66,13 +66,13 @@ jobs:
         run: npm run build-multiplayer
         working-directory: ./modules/native
       - name: Build Client (Cargo)
-        run: cargo build --bin client --verbose
+        run: cargo build --bin client --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-win-x64
-          path: modules/native/rust-wrapper/target/debug/client.exe
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/client.exe
   client-mac-arm64:
     runs-on: macos-14
 
@@ -167,7 +167,7 @@ jobs:
           name: dedicated_server-linux-x64
           path: modules/native/rust-wrapper/target/debug/dedicated_server
   dedicated_server-win-x64:
-    runs-on: windows-2022
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
@@ -180,10 +180,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install GNU Toolchain
-        run: rustup toolchain install stable-gnu
-      - name: Switch to MinGW
-        run: rustup set default-host x86_64-pc-windows-gnu
+      - name: Install MinGW Toolchain
+        run: sudo apt-get install mingw-w64
+      - name: Add MinGW Toolchain to Rust
+        run: rustup target add x86_64-pc-windows-gnu
       - name: Install NPM Packages (Common)
         run: npm install
         working-directory: ./modules/common
@@ -194,13 +194,13 @@ jobs:
         run: npm run build-server
         working-directory: ./modules/native
       - name: Build Server (Cargo)
-        run: cargo build --bin dedicated_server --verbose
+        run: cargo build --bin dedicated_server --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-win-x64
-          path: modules/native/rust-wrapper/target/debug/dedicated_server
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/dedicated_server.exe
   dedicated_server-mac-arm64:
     runs-on: macos-14
 
@@ -295,7 +295,7 @@ jobs:
           name: singleplayer-linux-x64
           path: modules/native/rust-wrapper/target/debug/singleplayer
   singleplayer-win-x64:
-    runs-on: windows-2022
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
@@ -308,10 +308,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install GNU Toolchain
-        run: rustup toolchain install stable-gnu
-      - name: Switch to MinGW
-        run: rustup set default-host x86_64-pc-windows-gnu
+      - name: Install MinGW Toolchain
+        run: sudo apt-get install mingw-w64
+      - name: Add MinGW Toolchain to Rust
+        run: rustup target add x86_64-pc-windows-gnu
       - name: Install NPM Packages (Common)
         run: npm install
         working-directory: ./modules/common
@@ -322,13 +322,13 @@ jobs:
         run: npm run build
         working-directory: ./modules/native
       - name: Build Singleplayer (Cargo)
-        run: cargo build --bin singleplayer --verbose
+        run: cargo build --bin singleplayer --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-win-x64
-          path: modules/native/rust-wrapper/target/debug/singleplayer.exe
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/singleplayer.exe
   singleplayer-mac-arm64:
     runs-on: macos-14
 
