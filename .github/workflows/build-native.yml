@@ -62,7 +62,7 @@ jobs:
         run: npm run build-server
         working-directory: ./modules/native
       - name: Build Server (Cargo)
-        run: cargo build --bin server --verbose
+        run: cargo build --bin dedicated_server --verbose
         working-directory: ./modules/native/rust-wrapper
       - name: Upload Output
         uses: actions/upload-artifact@v4
