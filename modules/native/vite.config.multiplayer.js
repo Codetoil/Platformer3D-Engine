@@ -4,7 +4,7 @@ import resolve from '@rollup/plugin-node-resolve'
 export default defineConfig({
 	build: {
 		emptyOutDir: false,
-		outDir: "rust-wrapper/src",
+		outDir: "rust-wrapper/src/client-like/client",
 		rollupOptions: {
 			input: {
 				client: '/ts/client/gameEngineClientNative.ts'

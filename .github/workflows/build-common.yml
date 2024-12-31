@@ -24,7 +24,7 @@ jobs:
       - name: Install NPM Packages (Common)
         run: npm install
         working-directory: ./modules/common
-      - name: Build NPM
+      - name: Build Common (NPM)
         run: npm run build
         working-directory: ./modules/common
       - name: Upload Output

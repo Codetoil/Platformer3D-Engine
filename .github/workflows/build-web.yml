@@ -7,7 +7,7 @@ on:
     branches: ["**"]
 
 jobs:
-  build:
+  client:
     runs-on: ubuntu-24.04
 
     strategy:
@@ -27,11 +27,95 @@ jobs:
       - name: Install NPM Packages (Web)
         run: npm install
         working-directory: ./modules/web
-      - name: Build NPM
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/web
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client
+          path: modules/web/dist
+  client-single-file:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Web)
+        run: npm install
+        working-directory: ./modules/web
+      - name: Build Client (Single File) (NPM)
+        run: npm run build-multiplayer-single-file
+        working-directory: ./modules/web
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-single-file
+          path: modules/web/dist/single-file
+  singleplayer:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Web)
+        run: npm install
+        working-directory: ./modules/web
+      - name: Build Singleplayer (NPM)
         run: npm run build
         working-directory: ./modules/web
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: singleplayer
           path: modules/web/dist
+  singleplayer-single-file:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Web)
+        run: npm install
+        working-directory: ./modules/web
+      - name: Build Singleplayer (Single File) (NPM)
+        run: npm run build-single-file
+        working-directory: ./modules/web
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer-single-file
+          path: modules/web/dist/single-file

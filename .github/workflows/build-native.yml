@@ -1,0 +1,102 @@
+name: Build for Web
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  client:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/native
+      - name: Build Client (Cargo)
+        run: cargo build --bin client --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client
+          path: modules/web/dist
+  server:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [ 22.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Server (NPM)
+        run: npm run build-server
+        working-directory: ./modules/native
+      - name: Build Server (Cargo)
+        run: cargo build --bin server --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client
+          path: modules/web/dist
+  singleplayer:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (Native)
+        run: npm install
+        working-directory: ./modules/native
+      - name: Build Singleplayer (NPM)
+        run: npm run build
+        working-directory: ./modules/native
+      - name: Build Singleplayer (Cargo)
+        run: cargo build --bin singleplayer --verbose
+        working-directory: ./modules/native/rust-wrapper
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer
+          path: modules/web/dist
