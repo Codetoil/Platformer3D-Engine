@@ -33,11 +33,15 @@ jobs:
       - name: Build Client (Cargo)
         run: cargo build --bin client --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-linux-x64
-          path: modules/native/rust-wrapper/target/debug/client
+          path: modules/native/rust-wrapper/target/debug
   client-win-x64:
     runs-on: ubuntu-24.04
 
@@ -68,11 +72,15 @@ jobs:
       - name: Build Client (Cargo)
         run: cargo build --bin client --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/client.exe
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
   client-mac-arm64:
     runs-on: macos-14
 
@@ -99,11 +107,15 @@ jobs:
       - name: Build Client (Cargo)
         run: cargo build --bin client --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-mac-arm64
-          path: modules/native/rust-wrapper/target/debug/client
+          path: modules/native/rust-wrapper/target/debug
   client-mac-x64:
     runs-on: macos-13
 
@@ -130,11 +142,15 @@ jobs:
       - name: Build Client (Cargo)
         run: cargo build --bin client --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: client-mac-x64
-          path: modules/native/rust-wrapper/target/debug/client
+          path: modules/native/rust-wrapper/target/debug
   dedicated_server-linux-x64:
     runs-on: ubuntu-20.04
 
@@ -161,11 +177,15 @@ jobs:
       - name: Build Server (Cargo)
         run: cargo build --bin dedicated_server --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-linux-x64
-          path: modules/native/rust-wrapper/target/debug/dedicated_server
+          path: modules/native/rust-wrapper/target/debug
   dedicated_server-win-x64:
     runs-on: ubuntu-24.04
 
@@ -196,11 +216,15 @@ jobs:
       - name: Build Server (Cargo)
         run: cargo build --bin dedicated_server --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/dedicated_server.exe
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
   dedicated_server-mac-arm64:
     runs-on: macos-14
 
@@ -227,11 +251,15 @@ jobs:
       - name: Build Server (Cargo)
         run: cargo build --bin dedicated_server --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-mac-arm64
-          path: modules/native/rust-wrapper/target/debug/dedicated_server
+          path: modules/native/rust-wrapper/target/debug
   dedicated_server-mac-x64:
     runs-on: macos-13
 
@@ -258,11 +286,15 @@ jobs:
       - name: Build Server (Cargo)
         run: cargo build --bin dedicated_server --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated_server-mac-x64
-          path: modules/native/rust-wrapper/target/debug/dedicated_server
+          path: modules/native/rust-wrapper/target/debug
   singleplayer-linux-x64:
     runs-on: ubuntu-20.04
 
@@ -289,11 +321,15 @@ jobs:
       - name: Build Singleplayer (Cargo)
         run: cargo build --bin singleplayer --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-linux-x64
-          path: modules/native/rust-wrapper/target/debug/singleplayer
+          path: modules/native/rust-wrapper/target/debug
   singleplayer-win-x64:
     runs-on: ubuntu-24.04
 
@@ -324,11 +360,15 @@ jobs:
       - name: Build Singleplayer (Cargo)
         run: cargo build --bin singleplayer --verbose --target=x86_64-pc-windows-gnu
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-win-x64
-          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug/singleplayer.exe
+          path: modules/native/rust-wrapper/target/x86_64-pc-windows-gnu/debug
   singleplayer-mac-arm64:
     runs-on: macos-14
 
@@ -355,11 +395,15 @@ jobs:
       - name: Build Singleplayer (Cargo)
         run: cargo build --bin singleplayer --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-mac-arm64
-          path: modules/native/rust-wrapper/target/debug/singleplayer
+          path: modules/native/rust-wrapper/target/debug
   singleplayer-mac-x64:
     runs-on: macos-13
 
@@ -386,8 +430,12 @@ jobs:
       - name: Build Singleplayer (Cargo)
         run: cargo build --bin singleplayer --verbose
         working-directory: ./modules/native/rust-wrapper
+      - name: Create source code tarbell
+        run: git archive -o modules/native/rust-wrapper/target/debug/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md mmodules/native/rust-wrapper/target/debug
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: singleplayer-mac-x64
-          path: modules/native/rust-wrapper/target/debug/singleplayer
+          path: modules/native/rust-wrapper/target/debug

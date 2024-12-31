@@ -30,6 +30,10 @@ jobs:
       - name: Build Client (NPM)
         run: npm run build-multiplayer
         working-directory: ./modules/web
+      - name: Create source code tarbell
+        run: git archive -o modules/web/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/web/dist
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
@@ -58,6 +62,10 @@ jobs:
       - name: Build Client (Single File) (NPM)
         run: npm run build-multiplayer-single-file
         working-directory: ./modules/web
+      - name: Create source code tarbell
+        run: git archive -o modules/web/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/web/dist
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
@@ -86,6 +94,10 @@ jobs:
       - name: Build Singleplayer (NPM)
         run: npm run build
         working-directory: ./modules/web
+      - name: Create source code tarbell
+        run: git archive -o modules/web/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/web/dist
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
@@ -114,6 +126,10 @@ jobs:
       - name: Build Singleplayer (Single File) (NPM)
         run: npm run build-single-file
         working-directory: ./modules/web
+      - name: Create source code tarbell
+        run: git archive -o modules/web/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/web/dist
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
