@@ -243,7 +243,6 @@ export class Character {
     }
 
     public accelerateAndRotateHorizontalComponents(x: number, z: number): void {
-        this.checkCollisions();
         let r = Math.sqrt(x ** 2 + z ** 2);
 
         if (r > 0.01) { // Deadzone
@@ -319,7 +318,6 @@ export class Character {
     }
 
     private applyHorizontalMovementInfluences(): void {
-        this.checkCollisions();
         let proportionalityConstant: number = 1.0;
         if (this._characterInputController.isSprintActive && this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             proportionalityConstant = 1.3;
@@ -407,12 +405,13 @@ export class Character {
         }
         console.assert(!!this._babylonMesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
         this._characterOrientation = this._babylonMesh.rotationQuaternion as BABYLON.Quaternion;
+        this.checkCollisions();
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
-        this.checkCollisions();
     }
 
     public preformTick(getDeltaTime: () => number): void {
+        this.checkCollisions();
         this._characterInputController.preformTick();
         this.move(getDeltaTime);
     }
