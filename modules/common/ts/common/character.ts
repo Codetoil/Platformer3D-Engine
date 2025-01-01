@@ -243,6 +243,7 @@ export class Character {
     }
 
     public accelerateAndRotateHorizontalComponents(x: number, z: number): void {
+        this.checkCollisions();
         let r = Math.sqrt(x ** 2 + z ** 2);
 
         if (r > 0.01) { // Deadzone
@@ -318,6 +319,7 @@ export class Character {
     }
 
     private applyHorizontalMovementInfluences(): void {
+        this.checkCollisions();
         let proportionalityConstant: number = 1.0;
         if (this._characterInputController.isSprintActive && this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             proportionalityConstant = 1.3;
@@ -381,7 +383,7 @@ export class Character {
         let deltaPos = this._characterVelocity.scale(getDeltaTime() / 1000.0);
 
         if (deltaPos.length() > 0) {
-            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos, 2 * deltaPos.length());
+            let ray: BABYLON.Ray = new BABYLON.Ray(this._characterPosition, deltaPos.normalizeToNew(), this._characterHeight / 2);
             this.movementRayHelper = new BABYLON.RayHelper(ray);
             this.movementRayHelper.show(
                 this._characterWorld.babylonScene,
@@ -392,12 +394,12 @@ export class Character {
                     return this._characterWorld.collidables
                         .map((collidable) => collidable.babylonMesh).includes(mesh);
                 });
-            if (hit && hit.pickedPoint && hit.getNormal()) {
-                console.debug(hit)
+            if (hit && hit.pickedPoint && hit.getNormal(true)) {
+                console.debug(hit, hit.getNormal(true))
                 this._babylonMesh.position = this._characterPosition =
-                    hit.pickedPoint.subtract(this._characterVelocity.normalize().scale(this._characterHeight / 2));
+                    hit.pickedPoint.add(hit.getNormal(true)!.scale(this._characterHeight / 2));
                 this._characterVelocity = this._characterVelocity
-                    .subtract(hit.getNormal()!.scale(this._characterVelocity.dot(hit.getNormal()!)));
+                    .subtract(hit.getNormal(true)!.scale(this._characterVelocity.dot(hit.getNormal(true)!)));
 
             } else {
                 this._babylonMesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
@@ -405,13 +407,12 @@ export class Character {
         }
         console.assert(!!this._babylonMesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
         this._characterOrientation = this._babylonMesh.rotationQuaternion as BABYLON.Quaternion;
-        this.checkCollisions();
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
+        this.checkCollisions();
     }
 
     public preformTick(getDeltaTime: () => number): void {
-        this.checkCollisions();
         this._characterInputController.preformTick();
         this.move(getDeltaTime);
     }
