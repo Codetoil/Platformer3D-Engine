@@ -2,7 +2,7 @@ import {GameEngineServer} from "game3d-common/ts/server/gameEngineServer";
 
 /**
  *  Platformer3D Engine, a 3D Platformer Engine built for the web.
- *  Copyright (C) 2021-2024 Codetoil
+ *  Copyright (C) 2021-2025 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by

@@ -15,20 +15,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 import type {GameEngine} from "./gameEngine";
-import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
-import {Character} from "./character";
 
-
-
-export abstract class World {
+export abstract class Renderer {
     protected _gameEngine: GameEngine;
-    protected _isWorldLoaded!: boolean;
     public readonly namespacedKey: NamespacedKey;
-    public readonly collidables: Collidable[] = [];
-    public readonly characters: Character[] = [];
 
     constructor(game: GameEngine, namespacedKey: NamespacedKey) {
         this._gameEngine = game;
@@ -38,20 +30,5 @@ export abstract class World {
     public get gameEngine(): GameEngine
     {
         return this._gameEngine;
-    }
-
-    public get isWorldLoaded(): boolean
-    {
-        return this._isWorldLoaded;
-    }
-
-    public abstract loadWorld(): Promise<void>;
-
-    public preformTick() {
-        this.characters.forEach(character => character.preformTick(() => (((a: number | undefined): number => {
-            if (a != undefined)
-                return a;
-            return 0.0;
-        })(this.gameEngine.renderer.deltaTime))));
     }
 }

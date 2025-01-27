@@ -1,6 +1,6 @@
 /**
  *  Platformer3D Engine, a 3D Platformer Engine built for the web.
- *  Copyright (C) 2021-2024 Codetoil
+ *  Copyright (C) 2021-2025 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as BABYLON from "@babylonjs/core";
 import type {World} from "./world";
 import {VERSION} from "./version";
 import {NamespacedKey} from "./namespacedKey";
@@ -27,13 +26,17 @@ import {NamespacedKey} from "./namespacedKey";
 export abstract class GameEngine {
     public readonly abstract name: string;
     public readonly worlds: World[] = [];
-    protected _babylonEngine!: BABYLON.Engine;
+    protected _renderer: Renderer;
     protected _started: boolean = false;
     protected _stopped: boolean = false;
 
-    public get babylonEngine(): BABYLON.Engine {
-        return this._babylonEngine;
+    public get renderer(): Renderer
+    {
+        return this._renderer;
     }
+
+    public abstract createRenderer(): Promise<Renderer>;
+
     public get started(): boolean
     {
         return this._started;
@@ -43,7 +46,6 @@ export abstract class GameEngine {
         return this._stopped;
     }
 
-    public abstract createBabylonEngine(): Promise<BABYLON.Engine>;
 
     public abstract onLoad(): Promise<void>;
 
@@ -51,25 +53,11 @@ export abstract class GameEngine {
 
     public initializeEngine(resolve: (value: GameEngine | Promise<GameEngine>) => void, reject: (reason?: any) => void) {
         console.info(`Starting ${this.name} Version ${VERSION}`)
-        this.createBabylonEngine()
-            .then((engine) => {
-                if (!engine) reject(new Error("engine should not be null."));
-                this._babylonEngine = engine;
-                this.onLoad().then(() => resolve(this), (error) => reject(error));
-            })
-            .catch((e: any) => {
-                console.error("The available createEngine function failed.");
-                console.error(e);
-                reject(e);
-            }).then(
-            () => {
-                this._started = true
-                console.info("Started " + this.name);
-            }
-        );
+        this.onLoad().then(() => resolve(this), (error) => reject(error));
     }
 
     public initializeMainLoop() {
+
         this._babylonEngine.runRenderLoop(() => {
             if (!this.shouldStop()) {
                 try {

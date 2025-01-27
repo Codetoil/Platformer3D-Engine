@@ -1,6 +1,6 @@
 /**
  *  Platformer3D Engine, a 3D Platformer Engine built for the web.
- *  Copyright (C) 2021-2024 Codetoil
+ *  Copyright (C) 2021-2025 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as BABYLON from "@babylonjs/core";
 import {GameEngine} from "game3d-common/ts/common/gameEngine";
 import {GameEngineClient} from "game3d-common/ts/client/gameEngineClient";
 
@@ -37,10 +36,7 @@ export class GameEngineClientNative extends GameEngineClient {
         return "./assets/";
     }
 
-    public async createBabylonEngine(): Promise<BABYLON.Engine> {
-        this._babylonEngine = new BABYLON.NativeEngine();
-        console.log("Engine initialized...")
-        return this._babylonEngine;
+    public async createRenderer(): Promise<Renderer> {
     }
 }
 

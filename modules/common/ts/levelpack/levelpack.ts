@@ -1,6 +1,6 @@
 /**
  *  Platformer3D Engine, a 3D Platformer Engine built for the web.
- *  Copyright (C) 2021-2024 Codetoil
+ *  Copyright (C) 2021-2025 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +18,6 @@
 // TODO Dynamicly load information from file system
 import {NamespacedKey} from "../common/namespacedKey";
 import {MoveLevel} from "../common/move";
-import * as BABYLON from "@babylonjs/core";
 import {Collidable, CollidableType} from "../common/collidable";
 import {GameEngine} from "../common/gameEngine";
 import {World} from "../common/world";
