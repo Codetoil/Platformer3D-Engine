@@ -4,7 +4,7 @@ import resolve from '@rollup/plugin-node-resolve'
 export default defineConfig({
 	build: {
 		emptyOutDir: false,
-		outDir: "rust-wrapper/src/dedicated_server",
+		outDir: "dist-dedicated-server",
 		rollupOptions: {
 			input: {
 				dedicated_server: '/ts/server/runServer.ts'

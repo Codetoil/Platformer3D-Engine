@@ -31,9 +31,9 @@ jobs:
         run: npm run build-multiplayer
         working-directory: ./modules/bosix
       - name: Create source code tarbell
-        run: git archive -o modules/bosix/dist/source.tar.gz HEAD
+        run: git archive -o modules/bosix/dist-client/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md modules/bosix/dist/debug
+        run: cp LICENSE.md modules/bosix/dist-client/
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
@@ -67,17 +67,17 @@ jobs:
         run: npm run build-multiplayer
         working-directory: ./modules/bosix
       - name: Create source code tarbell
-        run: git archive -o modules/bosix/dist/source.tar.gz HEAD
+        run: git archive -o modules/bosix/dist-dedicated-server/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md modules/bosix/dist/debug
+        run: cp LICENSE.md modules/bosix/dist-dedicated-server/
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
           name: dedicated-server-bosix
           path: |
-            modules/native/dist-singleplayer/platformer3d-engine-dedicated-server-0.2.0.bpackage
-            modules/native/dist/source.tar.gz
-            modules/native/dist/LICENSE.md
+            modules/native/dist-dedicated-server/platformer3d-engine-dedicated-server-0.2.0.bpackage
+            modules/native/dist-dedicated-server/source.tar.gz
+            modules/native/dist-dedicated-server/LICENSE.md
 
   build-singleplayer:
     runs-on: ubuntu-24.04
@@ -105,7 +105,7 @@ jobs:
       - name: Create source code tarbell
         run: git archive -o modules/bosix/dist-singleplayer/source.tar.gz HEAD
       - name: Copy License to output dist
-        run: cp LICENSE.md modules/bosix/dist-singleplayer/singleplayer/debug
+        run: cp LICENSE.md modules/bosix/dist-singleplayer/
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:

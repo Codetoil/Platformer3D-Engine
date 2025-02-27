@@ -1,5 +1,5 @@
 {
-  "name": "platformer3d-engine-native",
+  "name": "platformer3d-engine-bosix",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
   "main": "index.js",
