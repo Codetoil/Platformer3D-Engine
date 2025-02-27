@@ -1,0 +1,116 @@
+name: Build for Native
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-client:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (BOSIX)
+        run: npm install
+        working-directory: ./modules/bosix
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/bosix
+      - name: Create source code tarbell
+        run: git archive -o modules/bosix/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/bosix/dist/debug
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-bosix
+          path: |
+            modules/native/dist-client/platformer3d-engine-client-bosix.bpackage
+            modules/native/dist-client/source.tar.gz
+            modules/native/dist-client/LICENSE.md
+
+  build-dedicated-server:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (BOSIX)
+        run: npm install
+        working-directory: ./modules/bosix
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/bosix
+      - name: Create source code tarbell
+        run: git archive -o modules/bosix/dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/bosix/dist/debug
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: dedicated-server-bosix
+          path: |
+            modules/native/dist-singleplayer/platformer3d-engine-dedicated-server-0.2.0.bpackage
+            modules/native/dist/source.tar.gz
+            modules/native/dist/LICENSE.md
+
+  build-singleplayer:
+    runs-on: ubuntu-24.04
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install NPM Packages (Common)
+        run: npm install
+        working-directory: ./modules/common
+      - name: Install NPM Packages (BOSIX)
+        run: npm install
+        working-directory: ./modules/bosix
+      - name: Build Client (NPM)
+        run: npm run build-multiplayer
+        working-directory: ./modules/bosix
+      - name: Create source code tarbell
+        run: git archive -o modules/bosix/dist-singleplayer/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md modules/bosix/dist-singleplayer/singleplayer/debug
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: singleplayer-bosix
+          path: |
+            modules/native/dist-singleplayer/platformer3d-engine-singleplayer-0.2.0.bpackage
+            modules/native/dist-singleplayer/source.tar.gz
+            modules/native/dist-singleplayer/LICENSE.md
