@@ -80,4 +80,4 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: codeql
-          path: results/javascript.sarif
+          path: javascript.sarif
