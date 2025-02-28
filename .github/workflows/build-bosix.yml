@@ -1,4 +1,4 @@
-name: Build for Native
+name: Build for BOSIX
 
 on:
   push:
