@@ -659,22 +659,21 @@ school, if any, to sign a "copyright disclaimer" for the program, if
 necessary. For more information on this, and how to apply and follow
 the GNU AGPL, see <https://www.gnu.org/licenses/>.
 
-## Launcher Interface Exception
+## BOSIX Package API Exception
 
 Linking Platformer3D Engine statically or dynamically with other modules is making a combined work based on Platformer3D Engine. Thus, the terms
 and conditions of the GNU Affero General Public License cover the whole combination.
 
 As a special exception, the copyright holders of Platformer3D Engine give you permission to combine Platformer3D Engine program with free
 software programs or libraries that are released under the GNU LGPL and with independent modules that communicate with
-Platformer3D Engine solely through the Launcher interface. You may copy and distribute such a system following the terms of the GNU
+Platformer3D Engine solely through the BOSIX Package API. You may copy and distribute such a system following the terms of the GNU
 AGPL for Platformer3D Engine and the licenses of the other code concerned, provided that you include the source code of that other
-code when and as the GNU AGPL requires distribution of source code and provided that you do not modify the Launcher
-interface.
+code when and as the GNU AGPL requires distribution of source code and provided that you do not modify the BOSIX Package API.
 
 Note that people who make modified versions of Platformer3D Engine are not obligated to grant this special exception for their
 modified versions; it is their choice whether to do so. The GNU Affero General Public License gives permission to
 release a modified version without this exception; this exception also makes it possible to release a modified version
-which carries forward this exception. If you modify the Launcher interface, this exception does not apply to your
+which carries forward this exception. If you modify the BOSIX Package API, this exception does not apply to your
 modified version of Platformer3D Engine, and you must remove this exception when you distribute your modified version.
 
 This exception is an additional permission under section 7 of the GNU Affero General Public License, version 3
