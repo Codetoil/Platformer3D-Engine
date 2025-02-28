@@ -73,3 +73,11 @@ jobs:
         uses: github/codeql-action/analyze@main
         with:
           category: "/language:${{matrix.language}}"
+
+
+      # Upload the SARIF file generated in the previous step
+      - name: Upload SARIF results file
+        uses: actions/upload-artifact@main
+        with:
+          name: codacy
+          path: ${{ steps.analyze.outputs.sarif-output }}
