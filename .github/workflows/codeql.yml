@@ -79,5 +79,5 @@ jobs:
       - name: Upload SARIF results file
         uses: actions/upload-artifact@main
         with:
-          name: codacy
+          name: codeql
           path: ${{ steps.analyze.outputs.sarif-output }}
