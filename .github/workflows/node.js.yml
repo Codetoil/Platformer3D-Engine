@@ -19,15 +19,15 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@main
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run build
       - name: Upload Output
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@main
         with:
           name: dist
           path: dist
