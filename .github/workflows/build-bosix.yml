@@ -16,9 +16,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install NPM Packages (Common)
@@ -35,7 +35,7 @@ jobs:
       - name: Copy License to output dist
         run: cp LICENSE.md modules/bosix/dist-client/
       - name: Upload Output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: client-bosix
           path: |
@@ -52,9 +52,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install NPM Packages (Common)
@@ -71,7 +71,7 @@ jobs:
       - name: Copy License to output dist
         run: cp LICENSE.md modules/bosix/dist-dedicated-server/
       - name: Upload Output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: dedicated-server-bosix
           path: |
@@ -88,9 +88,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@main
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install NPM Packages (Common)
@@ -107,7 +107,7 @@ jobs:
       - name: Copy License to output dist
         run: cp LICENSE.md modules/bosix/dist-singleplayer/
       - name: Upload Output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@main
         with:
           name: singleplayer-bosix
           path: |
