@@ -1,0 +1,19 @@
+{
+  "extends": "./node_modules/@assemblyscript/wasi-shim/asconfig.json",
+  "entries": [
+    "src/assembly/client/gameEngineClient.ts"
+  ],
+  "options": {
+    "importTable": true
+  },
+  "targets": {
+    "release": {
+      "optimize": true,
+      "outFile": "dist/platformer3d-engine-client.release.wasm"
+    },
+    "debug": {
+      "debug": true,
+      "outFile": "dist/platformer3d-engine-client.debug.wasm"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extends": "./node_modules/@assemblyscript/wasi-shim/asconfig.json",
+  "entries": [
+    "src/assembly/common/character.ts",
+    "src/assembly/common/characterInputController.ts",
+    "src/assembly/common/collidable.ts",
+    "src/assembly/common/gameEngine.ts",
+    "src/assembly/common/inventory.ts",
+    "src/assembly/common/move.ts",
+    "src/assembly/common/namespacedKey.ts",
+    "src/assembly/common/renderer.ts",
+    "src/assembly/common/skill.ts",
+    "src/assembly/common/version.ts",
+    "src/assembly/common/world.ts"
+  ],
+  "options": {
+    "importTable": true
+  },
+  "targets": {
+    "release": {
+      "optimize": true,
+      "outFile": "dist/platformer3d-engine-common.release.wasm"
+    },
+    "debug": {
+      "debug": true,
+      "outFile": "dist/platformer3d-engine-common.debug.wasm"
+    }
+  }
+}

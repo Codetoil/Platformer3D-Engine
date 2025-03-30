@@ -1,0 +1,26 @@
+{
+  "name": "platformer3d-engine",
+  "version": "0.2.0",
+  "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
+  "main": "index.js",
+  "scripts": {
+    "build-client": "asc --config asconfig.client.json",
+    "build-common": "asc --config asconfig.common.json",
+    "build-server": "asc --config asconfig.server.json",
+    "build-singleplayer": "asc --config asconfig.singleplayer.json --target debug",
+    "dev-build-client": "asc --config asconfig.client.json --target debug",
+    "dev-build-common": "asc --config asconfig.common.json --target debug",
+    "dev-build-server": "asc --config asconfig.server.json --target debug",
+    "dev-build-singleplayer": "asc --config asconfig.singleplayer.json --target debug",
+    "update": "npm-check-updates -u"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Codetoil/Platformer3D-Engine.git"
+  },
+  "devDependencies": {
+    "assemblyscript": "0.27.35",
+    "npm-check-updates": "17.1.16"
+  },
+  "type": "module"
+}
