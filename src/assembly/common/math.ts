@@ -17,9 +17,9 @@
  */
 
 export class Vector3 {
-    private readonly _x: number = 0;
-    private readonly _y: number = 0;
-    private readonly _z: number = 0;
+    private _x: number = 0;
+    private _y: number = 0;
+    private _z: number = 0;
 
     constructor(x: number, y: number, z: number) {
         this._x = x;
@@ -42,8 +42,20 @@ export class Vector3 {
     }
 
     @operator("*")
-    public static scale(scalar: number, vector: Vector3): Vector3 {
+    public static scale(vector: Vector3, scalar: f64): Vector3 {
         return new Vector3(scalar * vector.x, scalar * vector.y, scalar * vector.z);
+    }
+
+    public static dot(vector: Vector3, vector2: Vector3): f64 {
+        return vector.x * vector2.x + vector.y * vector2.y + vector.z * vector2.z;
+    }
+
+    public length(): f64 {
+        return Math.sqrt(Vector3.dot(this, this));
+    }
+
+    public normalize(): Vector3 {
+        return this * (1 / this.length());
     }
 }
 
@@ -70,8 +82,20 @@ export class Vector2 {
     }
 
     @operator("*")
-    public static scale(scalar: number, vector: Vector2): Vector2 {
+    public static scale(vector: Vector2, scalar: f64): Vector2 {
         return new Vector2(scalar * vector.x, scalar * vector.y);
+    }
+
+    public static dot(vector: Vector2, vector2: Vector2): f64 {
+        return vector.x * vector2.x + vector.y * vector2.y;
+    }
+
+    public length(): f64 {
+        return Math.sqrt(Vector2.dot(this, this));
+    }
+
+    public normalize(): Vector2 {
+        return this * (1 / this.length());
     }
 }
 
@@ -92,4 +116,19 @@ export class Quaternion {
     public get b(): number { return this._b; }
     public get c(): number { return this._c; }
     public get d(): number { return this._d; }
+}
+
+export class Ray {
+    constructor(a: Vector3, b: Vector3, c: number) {
+    }
+}
+
+export class RayPickingInfo {
+    public getHitPosition(): Vector3 | null {
+        return null;
+    }
+
+    public getNormalVector(): Vector3 | null {
+        return null;
+    }
 }

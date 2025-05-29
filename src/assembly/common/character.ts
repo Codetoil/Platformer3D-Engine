@@ -18,19 +18,19 @@
 
 import {CharacterInputController} from "./characterInputController";
 import {World} from "./world";
-import {Collidable, CollidableType} from "./collidable";
+import {Collidable, CollidableCategory} from "./collidable";
 import {CollidableTypes} from "../levelpack/levelpack";
 import {Skill} from "./skill";
 import {Item} from "./item";
 import {InventorySlot} from "./inventory";
-import {Quaternion, Vector3} from "./math";
+import {Quaternion, Ray, RayPickingInfo, Vector3} from "./math";
 
 /**
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
  */
 export class Character {
-    protected _characterWorld!: World;
-    protected _characterInputController!: CharacterInputController;
+    protected _characterWorld: World;
+    protected _characterInputController: CharacterInputController;
 
     // Character Location and Rotation
     protected _characterPosition!: Vector3;
@@ -54,16 +54,16 @@ export class Character {
     protected _characterNormalGravititationalAcceleration: number = -1.0;
 
     // Character State
-    protected _healthPoints!: number;
-    protected _manaPoints!: number;
+    protected _healthPoints: number;
+    protected _manaPoints: number;
 
     protected _canWallJumpNow: boolean = true;
-    protected _lastWallWallJumpedFrom: Collidable = null;
+    protected _lastWallWallJumpedFrom: Collidable | null = null;
     protected _jumpState: boolean = false;
     /**
      * A map from a world surface type to a boolean
      */
-    public readonly isCharacterOnWorldSurface: Map<CollidableType, boolean> = new Map([]);
+    public readonly isCharacterOnWorldSurface: Map<CollidableCategory, boolean> = new Map();
 
     /**
      * An array of skills this character is using right now.
@@ -181,7 +181,7 @@ export class Character {
         return this._canWallJumpNow;
     }
 
-    public get lastWallWallJumpedFrom(): Collidable {
+    public get lastWallWallJumpedFrom(): Collidable | null {
         return this._lastWallWallJumpedFrom;
     }
 
@@ -207,7 +207,7 @@ export class Character {
     }
 
     protected checkCollisions(): void {
-        this.isCharacterOnWorldSurface.forEach((_value: boolean, collidableType: CollidableType) => {
+        this.isCharacterOnWorldSurface.forEach((_value: boolean, collidableType: CollidableCategory) => {
             this.isCharacterOnWorldSurface.set(collidableType, false);
         })
         this._characterWorld.collidables.forEach((collidable) => {
@@ -368,33 +368,25 @@ export class Character {
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
 
-        let deltaPos = this._characterVelocity.scale(getDeltaTime() / 1000.0);
+        let deltaPos: Vector3 = (getDeltaTime() / 1000.0) * this._characterVelocity;
 
         if (deltaPos.length() > 0) {
-            let ray: Ray = new Ray(this._characterPosition, deltaPos.normalizeToNew(), this._characterHeight / 2);
-            this.movementRayHelper = new RayHelper(ray);
-            this.movementRayHelper.show(
-                this._characterWorld.babylonScene,
-                Color3.Purple()
-            );
-            let hit: Nullable<PickingInfo> = this._characterWorld.babylonScene.pickWithRay(ray,
-                (mesh: AbstractMesh) => {
-                    return this._characterWorld.collidables
-                        .map((collidable) => collidable.babylonMesh).includes(mesh);
+            let ray: Ray = new Ray(this._characterPosition, deltaPos.normalize(), this._characterHeight / 2);
+            let hit: RayPickingInfo = this._characterWorld.pickWithRay(ray,
+                (collidable: Collidable): boolean => {
+                    return this._characterWorld.collidables.indexOf(collidable) > 0;
                 });
-            if (hit && hit.pickedPoint && hit.getNormal(true)) {
-                console.debug(hit, hit.getNormal(true))
-                this._babylonMesh.position = this._characterPosition =
-                    hit.pickedPoint.add(hit.getNormal(true)!.scale(this._characterHeight / 2));
-                this._characterVelocity = this._characterVelocity
-                    .subtract(hit.getNormal(true)!.scale(this._characterVelocity.dot(hit.getNormal(true)!)));
-
+            if (hit && hit.getHitPosition() && hit.getNormalVector()) {
+                console.debug(hit, hit.getNormalVector())
+                this._characterPosition =
+                    hit.getHitPosition() + (this._characterHeight / 2) * hit.getNormalVector()!;
+                this._characterVelocity = this._characterVelocity -
+                    Vector3.dot(this._characterVelocity, hit.getNormalVector()!) * hit.getNormalVector()!;
             } else {
-                this._babylonMesh.position = this._characterPosition = this._characterPosition.add(deltaPos);
+                this._characterPosition = this._characterPosition + deltaPos;
             }
         }
-        console.assert(!!this._babylonMesh.rotationQuaternion, "Rotation quaternion cannot be undefined");
-        this._characterOrientation = this._babylonMesh.rotationQuaternion as Quaternion;
+        console.assert(!!this._characterOrientation, "Rotation quaternion cannot be undefined");
         this.checkCollisions();
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
@@ -409,4 +401,116 @@ export class Character {
     protected get horizontalMovementScaleFactor(): number {
         return this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) ? 5.0 : 1.0;
     }
+}
+
+export function newCharacter(characterHeight: number, characterWorld: World,
+    characterInputController: CharacterInputController): Character {
+    return new Character(characterHeight, characterWorld, characterInputController);
+}
+
+/**
+ * The world the character is currently in.
+ */
+export function getCharacterWorld(target: Character): World {
+    return target.characterWorld;
+}
+
+export function getCharacterInputController(target: Character): CharacterInputController {
+    return target.characterInputController;
+}
+
+
+// Character Location and Rotation
+/**
+ * Character position in 3D Space.
+ */
+export function getCharacterPosition(target: Character): Vector3 {
+    return target.characterPosition;
+}
+
+/**
+ * Character Velocity in 3D Space.
+ */
+export function getCharacterVelocity(target: Character): Vector3 {
+    return target.characterVelocity;
+}
+
+/**
+ * Character Orientation in 3D Space (as a Quaternion)
+ */
+export function getCharacterOrientation(target: Character): Quaternion {
+    return target.characterOrientation;
+}
+
+/**
+ * Character Ray of View in 3D Space
+ */
+export function getCharacterRayOfView(target: Character): Vector3 {
+    return target.characterRayOfView;
+}
+
+// Character Properties
+export function getCharacterHeight(target: Character): number {
+    return target.characterHeight;
+}
+
+export function getCharacterMaximumHealthPoints(target: Character): number {
+    return target.characterMaximumHealthPoints;
+}
+
+export function getCharacterMaximumManaPoints(target: Character): number {
+    return target.characterMaximumManaPoints;
+}
+
+export function getCharacterMaximumSkillPoints(target: Character): number {
+    return target.characterMaximumSkillPoints;
+}
+
+export function getCharacterMaximumHorizontalSpeedUponJoystickNeutral(target: Character): number {
+    return target.characterMaximumHorizontalSpeedUponJoystickNeutral;
+}
+
+export function getCharacterMaximumHorizontalSpeedUponJoystickFullyActive(target: Character): number {
+    return target.characterMaximumHorizontalSpeedUponJoystickFullyActive;
+}
+
+export function getCharacterMaximumVerticalSpeed(target: Character): number {
+    return target.characterMaximumVerticalSpeed;
+}
+
+export function getCharacterVerticalJumpVelocity(target: Character): number {
+    return target.characterVerticalJumpVelocity;
+}
+
+export function getCharacterGroundFriction(target: Character): number {
+    return target.characterGroundFriction;
+}
+
+// Character State
+export function getCharacterHealthPoints(target: Character): number {
+    return target.healthPoints;
+}
+
+export function getCharacterManaPoints(target: Character): number {
+    return target.manaPoints;
+}
+
+export function getCharacterCanWallJumpNow(target: Character): boolean {
+    return target.canWallJumpNow;
+}
+
+export function getCharacterLastWallWallJumpedFrom(target: Character): Collidable | null {
+    return target.lastWallWallJumpedFrom;
+}
+
+export function getCharacterJumpState(target: Character): boolean {
+    return target.jumpState;
+}
+
+export function setCharacterPositionAndRotation(
+    target: Character,
+    pos: Vector3,
+    rot: Quaternion
+): Character {
+    return target.setPositionAndRotation(pos, rot);
 }

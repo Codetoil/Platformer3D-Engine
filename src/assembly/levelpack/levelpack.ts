@@ -18,7 +18,7 @@
 // TODO Dynamicly load information from file system
 import {NamespacedKey} from "../common/namespacedKey";
 import {MoveLevel} from "../common/move";
-import {Collidable, CollidableType} from "../common/collidable";
+import {Collidable, CollidableCategory} from "../common/collidable";
 import {GameEngine} from "../common/gameEngine";
 import {World} from "../common/world";
 
@@ -41,8 +41,8 @@ export class Items {
 }
 
 export class CollidableTypes {
-    public static readonly GROUND: CollidableType = new CollidableType(new NamespacedKey("game3d", "ground"));
-    public static readonly WALL: CollidableType = new CollidableType(new NamespacedKey("game3d", "wall"));
+    public static readonly GROUND: CollidableCategory = new CollidableCategory(new NamespacedKey("game3d", "ground"));
+    public static readonly WALL: CollidableCategory = new CollidableCategory(new NamespacedKey("game3d", "wall"));
 }
 
 export class Worlds {

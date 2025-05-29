@@ -20,6 +20,7 @@ import {GameEngine} from "./gameEngine";
 import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
 import {Character} from "./character";
+import {Ray, RayPickingInfo} from "./math";
 
 export abstract class World {
     protected _gameEngine: GameEngine;
@@ -48,5 +49,9 @@ export abstract class World {
     public preformTick(): void {
         this.characters.forEach(character => character.preformTick((): number =>
             this.gameEngine.renderer.deltaTime));
+    }
+
+    public pickWithRay(ray: Ray, filter: (collidable: Collidable) => boolean): RayPickingInfo {
+        return new RayPickingInfo();
     }
 }

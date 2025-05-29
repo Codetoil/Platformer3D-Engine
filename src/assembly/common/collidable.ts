@@ -21,7 +21,7 @@ import {NamespacedKey} from "./namespacedKey";
 /**
  * A type of {@link Collidable}
  */
-export class CollidableType {
+export class CollidableCategory {
     public readonly key: NamespacedKey;
 
     public constructor(key: NamespacedKey) {
@@ -29,18 +29,30 @@ export class CollidableType {
     }
 }
 
+export function newCollidableType(key: NamespacedKey): CollidableCategory {
+    return new CollidableCategory(key);
+}
+
 /**
  * An object that can collide with characters.
  */
 export class Collidable {
-    protected _collidableType: CollidableType;
+    protected _collidableCategory: CollidableCategory;
 
-    public get collidableType(): CollidableType {
-        return this._collidableType;
+    public get collidableCategory(): CollidableCategory {
+        return this._collidableCategory;
     }
 
-    constructor(collidableCategory: CollidableType) {
-        this._collidableType = collidableCategory;
+    constructor(collidableCategory: CollidableCategory) {
+        this._collidableCategory = collidableCategory;
     }
 
+}
+
+export function newCollidable(collidableCategory: CollidableCategory): Collidable {
+    return new Collidable(collidableCategory);
+}
+
+export function getCollidableCategory(collidable: Collidable): CollidableCategory {
+    return collidable.collidableCategory;
 }

@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import {Vector2} from "./math";
+
 /**
  * Controls a character.
  */
