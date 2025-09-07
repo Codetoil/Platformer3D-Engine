@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitOverride": true,
+    "composite": true,
+    "preserveConstEnums": true,
+    "outDir": "dist/client/",
+    "sourceMap": true
+  },
+  "files": [
+    "src/ts/client/gameEngineClient.ts",
+    "src/ts/client/*",
+    "src/ts/common/*",
+    "src/ts/levelpack/levelpack.ts"
+  ]
+}

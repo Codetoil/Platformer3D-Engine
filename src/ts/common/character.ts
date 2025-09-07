@@ -23,7 +23,7 @@ import {CollidableTypes} from "../levelpack/levelpack";
 import {Skill} from "./skill";
 import {Item} from "./item";
 import {InventorySlot} from "./inventory";
-import {Quaternion, Ray, RayPickingInfo, Vector3} from "./math";
+import {Quaternion, Ray, RayPickingInfo, Vector2, Vector3} from "./math";
 
 /**
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
@@ -54,8 +54,8 @@ export class Character {
     protected _characterNormalGravititationalAcceleration: number = -1.0;
 
     // Character State
-    protected _healthPoints: number;
-    protected _manaPoints: number;
+    protected _characterHealthPoints: number;
+    protected _characterManaPoints: number;
 
     protected _canWallJumpNow: boolean = true;
     protected _lastWallWallJumpedFrom: Collidable | null = null;
@@ -68,9 +68,7 @@ export class Character {
     /**
      * An array of skills this character is using right now.
      */
-    public readonly characterSkillsEquiped: Array<Skill> = new Array(
-
-    );
+    public readonly characterSkillsEquiped: Array<Skill> = [];
 
     /**
      * Every character possesses an inventory.
@@ -169,12 +167,12 @@ export class Character {
     }
 
     // Character State
-    public get healthPoints(): number {
-        return this._healthPoints;
+    public get characterHealthPoints(): number {
+        return this._characterHealthPoints;
     }
 
-    public get manaPoints(): number {
-        return this._manaPoints;
+    public get characterManaPoints(): number {
+        return this._characterManaPoints;
     }
 
     public get canWallJumpNow(): boolean {
@@ -194,6 +192,8 @@ export class Character {
         this._characterHeight = characterHeight;
         this._characterWorld = characterWorld;
         this._characterInputController = characterInputController;
+        this._characterHealthPoints = this._characterMaximumHealthPoints;
+        this._characterManaPoints = this._characterMaximumManaPoints;
     }
 
 
@@ -241,14 +241,12 @@ export class Character {
             z *= r / r1;
 
             if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-                this._characterOrientation = Vector3.Up()
-                    .scale(Math.atan2(z, x))
-                    .toQuaternion();
+                this._characterOrientation = new Vector3(0, Math.atan2(z, x), 0).toQuaternion();
 
-                this._characterRayOfView.set(z, 0.0, x).normalize();
+                this._characterRayOfView = new Vector3(z, 0.0, x).normalize();
             }
 
-            this._characterVelocity.set(
+            this._characterVelocity = new Vector3(
                 this._characterVelocity.x + this.horizontalMovementScaleFactor * z,
                 this._characterVelocity.y,
                 this._characterVelocity.z + this.horizontalMovementScaleFactor * x
@@ -256,12 +254,16 @@ export class Character {
         }
 
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-            this._characterVelocity.set(this.characterGroundFriction * this._characterVelocity.x, this._characterVelocity.y, this.characterGroundFriction * this._characterVelocity.z);
+            this._characterVelocity = new Vector3(this.characterGroundFriction * this._characterVelocity.x,
+                this._characterVelocity.y,
+                this.characterGroundFriction * this._characterVelocity.z);
         }
     }
 
     public preformJump(): void {
-        this._characterVelocity.y = this.characterVerticalJumpVelocity;
+        this._characterVelocity = new Vector3(this._characterVelocity.x,
+            this.characterVerticalJumpVelocity,
+            this._characterVelocity.z);
     }
 
     public preformWallJump(): void {
@@ -324,15 +326,19 @@ export class Character {
     }
 
     private applyGravity(getDeltaTime: () => number): void {
-        this._characterVelocity.y += 0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0);
+        this._characterVelocity = Vector3.add(this._characterVelocity,
+            new Vector3(0,0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0), 0));
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) && this._characterVelocity.y < 0.0) {
-            this._characterVelocity.y = 0.0;
+            this._characterVelocity = new Vector3(this._characterVelocity.x, 0.0, this._characterVelocity.z);
         }
     }
 
     private capYVelocity(): void {
         if (Math.abs(this._characterVelocity.y) > this.characterMaximumVerticalSpeed) {
-            this._characterVelocity.y = this.characterMaximumVerticalSpeed * (this._characterVelocity.y === 0 ? 0 : this._characterVelocity.y > 0 ? 1 : -1);
+            this._characterVelocity = new Vector3(this._characterVelocity.x,
+                this.characterMaximumVerticalSpeed * (this._characterVelocity.y === 0
+                    ? 0 : this._characterVelocity.y > 0 ? 1 : -1),
+                this._characterVelocity.z);
         }
     }
 
@@ -368,7 +374,7 @@ export class Character {
         this.applyGravity(getDeltaTime);
         this.capYVelocity();
 
-        let deltaPos: Vector3 = (getDeltaTime() / 1000.0) * this._characterVelocity;
+        let deltaPos: Vector3 = Vector3.scale(this._characterVelocity, getDeltaTime() / 1000.0);
 
         if (deltaPos.length() > 0) {
             let ray: Ray = new Ray(this._characterPosition, deltaPos.normalize(), this._characterHeight / 2);
@@ -379,11 +385,13 @@ export class Character {
             if (hit && hit.getHitPosition() && hit.getNormalVector()) {
                 console.debug(hit, hit.getNormalVector())
                 this._characterPosition =
-                    hit.getHitPosition() + (this._characterHeight / 2) * hit.getNormalVector()!;
-                this._characterVelocity = this._characterVelocity -
-                    Vector3.dot(this._characterVelocity, hit.getNormalVector()!) * hit.getNormalVector()!;
+                    Vector3.add(hit.getHitPosition(),
+                        Vector3.scale(hit.getNormalVector()!, this._characterHeight / 2));
+                this._characterVelocity = Vector3.subtract(this._characterVelocity,
+                    Vector3.scale(hit.getNormalVector()!,
+                        Vector3.dot(this._characterVelocity, hit.getNormalVector()!)));
             } else {
-                this._characterPosition = this._characterPosition + deltaPos;
+                this._characterPosition = Vector3.add(this._characterPosition, deltaPos);
             }
         }
         console.assert(!!this._characterOrientation, "Rotation quaternion cannot be undefined");
@@ -401,116 +409,4 @@ export class Character {
     protected get horizontalMovementScaleFactor(): number {
         return this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) ? 5.0 : 1.0;
     }
-}
-
-export function newCharacter(characterHeight: number, characterWorld: World,
-    characterInputController: CharacterInputController): Character {
-    return new Character(characterHeight, characterWorld, characterInputController);
-}
-
-/**
- * The world the character is currently in.
- */
-export function getCharacterWorld(target: Character): World {
-    return target.characterWorld;
-}
-
-export function getCharacterInputController(target: Character): CharacterInputController {
-    return target.characterInputController;
-}
-
-
-// Character Location and Rotation
-/**
- * Character position in 3D Space.
- */
-export function getCharacterPosition(target: Character): Vector3 {
-    return target.characterPosition;
-}
-
-/**
- * Character Velocity in 3D Space.
- */
-export function getCharacterVelocity(target: Character): Vector3 {
-    return target.characterVelocity;
-}
-
-/**
- * Character Orientation in 3D Space (as a Quaternion)
- */
-export function getCharacterOrientation(target: Character): Quaternion {
-    return target.characterOrientation;
-}
-
-/**
- * Character Ray of View in 3D Space
- */
-export function getCharacterRayOfView(target: Character): Vector3 {
-    return target.characterRayOfView;
-}
-
-// Character Properties
-export function getCharacterHeight(target: Character): number {
-    return target.characterHeight;
-}
-
-export function getCharacterMaximumHealthPoints(target: Character): number {
-    return target.characterMaximumHealthPoints;
-}
-
-export function getCharacterMaximumManaPoints(target: Character): number {
-    return target.characterMaximumManaPoints;
-}
-
-export function getCharacterMaximumSkillPoints(target: Character): number {
-    return target.characterMaximumSkillPoints;
-}
-
-export function getCharacterMaximumHorizontalSpeedUponJoystickNeutral(target: Character): number {
-    return target.characterMaximumHorizontalSpeedUponJoystickNeutral;
-}
-
-export function getCharacterMaximumHorizontalSpeedUponJoystickFullyActive(target: Character): number {
-    return target.characterMaximumHorizontalSpeedUponJoystickFullyActive;
-}
-
-export function getCharacterMaximumVerticalSpeed(target: Character): number {
-    return target.characterMaximumVerticalSpeed;
-}
-
-export function getCharacterVerticalJumpVelocity(target: Character): number {
-    return target.characterVerticalJumpVelocity;
-}
-
-export function getCharacterGroundFriction(target: Character): number {
-    return target.characterGroundFriction;
-}
-
-// Character State
-export function getCharacterHealthPoints(target: Character): number {
-    return target.healthPoints;
-}
-
-export function getCharacterManaPoints(target: Character): number {
-    return target.manaPoints;
-}
-
-export function getCharacterCanWallJumpNow(target: Character): boolean {
-    return target.canWallJumpNow;
-}
-
-export function getCharacterLastWallWallJumpedFrom(target: Character): Collidable | null {
-    return target.lastWallWallJumpedFrom;
-}
-
-export function getCharacterJumpState(target: Character): boolean {
-    return target.jumpState;
-}
-
-export function setCharacterPositionAndRotation(
-    target: Character,
-    pos: Vector3,
-    rot: Quaternion
-): Character {
-    return target.setPositionAndRotation(pos, rot);
 }

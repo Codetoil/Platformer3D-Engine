@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitOverride": true,
+    "preserveConstEnums": true,
+    "composite": true,
+    "outDir": "dist/server/",
+    "sourceMap": true
+  },
+  "include": [
+    "src/ts/server/runServer.ts",
+    "src/ts/server/*",
+    "src/ts/common/*",
+    "src/ts/levelpack/levelpack.ts"
+  ]
+}

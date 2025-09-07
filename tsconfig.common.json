@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "lib": ["ES2024"],
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitOverride": true,
+    "preserveConstEnums": true,
+    "composite": true,
+    "outDir": "dist/common/",
+    "sourceMap": true
+  },
+  "include": [
+    "src/ts/common/*",
+    "src/ts/levelpack/levelpack.ts"
+  ]
+}

@@ -17,9 +17,9 @@
  */
 
 export class Vector3 {
-    private _x: number = 0;
-    private _y: number = 0;
-    private _z: number = 0;
+    private readonly _x: number = 0;
+    private readonly _y: number = 0;
+    private readonly _z: number = 0;
 
     constructor(x: number, y: number, z: number) {
         this._x = x;
@@ -31,31 +31,28 @@ export class Vector3 {
     public get y(): number { return this._y; }
     public get z(): number { return this._z; }
 
-    @operator("+")
     public static add(vector1: Vector3, vector2: Vector3): Vector3 {
         return new Vector3(vector1.x + vector2.x, vector1.y + vector2.y, vector1.z + vector2.z);
     }
 
-    @operator("-")
-    public static sub(vector1: Vector3, vector2: Vector3): Vector3 {
+    public static subtract(vector1: Vector3, vector2: Vector3): Vector3 {
         return new Vector3(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z);
     }
 
-    @operator("*")
-    public static scale(vector: Vector3, scalar: f64): Vector3 {
+    public static scale(vector: Vector3, scalar: number): Vector3 {
         return new Vector3(scalar * vector.x, scalar * vector.y, scalar * vector.z);
     }
 
-    public static dot(vector: Vector3, vector2: Vector3): f64 {
+    public static dot(vector: Vector3, vector2: Vector3): number {
         return vector.x * vector2.x + vector.y * vector2.y + vector.z * vector2.z;
     }
 
-    public length(): f64 {
+    public length(): number {
         return Math.sqrt(Vector3.dot(this, this));
     }
 
     public normalize(): Vector3 {
-        return this * (1 / this.length());
+        return Vector3.scale(this, (1 / this.length()));
     }
 }
 
@@ -71,31 +68,28 @@ export class Vector2 {
     public get x(): number { return this._x; }
     public get y(): number { return this._y; }
 
-    @operator("+")
     public static add(vector1: Vector2, vector2: Vector2): Vector2 {
         return new Vector2(vector1.x + vector2.x, vector1.y + vector2.y);
     }
 
-    @operator("-")
-    public static sub(vector1: Vector2, vector2: Vector2): Vector2 {
+    public static subtract(vector1: Vector2, vector2: Vector2): Vector2 {
         return new Vector2(vector1.x - vector2.x, vector1.y - vector2.y);
     }
 
-    @operator("*")
-    public static scale(vector: Vector2, scalar: f64): Vector2 {
+    public static scale(vector: Vector2, scalar: number): Vector2 {
         return new Vector2(scalar * vector.x, scalar * vector.y);
     }
 
-    public static dot(vector: Vector2, vector2: Vector2): f64 {
+    public static dot(vector: Vector2, vector2: Vector2): number {
         return vector.x * vector2.x + vector.y * vector2.y;
     }
 
-    public length(): f64 {
+    public length(): number {
         return Math.sqrt(Vector2.dot(this, this));
     }
 
     public normalize(): Vector2 {
-        return this * (1 / this.length());
+        return Vector2.scale(this, (1 / this.length()));
     }
 }
 

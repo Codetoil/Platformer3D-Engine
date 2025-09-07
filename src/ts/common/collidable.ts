@@ -29,10 +29,6 @@ export class CollidableCategory {
     }
 }
 
-export function newCollidableType(key: NamespacedKey): CollidableCategory {
-    return new CollidableCategory(key);
-}
-
 /**
  * An object that can collide with characters.
  */
@@ -47,12 +43,4 @@ export class Collidable {
         this._collidableCategory = collidableCategory;
     }
 
-}
-
-export function newCollidable(collidableCategory: CollidableCategory): Collidable {
-    return new Collidable(collidableCategory);
-}
-
-export function getCollidableCategory(collidable: Collidable): CollidableCategory {
-    return collidable.collidableCategory;
 }

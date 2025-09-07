@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitOverride": true,
+    "preserveConstEnums": true,
+    "composite": true,
+    "outDir": "dist/singleplayer/",
+    "sourceMap": true
+  },
+  "files": [
+    "src/ts/singleplayer/gameEngineSingleplayer.ts",
+    "src/ts/singleplayer/*",
+    "src/ts/common/*",
+    "src/ts/levelpack/levelpack.ts"
+  ]
+}

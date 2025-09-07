@@ -37,7 +37,7 @@ export class WorldClient extends World {
 
     public async loadFromNetwork(): Promise<void> {
         console.debug("Loading world from network...");
-        this._worker = new Worker(new URL("../server/integratedServerWorker.assembly", import.meta.url));
+        this._worker = new Worker(new URL("../server/integratedServerWorker.ts", import.meta.url));
         this._worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
             if (typeof(event.data) === "string") {
                 console.info("Received: " + (event.data as string))

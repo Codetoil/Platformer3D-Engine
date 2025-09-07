@@ -54,8 +54,8 @@ export abstract class GameEngine {
 
     public abstract createWorld(namespaceKey: NamespacedKey): World;
 
-    public initializeEngine(resolve: (value: Promise<GameEngine>) => void, reject: (reason?: any) => void): void {
-        console.info(`Starting ${this.name} Version ${VERSION}`)
+    public initializeEngine(resolve: (value: GameEngine) => void, reject: (reason?: any) => void): void {
+        console.info(`Starting ${this.getName()} Version ${VERSION}`)
         this.onLoad().then(() => resolve(this), (error) => reject(error));
     }
 
