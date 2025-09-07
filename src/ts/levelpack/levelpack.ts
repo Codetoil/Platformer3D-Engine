@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-// TODO Dynamicly load information from file system
+// TODO Dynamically load information from BOSIX API instead of hardcoding
 import {NamespacedKey} from "../common/namespacedKey";
 import {MoveLevel} from "../common/move";
 import {Collidable, CollidableCategory} from "../common/collidable";
