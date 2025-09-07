@@ -2,7 +2,7 @@
   "name": "platformer3d-engine",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later WITH GPL-3.0-interface-exception",
-  "main": "index.js",
+  "description": "A 3D Platformer Engine built for BOSIX with Web Technologies.",
   "scripts": {
     "build-client": "tsc -p tsconfig.client.json",
     "build-common": "tsc -p tsconfig.common.json",
@@ -16,7 +16,6 @@
   },
   "devDependencies": {
     "typescript": "5.9.2",
-    "@bosix-packages/api": "0.1.0",
     "npm-check-updates": "18.0.3"
   },
   "type": "module"

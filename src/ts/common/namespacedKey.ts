@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for the web.
+ *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
  *  Copyright (C) 2024 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
