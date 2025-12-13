@@ -15,8 +15,8 @@
     "url": "https://github.com/Codetoil/Platformer3D-Engine.git"
   },
   "devDependencies": {
-    "typescript": "5.9.2",
-    "npm-check-updates": "18.0.3"
+    "typescript": "5.9.3",
+    "npm-check-updates": "19.2.0"
   },
   "type": "module"
 }
