@@ -17,12 +17,12 @@
  */
 
 
-import {GameEngine} from "../common/gameEngine";
-import {Levelpack, Worlds} from "../levelpack/levelpack";
-import {NamespacedKey} from "../common/namespacedKey";
-import {World} from "../common/world";
+import {GameEngine} from "../../../../src/ts/common/gameEngine";
+import {Levelpack, Worlds} from "../../../../src/ts/levelpack/levelpack";
+import {NamespacedKey} from "../../../../src/ts/common/namespacedKey";
+import {World} from "../../../../src/ts/common/world";
 import {WorldSingleplayer} from "./worldSingleplayer";
-import {Renderer} from "../common/renderer";
+import {Renderer} from "../../../../src/ts/common/renderer";
 
 export class GameEngineSingleplayer extends GameEngine {
     public assetsDir(): string

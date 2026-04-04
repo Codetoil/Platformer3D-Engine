@@ -17,18 +17,33 @@
  */
 
 
-import {Character} from "../common/character";
+import {GameEngine} from "../../../../src/ts/common/gameEngine";
+import {NamespacedKey} from "../../../../src/ts/common/namespacedKey";
+import {World} from "../../../../src/ts/common/world";
+import {WorldClient} from "./worldClient";
+import {Renderer} from "../../../../src/ts/common/renderer";
 
-export class CharacterClient extends Character {
-    protected _babylonTexture?: BABYLON.Texture;
-
-    public get babylonTexture(): BABYLON.Texture | undefined
+export class GameEngineClient extends GameEngine {
+    public assetsDir(): string
     {
-        return this._babylonTexture;
+
     }
 
-    public set babylonTexture(texture: BABYLON.Texture)
+    public createRenderer(): Promise<Renderer>
     {
-        this._babylonTexture = texture;
+
+    }
+
+    public async onLoad(): Promise<void>
+    {
+    }
+
+    public createWorld(namespacedKey: NamespacedKey): World {
+        return new WorldClient(this, namespacedKey);
+    }
+
+    public getName(): string {
+        return "Platformer3D Engine Client";
     }
 }
+

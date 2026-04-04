@@ -1,13 +1,11 @@
 {
-  "name": "platformer3d-engine",
+  "name": "platformer3d-engine-server",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later",
   "description": "A 3D Platformer Engine built with Web Technologies.",
   "scripts": {
-    "build-client": "tsc -p tsconfig.client.json",
     "build-common": "tsc -p tsconfig.common.json",
     "build-server": "tsc -p tsconfig.server.json",
-    "build-singleplayer": "tsc -p tsconfig.singleplayer.json",
     "update": "npm-check-updates -u"
   },
   "repository": {
@@ -15,8 +13,8 @@
     "url": "https://github.com/Codetoil/Platformer3D-Engine.git"
   },
   "devDependencies": {
-    "typescript": "5.9.3",
-    "npm-check-updates": "19.2.0"
+    "typescript": "6.0.2",
+    "npm-check-updates": "20.0.0"
   },
   "type": "module"
 }

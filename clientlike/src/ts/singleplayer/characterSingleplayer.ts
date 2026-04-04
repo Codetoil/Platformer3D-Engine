@@ -17,7 +17,7 @@
  */
 
 
-import {Character} from "../common/character";
+import {Character} from "../../../../src/ts/common/character";
 
 export class CharacterSingleplayer extends Character {
     protected _babylonTexture?: BABYLON.Texture;

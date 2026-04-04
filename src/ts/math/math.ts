@@ -16,10 +16,65 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+export abstract class MagmaType<M extends Magma<M>> {
+    public add(element1: M, element2: M): M {
+        if (element1.constructor == element2.constructor)
+            return element1.add(element2);
+        else
+            throw new Error(`Invalid arguments ${element1} and ${element2}`);
+    }
+
+    public abstract unit(): M | undefined;
+
+    public leftSubtract(element1: M | undefined, element2: M | undefined): M | undefined {
+        if (!!element1 && !!element2 && element1.constructor == element2.constructor && !!(element1 as unknown as QuasiGroup<any>).leftSubtract)
+            return (element1 as unknown as QuasiGroup<any>).leftSubtract(element2);
+        else
+            throw new Error(`Invalid arguments ${element1} and ${element2}`);
+    }
+
+    public rightSubtract(element1: M | undefined, element2: M | undefined): M | undefined {
+        if (!!element1 && !!element2 && element1.constructor == element2.constructor && !!(element1 as unknown as QuasiGroup<any>).rightSubtract)
+            return (element1 as unknown as (Magma<M> & { rightSubtract(other: M): M })).rightSubtract(element2);
+        else
+            throw new Error(`Invalid arguments ${element1} and ${element2}`);
+    }
+}
+
+export interface Magma<M extends Magma<M>> {
+    add(other: M): M;
+}
+
+export interface UnitalMagma<UM extends UnitalMagma<UM>> extends Magma<UM> {
+}
+
+export interface QuasiGroup<QG extends QuasiGroup<QG>> extends Magma<QG> {
+    leftSubtract(other: QG): QG;
+    rightSubtract(other: QG): QG;
+}
+
+export interface Loop<L extends Loop<L>> extends UnitalMagma<L>, QuasiGroup<L> {
+}
+
+export interface SemiGroup<SG extends SemiGroup<SG>> extends Magma<SG> {
+}
+
+export interface Monoid<Mn extends Monoid<Mn>> extends SemiGroup<Mn>, UnitalMagma<Mn> {
+}
+
+export interface Group<G extends Group<G>> extends Loop<G>, Monoid<G> {
+}
+
+
+
 export class Vector3 {
     private readonly _x: number = 0;
     private readonly _y: number = 0;
     private readonly _z: number = 0;
+    public static readonly ZERO: Vector3 = new Vector3(0, 0, 0);
+    public static readonly UNIT_X: Vector3 = new Vector3(1, 0, 0);
+    public static readonly UNIT_Y: Vector3 = new Vector3(0, 1, 0);
+    public static readonly UNIT_Z: Vector3 = new Vector3(0, 0, 1);
 
     constructor(x: number, y: number, z: number) {
         this._x = x;
@@ -110,6 +165,10 @@ export class Quaternion {
     public get b(): number { return this._b; }
     public get c(): number { return this._c; }
     public get d(): number { return this._d; }
+
+    //public static fromVector3(vector1: Vector3, vector2: Vector3): Quaternion {
+
+    //}
 }
 
 export class Ray {

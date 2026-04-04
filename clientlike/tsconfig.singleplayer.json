@@ -10,9 +10,10 @@
     "sourceMap": true
   },
   "files": [
-    "src/ts/singleplayer/gameEngineSingleplayer.ts",
+    "./src/ts/singleplayer/gameEngineSingleplayer.ts",
     "src/ts/singleplayer/*",
-    "src/ts/common/*",
-    "src/ts/levelpack/levelpack.ts"
+    "../src/ts/common/*",
+    "../src/ts/math/*",
+    "../src/ts/levelpack/levelpack.ts"
   ]
 }

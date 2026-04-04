@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type {CharacterInputController} from "../common/characterInputController";
+import type {CharacterInputController} from "../../../../src/ts/common/characterInputController";
 
 export class PlayerInputController implements CharacterInputController {
     protected _joystick: BABYLON.Vector2 = BABYLON.Vector2.Zero();

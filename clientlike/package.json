@@ -1,0 +1,24 @@
+{
+  "name": "platformer3d-engine-client",
+  "version": "0.2.0",
+  "license": "AGPL-3.0-or-later",
+  "description": "A 3D Platformer Engine built for BOSIX with Web Technologies.",
+  "scripts": {
+    "build-client": "tsc -p clientlike/tsconfig.client.json",
+    "build-singleplayer": "tsc -p clientlike/tsconfig.singleplayer.json",
+    "update": "npm-check-updates -u"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Codetoil/Platformer3D-Engine.git"
+  },
+  "devDependencies": {
+    "typescript": "6.0.2",
+    "npm-check-updates": "20.0.0"
+  },
+  "dependencies": {
+    "platformer3d-engine-server": "..",
+    "@babylonjs/core": "9.1.0"
+  },
+  "type": "module"
+}

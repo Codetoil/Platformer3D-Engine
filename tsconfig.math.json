@@ -1,18 +1,16 @@
 {
   "compilerOptions": {
     "module": "es2022",
+    "lib": ["ES2024"],
     "strict": true,
     "alwaysStrict": true,
     "noImplicitOverride": true,
-    "composite": true,
     "preserveConstEnums": true,
-    "outDir": "dist/client/",
+    "composite": true,
+    "outDir": "dist/math/",
     "sourceMap": true
   },
-  "files": [
-    "src/ts/client/gameEngineClient.ts",
-    "src/ts/client/*",
-    "src/ts/common/*",
-    "src/ts/levelpack/levelpack.ts"
+  "include": [
+    "src/ts/math/*"
   ]
 }

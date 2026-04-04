@@ -23,7 +23,7 @@ import {CollidableTypes} from "../levelpack/levelpack";
 import {Skill} from "./skill";
 import {Item} from "./item";
 import {InventorySlot} from "./inventory";
-import {Quaternion, Ray, RayPickingInfo, Vector2, Vector3} from "./math";
+import {Quaternion, Ray, RayPickingInfo, Vector2, Vector3} from "../math/math";
 
 /**
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
@@ -34,9 +34,9 @@ export class Character {
 
     // Character Location and Rotation
     protected _characterPosition!: Vector3;
-    protected _characterVelocity: Vector3 = new Vector3(0.0, 0.0, 0.0);
+    protected _characterVelocity: Vector3 = Vector3.ZERO;
     protected _characterOrientation!: Quaternion;
-    protected _characterRayOfView: Vector3 = new Vector3(0, 0, 1).normalize();
+    protected _characterRayOfView: Vector3 = Vector3.UNIT_Z;
 
     // Character Properties
     // TODO: Load in at runtime
@@ -241,16 +241,12 @@ export class Character {
             z *= r / r1;
 
             if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-                this._characterOrientation = new Vector3(0, Math.atan2(z, x), 0).toQuaternion();
-
-                this._characterRayOfView = new Vector3(z, 0.0, x).normalize();
+                this._characterRayOfView = new Vector3(z, 0, x).normalize();
+                this._characterOrientation = Quaternion.fromVector3(Vector3.UNIT_Z, this._characterRayOfView);
             }
 
-            this._characterVelocity = new Vector3(
-                this._characterVelocity.x + this.horizontalMovementScaleFactor * z,
-                this._characterVelocity.y,
-                this._characterVelocity.z + this.horizontalMovementScaleFactor * x
-            )
+            this._characterVelocity = Vector3.add(this._characterVelocity,
+                Vector3.scale(this._characterRayOfView, this.horizontalMovementScaleFactor));
         }
 
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
@@ -327,7 +323,7 @@ export class Character {
 
     private applyGravity(getDeltaTime: () => number): void {
         this._characterVelocity = Vector3.add(this._characterVelocity,
-            new Vector3(0,0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0), 0));
+            new Vector3(0, 0.5 * this.characterGravitationalAcceleration * (getDeltaTime() / 1000.0), 0));
         if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND) && this._characterVelocity.y < 0.0) {
             this._characterVelocity = new Vector3(this._characterVelocity.x, 0.0, this._characterVelocity.z);
         }

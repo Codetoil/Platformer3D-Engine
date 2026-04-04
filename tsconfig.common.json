@@ -12,6 +12,7 @@
   },
   "include": [
     "src/ts/common/*",
+    "src/ts/math/*",
     "src/ts/levelpack/levelpack.ts"
   ]
 }

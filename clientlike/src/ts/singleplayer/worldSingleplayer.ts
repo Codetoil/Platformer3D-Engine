@@ -16,57 +16,46 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {World} from "../common/world";
-import {GameEngineClient} from "./gameEngineClient";
-import {CharacterClient} from "./characterClient";
-import {Character} from "../common/character";
-import {PlayerInputController} from "./playerInputController";
+import {World} from "../../../../src/ts/common/world";
+import {GameEngineSingleplayer} from "./gameEngineSingleplayer";
+import {CharacterSingleplayer} from "./characterSingleplayer";
+import {Character} from "../../../../src/ts/common/character";
+import {PlayerInputController} from "../client/playerInputController";
 
-export class WorldClient extends World {
-    protected _player!: CharacterClient;
-    protected _worker!: Worker;
+export class WorldSingleplayer extends World {
+    protected _player!: CharacterSingleplayer;
 
     public get player(): Character
     {
         return this._player;
-    }
-    public get worker(): Worker
-    {
-        return this._worker;
-    }
-
-    public async loadFromNetwork(): Promise<void> {
-        console.debug("Loading world from network...");
-        this._worker = new Worker(new URL("../server/integratedServerWorker.ts", import.meta.url));
-        this._worker.onmessage = (event: MessageEvent<Uint8Array | string>) => {
-            if (typeof(event.data) === "string") {
-                console.info("Received: " + (event.data as string))
-            } else
-            {
-                console.info("Received: " + (event.data as Uint8Array).toString())
-            }
-        }
-        this.worker.postMessage(import.meta.url);
-        this.worker.postMessage(Uint8Array.of());
-
-        // TODO - Load world from network
     }
 
     public async loadWorld(): Promise<void> {
         console.info("Loading World...");
         console.debug("Creating Scene")
         this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
+        if (!this._babylonScene) throw new Error("Couldn't create Scene!");
+        this._babylonScene.onBeforeRenderObservable.add(this.preformTick.bind(this));
 
-        await this.loadFromNetwork();
         console.debug("Initializing Player...");
         // Create the player entity
-        this._player = new CharacterClient(3., BABYLON.MeshBuilder.CreateSphere(
-            "player",
-            {
-                diameter: 1.5
-            },
-            this.babylonScene
-        ), this, new PlayerInputController(new DeviceSourceManager(this._gameEngine.babylonEngine)));
+        this._player = new CharacterSingleplayer(1.5,
+            BABYLON.MeshBuilder.CreateSphere(
+                "player",
+                {
+                    diameter: 1.5
+                },
+                this.babylonScene
+            )
+            /*
+            BABYLON.MeshBuilder.CreateSphere(
+                "player",
+                {
+                    diameter: 0.01
+                },
+                this.babylonScene
+            )*/
+        , this, new PlayerInputController(new DeviceSourceManager(this._gameEngine.babylonEngine)));
         this._player.setPositionAndRotation(
             new BABYLON.Vector3(5, -5, -10),
             BABYLON.Quaternion.Identity()
@@ -76,12 +65,13 @@ export class WorldClient extends World {
             this.babylonScene
         );
         this._player.babylonTexture = new BABYLON.Texture(
-            (this.gameEngine as GameEngineClient).assetsDir() + "temp_player.png",
+            (this.gameEngine as GameEngineSingleplayer).assetsDir() + "temp_player.png",
             this.babylonScene
         );
         (this._player.babylonMesh.material as BABYLON.StandardMaterial).diffuseTexture =
             this._player.babylonTexture;
         this._player.babylonTexture.hasAlpha = true;
+        this.characters.push(this._player);
 
         console.debug("Initializing Camera...");
         this.babylonCamera = new BABYLON.ArcFollowCamera(
@@ -98,13 +88,5 @@ export class WorldClient extends World {
             0.25
         ).toQuaternion();
         this._isWorldLoaded = true;
-    }
-
-    public preformTick() {
-        this._player.preformTick(() => (((a: number | undefined): number => {
-                if (a != undefined)
-                    return a;
-                return 0.0;
-            })(this.babylonScene.deltaTime)));
     }
 }

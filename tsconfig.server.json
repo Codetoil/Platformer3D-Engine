@@ -13,6 +13,7 @@
     "src/ts/server/runServer.ts",
     "src/ts/server/*",
     "src/ts/common/*",
+    "src/ts/math/*",
     "src/ts/levelpack/levelpack.ts"
   ]
 }

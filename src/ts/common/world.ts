@@ -20,7 +20,7 @@ import {GameEngine} from "./gameEngine";
 import {Collidable} from "./collidable";
 import {NamespacedKey} from "./namespacedKey";
 import {Character} from "./character";
-import {Ray, RayPickingInfo} from "./math";
+import {Ray, RayPickingInfo} from "../math/math";
 
 export abstract class World {
     protected _gameEngine: GameEngine;
