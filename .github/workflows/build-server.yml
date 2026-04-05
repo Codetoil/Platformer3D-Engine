@@ -1,4 +1,4 @@
-name: Build (Common)
+name: Build (Server)
 
 on:
   push:
