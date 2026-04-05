@@ -6,8 +6,9 @@
     "noImplicitOverride": true,
     "preserveConstEnums": true,
     "composite": true,
-    "outDir": "dist/server/",
-    "sourceMap": true
+    "outDir": "dist",
+    "sourceMap": true,
+    "lib": ["ES2023", "WebWorker"]
   },
   "include": [
     "src/ts/server/runServer.ts",

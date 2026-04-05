@@ -1,0 +1,32 @@
+name: Build (Common)
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v6
+      # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+      - name: Install NPM Packages
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Create source code tarbell
+        run: git archive -o dist/source.tar.gz HEAD
+      - name: Copy License to output dist
+        run: cp LICENSE.md dist/
+      - name: Upload Output
+        uses: actions/upload-artifact@v7
+        with:
+          name: server
+          path: dist
