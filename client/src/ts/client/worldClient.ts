@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,28 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {World} from "../../../../src/ts/common/world";
 import {GameEngineClient} from "./gameEngineClient";
 import {CharacterClient} from "./characterClient";
-import {Character} from "../../../../src/ts/common/character";
 import {PlayerInputController} from "./playerInputController";
+
+import {ArcFollowCamera} from "@babylonjs/core/Cameras/followCamera";
+import {Camera} from "@babylonjs/core/Cameras/camera";
+import {DeviceSourceManager} from "@babylonjs/core/DeviceInput/InputDevices/deviceSourceManager"
+import {MeshBuilder} from "@babylonjs/core/Meshes/meshBuilder";
+import {Scene} from "@babylonjs/core/scene"
+import {StandardMaterial} from "@babylonjs/core/Materials/standardMaterial";
+import {Texture} from "@babylonjs/core/Materials/Textures/texture"
+import {Quaternion as QuaternionBabylon} from "@babylonjs/core/Maths/math.vector";
+
+import {World} from "platformer3d-engine-server/src/ts/common/world";
+import {Character} from "platformer3d-engine-server/src/ts/common/character";
+import {Quaternion, Vector3} from "platformer3d-engine-server/src/ts/math/math";
 
 export class WorldClient extends World {
     protected _player!: CharacterClient;
     protected _worker!: Worker;
+    protected _babylonScene!: Scene;
+    protected _babylonCamera!: Camera;
 
     public get player(): Character
     {
@@ -55,48 +68,46 @@ export class WorldClient extends World {
     public async loadWorld(): Promise<void> {
         console.info("Loading World...");
         console.debug("Creating Scene")
-        this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);
+        this._babylonScene = new Scene((this._gameEngine as GameEngineClient).babylonEngine);
 
         await this.loadFromNetwork();
         console.debug("Initializing Player...");
         // Create the player entity
-        this._player = new CharacterClient(3., BABYLON.MeshBuilder.CreateSphere(
+        this._player = new CharacterClient(3., MeshBuilder.CreateSphere(
             "player",
             {
                 diameter: 1.5
             },
-            this.babylonScene
-        ), this, new PlayerInputController(new DeviceSourceManager(this._gameEngine.babylonEngine)));
+            this._babylonScene
+        ), this, new PlayerInputController(new DeviceSourceManager((this._gameEngine as GameEngineClient).babylonEngine)));
         this._player.setPositionAndRotation(
-            new BABYLON.Vector3(5, -5, -10),
-            BABYLON.Quaternion.Identity()
+            new Vector3(5, -5, -10),
+            Quaternion.IDENTITY
         );
-        this._player.babylonMesh.material = new BABYLON.StandardMaterial(
+        this._player.babylonMesh.material = new StandardMaterial(
             "playerMat",
             this.babylonScene
         );
-        this._player.babylonTexture = new BABYLON.Texture(
+        this._player.characterBabylonTexture = new Texture(
             (this.gameEngine as GameEngineClient).assetsDir() + "temp_player.png",
             this.babylonScene
         );
-        (this._player.babylonMesh.material as BABYLON.StandardMaterial).diffuseTexture =
-            this._player.babylonTexture;
-        this._player.babylonTexture.hasAlpha = true;
+        (this._player.babylonMesh.material as StandardMaterial).diffuseTexture =
+            this._player.characterBabylonTexture;
+        this._player.characterBabylonTexture.hasAlpha = true;
 
         console.debug("Initializing Camera...");
-        this.babylonCamera = new BABYLON.ArcFollowCamera(
+        this._babylonCamera = new ArcFollowCamera(
             "camera",
             Math.PI / 2,
             0.5,
             10,
-            this.player.babylonMesh,
+            (this.player as CharacterClient).babylonMesh,
             this.babylonScene
         );
-        (this.babylonCamera as BABYLON.ArcFollowCamera).rotationQuaternion = new BABYLON.Vector3(
-            Math.PI / 2,
+        (this.babylonCamera as ArcFollowCamera).rotationQuaternion = QuaternionBabylon.FromEulerAngles(Math.PI / 2,
             0,
-            0.25
-        ).toQuaternion();
+            0.25);
         this._isWorldLoaded = true;
     }
 
@@ -106,5 +117,13 @@ export class WorldClient extends World {
                     return a;
                 return 0.0;
             })(this.babylonScene.deltaTime)));
+    }
+
+    public get babylonScene(): Scene {
+        return this._babylonScene;
+    }
+
+    public get babylonCamera(): Camera {
+        return this._babylonCamera;
     }
 }

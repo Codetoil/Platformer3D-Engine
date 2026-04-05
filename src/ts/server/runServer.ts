@@ -1,7 +1,7 @@
 import {GameEngineServer} from "./gameEngineServer";
 
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify

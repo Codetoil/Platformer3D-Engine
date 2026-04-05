@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -16,22 +16,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-import {GameEngine} from "../../../../src/ts/common/gameEngine";
-import {NamespacedKey} from "../../../../src/ts/common/namespacedKey";
-import {World} from "../../../../src/ts/common/world";
 import {WorldClient} from "./worldClient";
-import {Renderer} from "../../../../src/ts/common/renderer";
+
+import {AbstractEngine} from "@babylonjs/core/Engines/abstractEngine";
+
+import {GameEngine} from "platformer3d-engine-server/src/ts/common/gameEngine";
+import {NamespacedKey} from "platformer3d-engine-server/src/ts/common/namespacedKey";
+import {World} from "platformer3d-engine-server/src/ts/common/world";
+import {Renderer} from "platformer3d-engine-server/src/ts/common/renderer";
 
 export class GameEngineClient extends GameEngine {
+    protected _babylonEngine!: AbstractEngine;
+
     public assetsDir(): string
     {
-
+        return "assets";
     }
 
     public createRenderer(): Promise<Renderer>
     {
-
+        return Promise.reject("Not implemented yet");
     }
 
     public async onLoad(): Promise<void>
@@ -44,6 +48,10 @@ export class GameEngineClient extends GameEngine {
 
     public getName(): string {
         return "Platformer3D Engine Client";
+    }
+
+    public get babylonEngine(): AbstractEngine {
+        return this._babylonEngine;
     }
 }
 

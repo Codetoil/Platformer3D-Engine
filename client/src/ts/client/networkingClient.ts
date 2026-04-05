@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -15,20 +15,3 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-
-import {Character} from "../../../../src/ts/common/character";
-
-export class CharacterSingleplayer extends Character {
-    protected _babylonTexture?: BABYLON.Texture;
-
-    public get babylonTexture(): BABYLON.Texture | undefined
-    {
-        return this._babylonTexture;
-    }
-
-    public set babylonTexture(texture: BABYLON.Texture)
-    {
-        this._babylonTexture = texture;
-    }
-}

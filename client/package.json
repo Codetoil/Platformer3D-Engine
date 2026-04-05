@@ -1,11 +1,10 @@
 {
-  "name": "platformer3d-engine-client",
+  "name": "platformer3d-engine",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later",
-  "description": "A 3D Platformer Engine built for BOSIX with Web Technologies.",
+  "description": "A 3D Platforming Engine built using Web Technologies.",
   "scripts": {
-    "build-client": "tsc -p clientlike/tsconfig.client.json",
-    "build-singleplayer": "tsc -p clientlike/tsconfig.singleplayer.json",
+    "build-client": "tsc -p tsconfig.client.json",
     "update": "npm-check-updates -u"
   },
   "repository": {

@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -114,6 +114,7 @@ export class Vector3 {
 export class Vector2 {
     private readonly _x: number = 0;
     private readonly _y: number = 0;
+    public static readonly ZERO: Vector2 = new Vector2(0, 0);
 
     constructor(x: number, y: number) {
         this._x = x;
@@ -153,6 +154,8 @@ export class Quaternion {
     private readonly _b: number = 0;
     private readonly _c: number = 0;
     private readonly _d: number = 0;
+    public static readonly ZERO: Quaternion = new Quaternion(0, 0, 0, 0);
+    public static readonly IDENTITY: Quaternion = new Quaternion(1, 0, 0, 0);
 
     constructor(a: number, b: number, c: number, d: number) {
         this._a = a;
@@ -165,10 +168,6 @@ export class Quaternion {
     public get b(): number { return this._b; }
     public get c(): number { return this._c; }
     public get d(): number { return this._d; }
-
-    //public static fromVector3(vector1: Vector3, vector2: Vector3): Quaternion {
-
-    //}
 }
 
 export class Ray {

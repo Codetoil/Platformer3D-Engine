@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     "module": "es2022",
-    "lib": ["ES2024"],
     "strict": true,
     "alwaysStrict": true,
     "noImplicitOverride": true,
     "preserveConstEnums": true,
     "composite": true,
-    "outDir": "dist/math/",
+    "outDir": "dist/client/",
     "sourceMap": true
   },
   "include": [
-    "src/ts/math/*"
+    "src/ts/client/gameEngineClient.ts",
+    "src/ts/client/*"
   ]
 }

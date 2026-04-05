@@ -2,9 +2,8 @@
   "name": "platformer3d-engine-server",
   "version": "0.2.0",
   "license": "AGPL-3.0-or-later",
-  "description": "A 3D Platformer Engine built with Web Technologies.",
+  "description": "The server component of a 3D Platforming Engine built using Web Technologies.",
   "scripts": {
-    "build-common": "tsc -p tsconfig.common.json",
     "build-server": "tsc -p tsconfig.server.json",
     "update": "npm-check-updates -u"
   },

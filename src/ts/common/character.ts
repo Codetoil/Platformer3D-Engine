@@ -1,5 +1,5 @@
 /**
- *  Platformer3D Engine, a 3D Platformer Engine built for BOSIX with Web Technologies.
+ *  Platformer3D Engine, a 3D Platforming Engine built using Web Technologies.
  *  Copyright (C) 2021-2026 Codetoil
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -210,7 +210,7 @@ export class Character {
         this.isCharacterOnWorldSurface.forEach((_value: boolean, collidableType: CollidableCategory) => {
             this.isCharacterOnWorldSurface.set(collidableType, false);
         })
-        this._characterWorld.collidables.forEach((collidable) => {
+        this._characterWorld.collidables.forEach((collidable: Collidable) => {
             /*let ray: Ray = new Ray(this._characterPosition, collidable.babylonMesh.position
                 .subtract(this._characterPosition).normalize(), this._characterHeight / 2);
             if (this.collisionRayHelper.get(collidable)) {
@@ -236,13 +236,14 @@ export class Character {
         let r = Math.sqrt(x ** 2 + z ** 2);
 
         if (r > 0.01) { // Deadzone
-            let r1 = Math.abs(x) + Math.abs(z);
+            const r1 = Math.abs(x) + Math.abs(z);
             x *= r / r1;
             z *= r / r1;
 
             if (this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
-                this._characterRayOfView = new Vector3(z, 0, x).normalize();
-                this._characterOrientation = Quaternion.fromVector3(Vector3.UNIT_Z, this._characterRayOfView);
+                const angle: number = Math.atan2(z, x);
+
+                this._characterOrientation = new Quaternion(Math.cos(angle / 2), 0, 0, Math.sin(angle / 2));
             }
 
             this._characterVelocity = Vector3.add(this._characterVelocity,
@@ -381,7 +382,7 @@ export class Character {
             if (hit && hit.getHitPosition() && hit.getNormalVector()) {
                 console.debug(hit, hit.getNormalVector())
                 this._characterPosition =
-                    Vector3.add(hit.getHitPosition(),
+                    Vector3.add(hit.getHitPosition()!,
                         Vector3.scale(hit.getNormalVector()!, this._characterHeight / 2));
                 this._characterVelocity = Vector3.subtract(this._characterVelocity,
                     Vector3.scale(hit.getNormalVector()!,
