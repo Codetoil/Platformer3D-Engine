@@ -171,7 +171,7 @@ export class Quaternion {
 }
 
 export class Ray {
-    constructor(a: Vector3, b: Vector3, c: number) {
+    constructor(_a: Vector3, _b: Vector3, _c: number) {
     }
 }
 

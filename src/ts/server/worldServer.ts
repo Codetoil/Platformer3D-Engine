@@ -21,7 +21,7 @@ import {World} from "../common/world";
 export class WorldServer extends World {
 
     public loadWorld(): Promise<void> {
-        return new Promise<void>((resolve: () => void, reject: (reason?: any) => void): void => {
+        return new Promise<void>((_resolve: () => void, _reject: (reason?: any) => void): void => {
             console.info("Loading World...");
             console.debug("Creating Scene")
             //this._babylonScene = new BABYLON.Scene(this._gameEngine.babylonEngine);

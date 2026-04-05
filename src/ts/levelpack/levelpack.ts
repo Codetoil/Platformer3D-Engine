@@ -53,7 +53,7 @@ export class Levelpack {
     public static readonly VERSION: number = 0;
 
     public static load(): Promise<void> {
-        return new Promise<void>((resolve: () => void, reject: (reason?: any) => void): void => {
+        return new Promise<void>((_resolve: () => void, _reject: (reason?: any) => void): void => {
             // TODO Load world data from Levelpack
 
             console.debug("Loading levelpack...");

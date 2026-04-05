@@ -34,7 +34,7 @@ export class GameEngineServer extends GameEngine {
     }
 
     public createRenderer(): Promise<Renderer> {
-        return new Promise<Renderer>((resolve: (renderer: Renderer) => void, reject: (reason?: any) => void) => {
+        return new Promise<Renderer>((resolve: (renderer: Renderer) => void, _reject: (reason?: any) => void) => {
             console.log("Renderer initialized...")
             resolve(new NullRenderer(this));
         })

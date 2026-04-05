@@ -51,7 +51,7 @@ export abstract class World {
             this.gameEngine.renderer.deltaTime));
     }
 
-    public pickWithRay(ray: Ray, filter: (collidable: Collidable) => boolean): RayPickingInfo {
+    public pickWithRay(_ray: Ray, _filter: (collidable: Collidable) => boolean): RayPickingInfo {
         return new RayPickingInfo();
     }
 }

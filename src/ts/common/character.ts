@@ -23,7 +23,7 @@ import {CollidableTypes} from "../levelpack/levelpack";
 import {Skill} from "./skill";
 import {Item} from "./item";
 import {InventorySlot} from "./inventory";
-import {Quaternion, Ray, RayPickingInfo, Vector2, Vector3} from "../math/math";
+import {Quaternion, Ray, RayPickingInfo, Vector3} from "../math/math";
 
 /**
  * A character in the game world. Can be an Ally, an Enemy, or both. Can be a Player or an NPC.
@@ -210,7 +210,7 @@ export class Character {
         this.isCharacterOnWorldSurface.forEach((_value: boolean, collidableType: CollidableCategory) => {
             this.isCharacterOnWorldSurface.set(collidableType, false);
         })
-        this._characterWorld.collidables.forEach((collidable: Collidable) => {
+        this._characterWorld.collidables.forEach((_collidable: Collidable) => {
             /*let ray: Ray = new Ray(this._characterPosition, collidable.babylonMesh.position
                 .subtract(this._characterPosition).normalize(), this._characterHeight / 2);
             if (this.collisionRayHelper.get(collidable)) {
@@ -313,13 +313,13 @@ export class Character {
         } else if (this._characterInputController.isSprintActive && !this.isCharacterOnWorldSurface.get(CollidableTypes.GROUND)) {
             proportionalityConstant = 1.2;
         }
-        /*if (this._characterVelocity.length() ** 2 - this._characterVelocity.y ** 2 > (proportionalityConstant *
+        if (this._characterVelocity.length() ** 2 - this._characterVelocity.y ** 2 > (proportionalityConstant *
             (this._characterMaximumHorizontalSpeedUponJoystickNeutral * (1.0 - this._characterInputController.normalizedHorizontalMovement.length()) +
                 this._characterMaximumHorizontalSpeedUponJoystickFullyActive * this._characterInputController.normalizedHorizontalMovement.length())) ** 2) {
-            this._characterVelocity.normalizeFromLength(proportionalityConstant *
+            Vector3.scale(this._characterVelocity.normalize(), proportionalityConstant *
                 (this._characterMaximumHorizontalSpeedUponJoystickNeutral * (1.0 - this._characterInputController.normalizedHorizontalMovement.length()) +
                     this._characterMaximumHorizontalSpeedUponJoystickFullyActive * this._characterInputController.normalizedHorizontalMovement.length()));
-        }*/
+        }
     }
 
     private applyGravity(getDeltaTime: () => number): void {
