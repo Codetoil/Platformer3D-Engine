@@ -35,4 +35,4 @@ profile:
 #    fresh: 70
 #    total: 50
 #Specify Qodana linter for analysis (Applied in CI/CD pipeline)
-linter: jetbrains/qodana-js:2026.1
+linter: jetbrains/qodana-js
