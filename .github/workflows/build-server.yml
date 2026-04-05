@@ -20,7 +20,7 @@ jobs:
       - name: Install NPM Packages
         run: npm install
       - name: Build
-        run: npm run build
+        run: npm run build-server
       - name: Create source code tarbell
         run: git archive -o dist/source.tar.gz HEAD
       - name: Copy License to output dist
