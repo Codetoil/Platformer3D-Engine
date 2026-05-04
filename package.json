@@ -22,7 +22,7 @@
     "@babylonjs/core": "8.28.2",
     "@babylonjs/loaders": "8.28.2",
     "ts-mixer": "6.0.4",
-    "uuid": "13.0.0",
+    "uuid": "14.0.0",
     "ws": "8.18.3",
     "xss": "1.0.15"
   },
